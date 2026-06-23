@@ -11,7 +11,7 @@ module.exports = function(app) {
       },
       on: {
         proxyReq: (proxyReq) => {
-          proxyReq.setHeader('x-api-key', 'AQ.Ab8RN6KraOTplYCrdfpSWJi0vUnl5MsrVPAlGgL9O4kCvTudFA);
+          proxyReq.setHeader('x-api-key', 'REMOVED');
           proxyReq.setHeader('anthropic-version', '2023-06-01');
           proxyReq.setHeader('content-type', 'application/json');
         },

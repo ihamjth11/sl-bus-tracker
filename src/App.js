@@ -1,3 +1,4 @@
+import { searchLocations } from './locations';
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
@@ -48,12 +49,17 @@ const busRoutes = {
 
   // Anuradhapura based routes
   "anuradhapura-nochchiyagama": {
-    normal: { bus: "No. 57 - Normal", fare: "Rs. 98", duration: "45 mins" },
-    ac: { bus: "No. 57 - AC", fare: "Rs. 185", duration: "35 mins" },
-    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 20 mins" },
-    stops: ["Anuradhapura", "Thalawa", "Nochchiyagama"],
-    coords: [{lat: 8.3114, lng: 80.4037}, {lat: 8.2833, lng: 80.2167}]
-  },
+  normal: { bus: "No. 57 - Normal", fare: "Rs. 98", duration: "45 mins" },
+  ac: { bus: "No. 57 - AC", fare: "Rs. 185", duration: "35 mins" },
+  alternativeBuses: [
+    { bus: "No. 57/1", fare: "Rs. 98", type: "Normal" },
+    { bus: "No. 822", fare: "Rs. 98", type: "Normal" },
+    { bus: "No. 87", fare: "Rs. 110", type: "Normal" },
+  ],
+  timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 20 mins" },
+  stops: ["Anuradhapura", "Thalawa", "Nochchiyagama"],
+  coords: [{lat: 8.3114, lng: 80.4037}, {lat: 8.2833, lng: 80.2167}]
+},
   "anuradhapura-jaffna": {
     normal: { bus: "No. 15 - Normal", fare: "Rs. 873", duration: "3.5 hrs" },
     ac: { bus: "No. 15 - AC", fare: "Rs. 1,635", duration: "3 hrs" },
@@ -575,6 +581,10 @@ function findRoute(from, to) {
 }
 
 function App() {
+  const [fromSuggestions, setFromSuggestions] = useState([]);
+  const [toSuggestions, setToSuggestions] = useState([]);
+  const [showFromSuggestions, setShowFromSuggestions] = useState(false);
+  const [showToSuggestions, setShowToSuggestions] = useState(false);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [result, setResult] = useState(null);
@@ -632,7 +642,31 @@ function App() {
     setNotFound(true);
   }
 };
+const handleFromChange = (e) => {
+  const val = e.target.value;
+  setFrom(val);
+  const suggestions = searchLocations(val);
+  setFromSuggestions(suggestions);
+  setShowFromSuggestions(true);
+};
 
+const handleToChange = (e) => {
+  const val = e.target.value;
+  setTo(val);
+  const suggestions = searchLocations(val);
+  setToSuggestions(suggestions);
+  setShowToSuggestions(true);
+};
+
+const selectFrom = (location) => {
+  setFrom(location.name);
+  setShowFromSuggestions(false);
+};
+
+const selectTo = (location) => {
+  setTo(location.name);
+  setShowToSuggestions(false);
+};
   const handleSwap = () => {
     setFrom(to);
     setTo(from);
@@ -656,48 +690,20 @@ function App() {
   setLoading(true);
 
   try {
-    const response = await fetch(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        method: "POST",
-        mode: "cors",
-        credentials: "omit",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "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"
-        },
-        body: JSON.stringify({
-          model: "llama3-8b-8192",
-          messages: [
-            {
-              role: "system",
-              content: `You are a helpful Sri Lanka bus transport assistant. Help people find bus routes, fares, timings across Sri Lanka. Be friendly and concise. Answer in the same language as the user (Tamil, Sinhala, or English).
-
-Known routes:
-- Colombo-Kandy: Normal Rs.458 / AC Rs.830, 2.5-3hrs, Bus No.1
-- Colombo-Galle: Normal Rs.532 / AC Rs.800, 2-2.5hrs, Bus No.2-1
-- Colombo-Jaffna: Normal Rs.1967 / AC Rs.2620, 7-8hrs, Bus No.15/87
-- Colombo-Negombo: Normal Rs.301 / AC Rs.652, 1-1.5hrs, Bus No.4
-- Colombo-Matara: Normal Rs.797 / AC Rs.1060, 3-3.5hrs, Bus No.2
-- Colombo-Anuradhapura: Normal Rs.1094 / AC Rs.1460, 4-5hrs, Bus No.15-1-1
-- Colombo-Trincomalee: Normal Rs.1275 / AC Rs.2550, 6-7hrs, Bus No.49
-- Colombo-Batticaloa: Normal Rs.1524 / AC Rs.3050, 6.5-7.5hrs, Bus No.48-1
-- Colombo-Hambantota: Normal Rs.1184 / AC Rs.2180, 4-5hrs, Bus No.32-1
-- Colombo-Badulla: Normal Rs.1250 / AC Rs.1690, 5-6hrs, Bus No.21-6`
-            },
-            {
-              role: "user",
-              content: userMsg
-            }
-          ],
-          max_tokens: 500,
-        })
-      }
-    );
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: userMsg,
+        history: chat.map(m => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.text
+        }))
+      })
+    });
 
     const data = await response.json();
-    const reply = data.choices[0].message.content;
-    setChat(prev => [...prev, { role: 'assistant', text: reply }]);
+    setChat(prev => [...prev, { role: 'assistant', text: data.reply }]);
   } catch (error) {
     setChat(prev => [...prev, { role: 'assistant', text: 'Sorry, something went wrong. Please try again!' }]);
   }
@@ -723,21 +729,65 @@ Known routes:
       </div>
 
       <div className="search-card">
-        <div className="input-group">
-          <span className="input-icon">📍</span>
-          <input type="text" placeholder="From — Colombo, Kandy..." value={from} onChange={e => setFrom(e.target.value)} />
-        </div>
-        <div className="divider">
-          <div className="divider-line"></div>
-          <div className="swap-btn" onClick={handleSwap}>⇅</div>
-          <div className="divider-line"></div>
-        </div>
-        <div className="input-group">
-          <span className="input-icon">🏁</span>
-          <input type="text" placeholder="To — Galle, Jaffna..." value={to} onChange={e => setTo(e.target.value)} />
-        </div>
-        <button className="search-btn" onClick={handleSearch}>Find My Bus →</button>
+  {/* From Input */}
+  <div className="input-wrapper">
+    <div className="input-group">
+      <span className="input-icon">📍</span>
+      <input
+        type="text"
+        placeholder="From — Colombo, Kandy..."
+        value={from}
+        onChange={handleFromChange}
+        onFocus={() => setShowFromSuggestions(true)}
+        onBlur={() => setTimeout(() => setShowFromSuggestions(false), 200)}
+      />
+    </div>
+    {showFromSuggestions && fromSuggestions.length > 0 && (
+      <div className="suggestions-box">
+        {fromSuggestions.map((loc, i) => (
+          <div key={i} className="suggestion-item" onMouseDown={() => selectFrom(loc)}>
+            <span className="suggestion-name">{loc.name}</span>
+            <span className="suggestion-district">{loc.district}</span>
+          </div>
+        ))}
       </div>
+    )}
+  </div>
+
+  {/* Swap */}
+  <div className="divider">
+    <div className="divider-line"></div>
+    <div className="swap-btn" onClick={handleSwap}>⇅</div>
+    <div className="divider-line"></div>
+  </div>
+
+  {/* To Input */}
+  <div className="input-wrapper">
+    <div className="input-group">
+      <span className="input-icon">🏁</span>
+      <input
+        type="text"
+        placeholder="To — Galle, Jaffna..."
+        value={to}
+        onChange={handleToChange}
+        onFocus={() => setShowToSuggestions(true)}
+        onBlur={() => setTimeout(() => setShowToSuggestions(false), 200)}
+      />
+    </div>
+    {showToSuggestions && toSuggestions.length > 0 && (
+      <div className="suggestions-box">
+        {toSuggestions.map((loc, i) => (
+          <div key={i} className="suggestion-item" onMouseDown={() => selectTo(loc)}>
+            <span className="suggestion-name">{loc.name}</span>
+            <span className="suggestion-district">{loc.district}</span>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <button className="search-btn" onClick={handleSearch}>Find My Bus →</button>
+</div>
 
       {result && (
   <div className="result-card">
@@ -785,6 +835,21 @@ Known routes:
     </div>
   </div>
 </div>
+{/* Alternative Buses */}
+{result.alternativeBuses && result.alternativeBuses.length > 0 && (
+  <div className="alt-buses">
+    <div className="alt-buses-title">🚌 Other Buses on this Route</div>
+    <div className="alt-buses-list">
+      {result.alternativeBuses.map((bus, i) => (
+        <div key={i} className="alt-bus-item">
+          <span className="alt-bus-number">{bus.bus}</span>
+          <span className="alt-bus-type">{bus.type}</span>
+          <span className="alt-bus-fare">{bus.fare}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
     {/* Stops */}
     <div className="stops-title">🗺️ Stops</div>

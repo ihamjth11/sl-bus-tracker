@@ -12,6 +12,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('API Key exists:', !!process.env.GROQ_API_KEY);
+    console.log('API Key first 10:', process.env.GROQ_API_KEY?.substring(0, 10));
     const { message, history } = req.body;
 
     const controller = new AbortController();

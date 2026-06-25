@@ -56,6 +56,8 @@ Key routes (NTC 2026 fares):
     clearTimeout(timeout);
 
     const data = await response.json();
+    console.log('Groq status:', response.status);
+    console.log('Groq response:', JSON.stringify(data));
     
     if (!data.choices || !data.choices[0]) {
       return res.status(500).json({ error: data.error?.message || 'No response from AI' });
@@ -64,9 +66,12 @@ Key routes (NTC 2026 fares):
     const reply = data.choices[0].message.content;
     res.status(200).json({ reply });
   } catch (error) {
-    if (error.name === 'AbortError') {
-      return res.status(500).json({ error: 'Request timed out. Please try again.' });
-    }
-    res.status(500).json({ error: error.message || 'Something went wrong' });
+  console.log('Error name:', error.name);
+  console.log('Error message:', error.message);
+  console.log('Full error:', JSON.stringify(error));
+  if (error.name === 'AbortError') {
+    return res.status(500).json({ error: 'Request timed out. Please try again.' });
   }
+  res.status(500).json({ error: error.message || 'Something went wrong' });
+}
 }

@@ -51,6 +51,6 @@ Known routes with official NTC 2026 fares:
     const reply = data.choices[0].message.content;
     res.status(200).json({ reply });
   } catch (error) {
-    res.status(500).json({ error: 'Something went wrong' });
+    res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 }

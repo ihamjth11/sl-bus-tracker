@@ -3,575 +3,857 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 const busRoutes = {
-  // Kandy based routes
-  "kandy-anuradhapura": {
-    normal: { bus: "No. 43 - Normal", fare: "Rs. 636", duration: "3.5 hrs" },
-    ac: { bus: "No. 43 - AC", fare: "Rs. 850", duration: "3 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
-    stops: ["Kandy", "Dambulla", "Kekirawa", "Anuradhapura"],
-    coords: [{lat: 7.2906, lng: 80.6337}, {lat: 8.3114, lng: 80.4037}]
-  },
-  "kandy-nuwara eliya": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 213", duration: "2 hrs" },
-    ac: { bus: "No. 98 - AC", fare: "Rs. 400", duration: "1.5 hrs" },
-    timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 30 mins" },
-    stops: ["Kandy", "Gampola", "Nuwara Eliya"],
-    coords: [{lat: 7.2906, lng: 80.6337}, {lat: 6.9497, lng: 80.7891}]
-  },
-  "kandy-badulla": {
-    normal: { bus: "No. 98/1 - Normal", fare: "Rs. 425", duration: "3.5 hrs" },
-    ac: { bus: "No. 98/1 - AC", fare: "Rs. 795", duration: "3 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 45 mins" },
-    stops: ["Kandy", "Nuwara Eliya", "Welimada", "Badulla"],
-    coords: [{lat: 7.2906, lng: 80.6337}, {lat: 6.9934, lng: 81.0550}]
-  },
-  "kandy-polonnaruwa": {
-    normal: { bus: "No. 48 - Normal", fare: "Rs. 380", duration: "3 hrs" },
-    ac: { bus: "No. 48 - AC", fare: "Rs. 710", duration: "2.5 hrs" },
-    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 45 mins" },
-    stops: ["Kandy", "Matale", "Dambulla", "Polonnaruwa"],
-    coords: [{lat: 7.2906, lng: 80.6337}, {lat: 7.9403, lng: 81.0188}]
-  },
-  "kandy-trincomalee": {
-    normal: { bus: "No. 49 - Normal", fare: "Rs. 580", duration: "4 hrs" },
-    ac: { bus: "No. 49 - AC", fare: "Rs. 1,090", duration: "3.5 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
-    stops: ["Kandy", "Dambulla", "Habarana", "Trincomalee"],
-    coords: [{lat: 7.2906, lng: 80.6337}, {lat: 8.5874, lng: 81.2152}]
-  },
-  "kandy-matara": {
-    normal: { bus: "No. 2 - Normal", fare: "Rs. 520", duration: "4 hrs" },
-    ac: { bus: "No. 2 - AC", fare: "Rs. 975", duration: "3.5 hrs" },
-    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 1 hour" },
-    stops: ["Kandy", "Colombo", "Galle", "Matara"],
-    coords: [{lat: 7.2906, lng: 80.6337}, {lat: 5.9549, lng: 80.5550}]
-  },
-
-  // Anuradhapura based routes
-  "anuradhapura-nochchiyagama": {
-  normal: { bus: "No. 57 - Normal", fare: "Rs. 98", duration: "45 mins" },
-  ac: { bus: "No. 57 - AC", fare: "Rs. 185", duration: "35 mins" },
-  alternativeBuses: [
-    { bus: "No. 57/1", fare: "Rs. 98", type: "Normal" },
-    { bus: "No. 822", fare: "Rs. 98", type: "Normal" },
-    { bus: "No. 87", fare: "Rs. 110", type: "Normal" },
-  ],
-  timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 20 mins" },
-  stops: ["Anuradhapura", "Thalawa", "Nochchiyagama"],
-  coords: [{lat: 8.3114, lng: 80.4037}, {lat: 8.2833, lng: 80.2167}]
-},
-  "anuradhapura-jaffna": {
-    normal: { bus: "No. 15 - Normal", fare: "Rs. 873", duration: "3.5 hrs" },
-    ac: { bus: "No. 15 - AC", fare: "Rs. 1,635", duration: "3 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
-    stops: ["Anuradhapura", "Vavuniya", "Kilinochchi", "Jaffna"],
-    coords: [{lat: 8.3114, lng: 80.4037}, {lat: 9.6615, lng: 80.0255}]
-  },
-  "anuradhapura-trincomalee": {
-    normal: { bus: "No. 49 - Normal", fare: "Rs. 425", duration: "2.5 hrs" },
-    ac: { bus: "No. 49 - AC", fare: "Rs. 795", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
-    stops: ["Anuradhapura", "Kekirawa", "Habarana", "Trincomalee"],
-    coords: [{lat: 8.3114, lng: 80.4037}, {lat: 8.5874, lng: 81.2152}]
-  },
-  "anuradhapura-kurunegala": {
-    normal: { bus: "No. 6 - Normal", fare: "Rs. 318", duration: "2 hrs" },
-    ac: { bus: "No. 6 - AC", fare: "Rs. 595", duration: "1.5 hrs" },
-    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
-    stops: ["Anuradhapura", "Kekirawa", "Kurunegala"],
-    coords: [{lat: 8.3114, lng: 80.4037}, {lat: 7.4818, lng: 80.3609}]
-  },
-
-  // Jaffna based routes
-  "jaffna-vavuniya": {
-    normal: { bus: "No. 15 - Normal", fare: "Rs. 495", duration: "2.5 hrs" },
-    ac: { bus: "No. 15 - AC", fare: "Rs. 928", duration: "2 hrs" },
-    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins" },
-    stops: ["Jaffna", "Kilinochchi", "Vavuniya"],
-    coords: [{lat: 9.6615, lng: 80.0255}, {lat: 8.7514, lng: 80.4971}]
-  },
-  "jaffna-trincomalee": {
-    normal: { bus: "No. 78 - Normal", fare: "Rs. 680", duration: "4 hrs" },
-    ac: { bus: "No. 78 - AC", fare: "Rs. 1,275", duration: "3.5 hrs" },
-    timing: { first: "6:00 AM", last: "5:00 PM", frequency: "Every 2 hours" },
-    stops: ["Jaffna", "Mullaitivu", "Trincomalee"],
-    coords: [{lat: 9.6615, lng: 80.0255}, {lat: 8.5874, lng: 81.2152}]
-  },
-  "jaffna-mannar": {
-    normal: { bus: "No. 87 - Normal", fare: "Rs. 380", duration: "2.5 hrs" },
-    ac: { bus: "No. 87 - AC", fare: "Rs. 712", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
-    stops: ["Jaffna", "Paranthan", "Mannar"],
-    coords: [{lat: 9.6615, lng: 80.0255}, {lat: 8.9810, lng: 79.9044}]
-  },
-
-  // Galle based routes
-  "galle-matara": {
-    normal: { bus: "No. 32 - Normal", fare: "Rs. 185", duration: "1 hr" },
-    ac: { bus: "No. 32 - AC", fare: "Rs. 347", duration: "45 mins" },
-    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
-    stops: ["Galle", "Unawatuna", "Weligama", "Matara"],
-    coords: [{lat: 6.0535, lng: 80.2210}, {lat: 5.9549, lng: 80.5550}]
-  },
-  "galle-hambantota": {
-    normal: { bus: "No. 32/1 - Normal", fare: "Rs. 380", duration: "2 hrs" },
-    ac: { bus: "No. 32/1 - AC", fare: "Rs. 712", duration: "1.5 hrs" },
-    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
-    stops: ["Galle", "Matara", "Tangalle", "Hambantota"],
-    coords: [{lat: 6.0535, lng: 80.2210}, {lat: 6.1429, lng: 81.1212}]
-  },
-  "galle-ratnapura": {
-    normal: { bus: "No. 32/3 - Normal", fare: "Rs. 320", duration: "2.5 hrs" },
-    ac: { bus: "No. 32/3 - AC", fare: "Rs. 600", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
-    stops: ["Galle", "Elpitiya", "Ratnapura"],
-    coords: [{lat: 6.0535, lng: 80.2210}, {lat: 6.6828, lng: 80.3992}]
-  },
-
-  // Matara based routes
-  "matara-hambantota": {
-    normal: { bus: "No. 32/1 - Normal", fare: "Rs. 265", duration: "1.5 hrs" },
-    ac: { bus: "No. 32/1 - AC", fare: "Rs. 497", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins" },
-    stops: ["Matara", "Tangalle", "Hambantota"],
-    coords: [{lat: 5.9549, lng: 80.5550}, {lat: 6.1429, lng: 81.1212}]
-  },
-  "matara-badulla": {
-    normal: { bus: "No. 99 - Normal", fare: "Rs. 540", duration: "4 hrs" },
-    ac: { bus: "No. 99 - AC", fare: "Rs. 1,012", duration: "3.5 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 2 hours" },
-    stops: ["Matara", "Wellawaya", "Badulla"],
-    coords: [{lat: 5.9549, lng: 80.5550}, {lat: 6.9934, lng: 81.0550}]
-  },
-
-  // Trincomalee based routes
-  "trincomalee-batticaloa": {
-    normal: { bus: "No. 48 - Normal", fare: "Rs. 380", duration: "2.5 hrs" },
-    ac: { bus: "No. 48 - AC", fare: "Rs. 712", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
-    stops: ["Trincomalee", "Muttur", "Batticaloa"],
-    coords: [{lat: 8.5874, lng: 81.2152}, {lat: 7.7310, lng: 81.6747}]
-  },
-  "trincomalee-polonnaruwa": {
-    normal: { bus: "No. 49 - Normal", fare: "Rs. 285", duration: "2 hrs" },
-    ac: { bus: "No. 49 - AC", fare: "Rs. 534", duration: "1.5 hrs" },
-    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
-    stops: ["Trincomalee", "Kantale", "Polonnaruwa"],
-    coords: [{lat: 8.5874, lng: 81.2152}, {lat: 7.9403, lng: 81.0188}]
-  },
-
-  // Batticaloa based routes
-  "batticaloa-ampara": {
-    normal: { bus: "No. 68 - Normal", fare: "Rs. 185", duration: "1.5 hrs" },
-    ac: { bus: "No. 68 - AC", fare: "Rs. 347", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins" },
-    stops: ["Batticaloa", "Kalmunai", "Ampara"],
-    coords: [{lat: 7.7310, lng: 81.6747}, {lat: 7.2811, lng: 81.6747}]
-  },
-
-  // Kurunegala based routes
-  "kurunegala-puttalam": {
-    normal: { bus: "No. 7 - Normal", fare: "Rs. 212", duration: "1.5 hrs" },
-    ac: { bus: "No. 7 - AC", fare: "Rs. 397", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins" },
-    stops: ["Kurunegala", "Wariyapola", "Puttalam"],
-    coords: [{lat: 7.4818, lng: 80.3609}, {lat: 8.0408, lng: 79.8394}]
-  },
-  "kurunegala-kandy": {
-    normal: { bus: "No. 1 - Normal", fare: "Rs. 212", duration: "1.5 hrs" },
-    ac: { bus: "No. 1 - AC", fare: "Rs. 397", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
-    stops: ["Kurunegala", "Alawwa", "Kandy"],
-    coords: [{lat: 7.4818, lng: 80.3609}, {lat: 7.2906, lng: 80.6337}]
-  },
-
-  // Ratnapura based routes
-  "ratnapura-badulla": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 380", duration: "3 hrs" },
-    ac: { bus: "No. 98 - AC", fare: "Rs. 712", duration: "2.5 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
-    stops: ["Ratnapura", "Pelmadulla", "Wellawaya", "Badulla"],
-    coords: [{lat: 6.6828, lng: 80.3992}, {lat: 6.9934, lng: 81.0550}]
-  },
-  "ratnapura-galle": {
-    normal: { bus: "No. 32/3 - Normal", fare: "Rs. 320", duration: "2.5 hrs" },
-    ac: { bus: "No. 32/3 - AC", fare: "Rs. 600", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
-    stops: ["Ratnapura", "Elpitiya", "Galle"],
-    coords: [{lat: 6.6828, lng: 80.3992}, {lat: 6.0535, lng: 80.2210}]
-  },
-
-  // Badulla based routes
-  "badulla-nuwara eliya": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 212", duration: "2 hrs" },
-    ac: { bus: "No. 98 - AC", fare: "Rs. 397", duration: "1.5 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 45 mins" },
-    stops: ["Badulla", "Welimada", "Nuwara Eliya"],
-    coords: [{lat: 6.9934, lng: 81.0550}, {lat: 6.9497, lng: 80.7891}]
-  },
-  "badulla-monaragala": {
-    normal: { bus: "No. 99 - Normal", fare: "Rs. 185", duration: "1.5 hrs" },
-    ac: { bus: "No. 99 - AC", fare: "Rs. 347", duration: "1 hr" },
-    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
-    stops: ["Badulla", "Wellawaya", "Monaragala"],
-    coords: [{lat: 6.9934, lng: 81.0550}, {lat: 6.8728, lng: 81.3507}]
-  },
-
-  // Hambantota based routes
-  "hambantota-matara": {
-    normal: { bus: "No. 32/1 - Normal", fare: "Rs. 265", duration: "1.5 hrs" },
-    ac: { bus: "No. 32/1 - AC", fare: "Rs. 497", duration: "1 hr" },
-    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins" },
-    stops: ["Hambantota", "Tangalle", "Matara"],
-    coords: [{lat: 6.1429, lng: 81.1212}, {lat: 5.9549, lng: 80.5550}]
-  },
-  "hambantota-monaragala": {
-    normal: { bus: "No. 99 - Normal", fare: "Rs. 318", duration: "2.5 hrs" },
-    ac: { bus: "No. 99 - AC", fare: "Rs. 596", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
-    stops: ["Hambantota", "Tissamaharama", "Monaragala"],
-    coords: [{lat: 6.1429, lng: 81.1212}, {lat: 6.8728, lng: 81.3507}]
-  },
-
-  // Nuwara Eliya based routes
-  "nuwara eliya-badulla": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 212", duration: "2 hrs" },
-    ac: { bus: "No. 98 - AC", fare: "Rs. 397", duration: "1.5 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 45 mins" },
-    stops: ["Nuwara Eliya", "Welimada", "Badulla"],
-    coords: [{lat: 6.9497, lng: 80.7891}, {lat: 6.9934, lng: 81.0550}]
-  },
-  "nuwara eliya-kandy": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 213", duration: "2 hrs" },
-    ac: { bus: "No. 98 - AC", fare: "Rs. 400", duration: "1.5 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 30 mins" },
-    stops: ["Nuwara Eliya", "Gampola", "Kandy"],
-    coords: [{lat: 6.9497, lng: 80.7891}, {lat: 7.2906, lng: 80.6337}]
-  },
-
-  // Polonnaruwa based routes
-  "polonnaruwa-batticaloa": {
-    normal: { bus: "No. 48 - Normal", fare: "Rs. 380", duration: "2.5 hrs" },
-    ac: { bus: "No. 48 - AC", fare: "Rs. 712", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
-    stops: ["Polonnaruwa", "Valaichchenai", "Batticaloa"],
-    coords: [{lat: 7.9403, lng: 81.0188}, {lat: 7.7310, lng: 81.6747}]
-  },
-  "polonnaruwa-anuradhapura": {
-    normal: { bus: "No. 15 - Normal", fare: "Rs. 318", duration: "2 hrs" },
-    ac: { bus: "No. 49 - AC", fare: "Rs. 596", duration: "1.5 hrs" },
-    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 45 mins" },
-    stops: ["Polonnaruwa", "Habarana", "Kekirawa", "Anuradhapura"],
-    coords: [{lat: 7.9403, lng: 81.0188}, {lat: 8.3114, lng: 80.4037}]
-  },
-
-  // Vavuniya based routes
-  "vavuniya-jaffna": {
-    normal: { bus: "No. 15 - Normal", fare: "Rs. 495", duration: "2 hrs" },
-    ac: { bus: "No. 15 - AC", fare: "Rs. 928", duration: "1.5 hrs" },
-    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
-    stops: ["Vavuniya", "Kilinochchi", "Jaffna"],
-    coords: [{lat: 8.7514, lng: 80.4971}, {lat: 9.6615, lng: 80.0255}]
-  },
-  "vavuniya-anuradhapura": {
-    normal: { bus: "No. 15 - Normal", fare: "Rs. 265", duration: "1.5 hrs" },
-    ac: { bus: "No. 15 - AC", fare: "Rs. 497", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
-    stops: ["Vavuniya", "Anuradhapura"],
-    coords: [{lat: 8.7514, lng: 80.4971}, {lat: 8.3114, lng: 80.4037}]
-  },
-
-  // Mannar based routes
-  "mannar-anuradhapura": {
-    normal: { bus: "No. 87 - Normal", fare: "Rs. 380", duration: "2.5 hrs" },
-    ac: { bus: "No. 87 - AC", fare: "Rs. 712", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
-    stops: ["Mannar", "Medawachchiya", "Anuradhapura"],
-    coords: [{lat: 8.9810, lng: 79.9044}, {lat: 8.3114, lng: 80.4037}]
-  },
-
-  // Puttalam based routes
-  "puttalam-kurunegala": {
-    normal: { bus: "No. 7 - Normal", fare: "Rs. 212", duration: "1.5 hrs" },
-    ac: { bus: "No. 7 - AC", fare: "Rs. 397", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins" },
-    stops: ["Puttalam", "Wariyapola", "Kurunegala"],
-    coords: [{lat: 8.0408, lng: 79.8394}, {lat: 7.4818, lng: 80.3609}]
-  },
-  "puttalam-negombo": {
-    normal: { bus: "No. 4 - Normal", fare: "Rs. 265", duration: "2 hrs" },
-    ac: { bus: "No. 4 - AC", fare: "Rs. 497", duration: "1.5 hrs" },
-    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
-    stops: ["Puttalam", "Chilaw", "Negombo"],
-    coords: [{lat: 8.0408, lng: 79.8394}, {lat: 7.2097, lng: 79.8350}]
-  },
-
-  // Kegalle based routes
-  "kegalle-kandy": {
-    normal: { bus: "No. 96 - Normal", fare: "Rs. 159", duration: "1 hr" },
-    ac: { bus: "No. 96 - AC", fare: "Rs. 298", duration: "45 mins" },
-    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins" },
-    stops: ["Kegalle", "Mawanella", "Kandy"],
-    coords: [{lat: 7.2513, lng: 80.3464}, {lat: 7.2906, lng: 80.6337}]
-  },
-  "kegalle-ratnapura": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 159", duration: "1 hr" },
-    ac: { bus: "No. 98 - AC", fare: "Rs. 298", duration: "45 mins" },
-    timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 20 mins" },
-    stops: ["Kegalle", "Avissawella", "Ratnapura"],
-    coords: [{lat: 7.2513, lng: 80.3464}, {lat: 6.6828, lng: 80.3992}]
-  },
-
-  // Matale based routes
-  "matale-dambulla": {
-    normal: { bus: "No. 6 - Normal", fare: "Rs. 106", duration: "45 mins" },
-    ac: { bus: "No. 6 - AC", fare: "Rs. 199", duration: "30 mins" },
-    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins" },
-    stops: ["Matale", "Sigiriya Junction", "Dambulla"],
-    coords: [{lat: 7.4675, lng: 80.6234}, {lat: 7.8742, lng: 80.6511}]
-  },
-  "matale-kandy": {
-    normal: { bus: "No. 8 - Normal", fare: "Rs. 106", duration: "45 mins" },
-    ac: { bus: "No. 8 - AC", fare: "Rs. 199", duration: "30 mins" },
-    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 10 mins" },
-    stops: ["Matale", "Kandy"],
-    coords: [{lat: 7.4675, lng: 80.6234}, {lat: 7.2906, lng: 80.6337}]
-  },
-
-  // Ampara based routes
-  "ampara-batticaloa": {
-    normal: { bus: "No. 68 - Normal", fare: "Rs. 185", duration: "1.5 hrs" },
-    ac: { bus: "No. 68 - AC", fare: "Rs. 347", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins" },
-    stops: ["Ampara", "Kalmunai", "Batticaloa"],
-    coords: [{lat: 7.2811, lng: 81.6747}, {lat: 7.7310, lng: 81.6747}]
-  },
-  "ampara-monaragala": {
-    normal: { bus: "No. 99 - Normal", fare: "Rs. 265", duration: "2 hrs" },
-    ac: { bus: "No. 99 - AC", fare: "Rs. 497", duration: "1.5 hrs" },
-    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
-    stops: ["Ampara", "Monaragala"],
-    coords: [{lat: 7.2811, lng: 81.6747}, {lat: 6.8728, lng: 81.3507}]
-  },
-
-  // Monaragala based routes
-  "monaragala-badulla": {
-    normal: { bus: "No. 99 - Normal", fare: "Rs. 185", duration: "1.5 hrs" },
-    ac: { bus: "No. 99 - AC", fare: "Rs. 347", duration: "1 hr" },
-    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
-    stops: ["Monaragala", "Wellawaya", "Badulla"],
-    coords: [{lat: 6.8728, lng: 81.3507}, {lat: 6.9934, lng: 81.0550}]
-  },
-  "monaragala-hambantota": {
-    normal: { bus: "No. 99 - Normal", fare: "Rs. 318", duration: "2.5 hrs" },
-    ac: { bus: "No. 99 - AC", fare: "Rs. 596", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
-    stops: ["Monaragala", "Tissamaharama", "Hambantota"],
-    coords: [{lat: 6.8728, lng: 81.3507}, {lat: 6.1429, lng: 81.1212}]
-  },
-
-  // Kilinochchi based routes
-  "kilinochchi-jaffna": {
-    normal: { bus: "No. 15 - Normal", fare: "Rs. 265", duration: "1.5 hrs" },
-    ac: { bus: "No. 15 - AC", fare: "Rs. 497", duration: "1 hr" },
-    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
-    stops: ["Kilinochchi", "Elephant Pass", "Jaffna"],
-    coords: [{lat: 9.3803, lng: 80.3770}, {lat: 9.6615, lng: 80.0255}]
-  },
-  "kilinochchi-vavuniya": {
-    normal: { bus: "No. 15 - Normal", fare: "Rs. 212", duration: "1 hr" },
-    ac: { bus: "No. 15 - AC", fare: "Rs. 397", duration: "45 mins" },
-    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
-    stops: ["Kilinochchi", "Vavuniya"],
-    coords: [{lat: 9.3803, lng: 80.3770}, {lat: 8.7514, lng: 80.4971}]
-  },
-
-  // Mullaitivu based routes
-  "mullaitivu-vavuniya": {
-    normal: { bus: "No. 15/1 - Normal", fare: "Rs. 318", duration: "2 hrs" },
-    ac: { bus: "No. 15/1 - AC", fare: "Rs. 596", duration: "1.5 hrs" },
-    timing: { first: "6:00 AM", last: "5:00 PM", frequency: "Every 2 hours" },
-    stops: ["Mullaitivu", "Mankulam", "Vavuniya"],
-    coords: [{lat: 9.2671, lng: 80.8128}, {lat: 8.7514, lng: 80.4971}]
-  },
-  "mullaitivu-trincomalee": {
-    normal: { bus: "No. 78 - Normal", fare: "Rs. 318", duration: "2.5 hrs" },
-    ac: { bus: "No. 78 - AC", fare: "Rs. 596", duration: "2 hrs" },
-    timing: { first: "6:00 AM", last: "4:00 PM", frequency: "Every 2 hours" },
-    stops: ["Mullaitivu", "Trincomalee"],
-    coords: [{lat: 9.2671, lng: 80.8128}, {lat: 8.5874, lng: 81.2152}]
-  },
-
-  // Gampaha based routes
-  "gampaha-negombo": {
-    normal: { bus: "No. 4 - Normal", fare: "Rs. 80", duration: "45 mins" },
-    ac: { bus: "No. 4 - AC", fare: "Rs. 150", duration: "30 mins" },
-    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
-    stops: ["Gampaha", "Ja-Ela", "Negombo"],
-    coords: [{lat: 7.0873, lng: 80.0144}, {lat: 7.2097, lng: 79.8350}]
-  },
-  "gampaha-kandy": {
-    normal: { bus: "No. 1 - Normal", fare: "Rs. 318", duration: "2 hrs" },
-    ac: { bus: "No. 1 - AC", fare: "Rs. 596", duration: "1.5 hrs" },
-    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
-    stops: ["Gampaha", "Kadawatha", "Nittambuwa", "Kandy"],
-    coords: [{lat: 7.0873, lng: 80.0144}, {lat: 7.2906, lng: 80.6337}]
-  },
-
-  // Kalutara based routes
-  "kalutara-galle": {
-    normal: { bus: "No. 2 - Normal", fare: "Rs. 265", duration: "1.5 hrs" },
-    ac: { bus: "No. 2 - AC", fare: "Rs. 497", duration: "1 hr" },
-    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins" },
-    stops: ["Kalutara", "Aluthgama", "Bentota", "Galle"],
-    coords: [{lat: 6.5854, lng: 79.9607}, {lat: 6.0535, lng: 80.2210}]
-  },
-  "kalutara-ratnapura": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 212", duration: "1.5 hrs" },
-    ac: { bus: "No. 98 - AC", fare: "Rs. 397", duration: "1 hr" },
-    timing: { first: "6:00 AM", last: "7:30 PM", frequency: "Every 30 mins" },
-    stops: ["Kalutara", "Horana", "Ratnapura"],
-    coords: [{lat: 6.5854, lng: 79.9607}, {lat: 6.6828, lng: 80.3992}]
-  },
+  // ============ COLOMBO ROUTES ============
   "colombo-kandy": {
-    normal: { bus: "No. 1 - Normal", fare: "Rs. 458", duration: "3 hrs" },
-    ac: { bus: "No. 1 - AC Luxury", fare: "Rs. 830", duration: "2.5 hrs" },
+    normal: { bus: "No. 1", fare: "Rs. 500", duration: "3 hrs" },
+    ac: { bus: "No. 1 - AC Intercity", fare: "Rs. 900", duration: "2.5 hrs" },
     timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins" },
     stops: ["Colombo Fort", "Kelaniya", "Kadawatha", "Nittambuwa", "Kandy"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 7.2906, lng: 80.6337}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.2906, lng: 80.6337 }]
   },
   "colombo-galle": {
-    normal: { bus: "No. 2-1 - Normal", fare: "Rs. 532", duration: "2.5 hrs" },
-    ac: { bus: "No. 2-1 - AC Luxury", fare: "Rs. 800", duration: "2 hrs" },
+    normal: { bus: "No. 2-1", fare: "Rs. 580", duration: "2.5 hrs" },
+    ac: { bus: "No. 2-1 - AC Intercity", fare: "Rs. 875", duration: "2 hrs" },
     timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 20 mins" },
     stops: ["Colombo Fort", "Moratuwa", "Panadura", "Kalutara", "Galle"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 6.0535, lng: 80.2210}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.0535, lng: 80.2210 }]
   },
   "colombo-jaffna": {
-    normal: { bus: "No. 15/87 - Normal", fare: "Rs. 1,967", duration: "8 hrs" },
-    ac: { bus: "No. 15/87 - AC Luxury", fare: "Rs. 2,620", duration: "7 hrs" },
+    normal: { bus: "No. 15/87", fare: "Rs. 2,150", duration: "8 hrs" },
+    ac: { bus: "No. 15/87 - AC Intercity", fare: "Rs. 2,860", duration: "7 hrs" },
     timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 1 hour" },
     stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Vavuniya", "Jaffna"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 9.6615, lng: 80.0255}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 9.6615, lng: 80.0255 }]
   },
   "colombo-negombo": {
-    normal: { bus: "No. 4 - Normal", fare: "Rs. 301", duration: "1.5 hrs" },
-    ac: { bus: "No. 4 - AC Luxury", fare: "Rs. 652", duration: "1 hr" },
+    normal: { bus: "No. 4", fare: "Rs. 328", duration: "1.5 hrs" },
+    ac: { bus: "No. 4 - AC", fare: "Rs. 710", duration: "1 hr" },
     timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins" },
     stops: ["Colombo Fort", "Wattala", "Ja-Ela", "Negombo"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 7.2097, lng: 79.8350}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.2097, lng: 79.8350 }]
   },
   "colombo-matara": {
-    normal: { bus: "No. 2 - Normal", fare: "Rs. 797", duration: "3.5 hrs" },
-    ac: { bus: "No. 2 - AC Luxury", fare: "Rs. 1,060", duration: "3 hrs" },
+    normal: { bus: "No. 2", fare: "Rs. 870", duration: "3.5 hrs" },
+    ac: { bus: "No. 2 - AC Intercity", fare: "Rs. 1,158", duration: "3 hrs" },
     timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 20 mins" },
     stops: ["Colombo Fort", "Moratuwa", "Kalutara", "Galle", "Matara"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 5.9549, lng: 80.5550}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 5.9549, lng: 80.5550 }]
   },
   "colombo-anuradhapura": {
-    normal: { bus: "No. 15-1-1 - Normal", fare: "Rs. 1,094", duration: "5 hrs" },
-    ac: { bus: "No. 15-1-1 - AC Luxury", fare: "Rs. 1,460", duration: "4 hrs" },
+    normal: { bus: "No. 15-1-1", fare: "Rs. 1,194", duration: "5 hrs" },
+    ac: { bus: "No. 15-1-1 - AC", fare: "Rs. 1,593", duration: "4 hrs" },
     timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 30 mins" },
     stops: ["Colombo Fort", "Kurunegala", "Dambulla", "Anuradhapura"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 8.3114, lng: 80.4037}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 8.3114, lng: 80.4037 }]
   },
   "colombo-trincomalee": {
-    normal: { bus: "No. 49 - Normal", fare: "Rs. 1,275", duration: "7 hrs" },
-    ac: { bus: "No. 49 - AC", fare: "Rs. 2,550", duration: "6 hrs" },
+    normal: { bus: "No. 49", fare: "Rs. 1,391", duration: "7 hrs" },
+    ac: { bus: "No. 49 - AC", fare: "Rs. 2,782", duration: "6 hrs" },
     timing: { first: "6:30 AM", last: "7:00 PM", frequency: "Every 1 hour" },
     stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Trincomalee"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 8.5874, lng: 81.2152}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 8.5874, lng: 81.2152 }]
   },
   "colombo-batticaloa": {
-    normal: { bus: "No. 48-1 - Normal", fare: "Rs. 1,524", duration: "7.5 hrs" },
-    ac: { bus: "No. 48-1 - AC Super Luxury", fare: "Rs. 3,050", duration: "6.5 hrs" },
+    normal: { bus: "No. 48-1", fare: "Rs. 1,663", duration: "7.5 hrs" },
+    ac: { bus: "No. 48-1 - AC Super Luxury", fare: "Rs. 3,326", duration: "6.5 hrs" },
     timing: { first: "6:00 AM", last: "7:30 PM", frequency: "Every 1 hour" },
     stops: ["Colombo Fort", "Kandy", "Polonnaruwa", "Batticaloa"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 7.7310, lng: 81.6747}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.7310, lng: 81.6747 }]
   },
   "colombo-hambantota": {
-    normal: { bus: "No. 32-1 - Normal", fare: "Rs. 1,184", duration: "5 hrs" },
-    ac: { bus: "No. 32-1 - AC", fare: "Rs. 2,180", duration: "4 hrs" },
+    normal: { bus: "No. 32-1", fare: "Rs. 1,292", duration: "5 hrs" },
+    ac: { bus: "No. 32-1 - AC", fare: "Rs. 2,378", duration: "4 hrs" },
     timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 30 mins" },
     stops: ["Colombo Fort", "Galle", "Matara", "Hambantota"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 6.1429, lng: 81.1212}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.1429, lng: 81.1212 }]
   },
   "colombo-badulla": {
-    normal: { bus: "No. 21-6 - Normal", fare: "Rs. 1,250", duration: "6 hrs" },
-    ac: { bus: "No. 21-6 - AC Luxury", fare: "Rs. 1,690", duration: "5 hrs" },
+    normal: { bus: "No. 21-6", fare: "Rs. 1,364", duration: "6 hrs" },
+    ac: { bus: "No. 21-6 - AC", fare: "Rs. 1,844", duration: "5 hrs" },
     timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 45 mins" },
     stops: ["Colombo Fort", "Ratnapura", "Welimada", "Badulla"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 6.9934, lng: 81.0550}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9934, lng: 81.0550 }]
   },
   "colombo-nuwara eliya": {
-    normal: { bus: "No. 2-10 - Normal", fare: "Rs. 971", duration: "5 hrs" },
-    ac: { bus: "No. 2-10 - AC Luxury", fare: "Rs. 1,295", duration: "4 hrs" },
+    normal: { bus: "No. 2-10", fare: "Rs. 1,060", duration: "5 hrs" },
+    ac: { bus: "No. 2-10 - AC", fare: "Rs. 1,413", duration: "4 hrs" },
     timing: { first: "6:00 AM", last: "7:30 PM", frequency: "Every 30 mins" },
     stops: ["Colombo Fort", "Kandy", "Nuwara Eliya"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 6.9497, lng: 80.7891}]
-  },
-  "colombo-mannar": {
-    normal: { bus: "No. 4 - Normal", fare: "Rs. 1,506", duration: "7 hrs" },
-    ac: { bus: "No. 4 - AC Luxury", fare: "Rs. 2,010", duration: "6 hrs" },
-    timing: { first: "6:30 AM", last: "6:00 PM", frequency: "Every 2 hours" },
-    stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Mannar"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 8.9810, lng: 79.9044}]
-  },
-  "colombo-vavuniya": {
-    normal: { bus: "No. 15/87 - Normal", fare: "Rs. 1,230", duration: "6 hrs" },
-    ac: { bus: "No. 15/87 - AC Luxury", fare: "Rs. 1,640", duration: "5 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
-    stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Vavuniya"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 8.7514, lng: 80.4971}]
-  },
-  "colombo-monaragala": {
-    normal: { bus: "No. 9 - Normal", fare: "Rs. 1,001", duration: "6 hrs" },
-    ac: { bus: "No. 9 - AC Luxury", fare: "Rs. 1,750", duration: "5.5 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
-    stops: ["Colombo Fort", "Ratnapura", "Wellawaya", "Monaragala"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 6.8728, lng: 81.3507}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9497, lng: 80.7891 }]
   },
   "colombo-kurunegala": {
-    normal: { bus: "No. 6 - Normal", fare: "Rs. 458", duration: "2.5 hrs" },
-    ac: { bus: "No. 6 - AC Luxury", fare: "Rs. 670", duration: "2 hrs" },
+    normal: { bus: "No. 6", fare: "Rs. 500", duration: "2.5 hrs" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 731", duration: "2 hrs" },
     timing: { first: "5:30 AM", last: "9:30 PM", frequency: "Every 15 mins" },
     stops: ["Colombo Fort", "Kelaniya", "Gampaha", "Kurunegala"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 7.4818, lng: 80.3609}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.4818, lng: 80.3609 }]
   },
   "colombo-ratnapura": {
-    normal: { bus: "No. 98 - Normal", fare: "Rs. 545", duration: "3 hrs" },
-    ac: { bus: "No. 98 - AC Luxury", fare: "Rs. 735", duration: "2.5 hrs" },
+    normal: { bus: "No. 98", fare: "Rs. 595", duration: "3 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 802", duration: "2.5 hrs" },
     timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
     stops: ["Colombo Fort", "Avissawella", "Ratnapura"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 6.6828, lng: 80.3992}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.6828, lng: 80.3992 }]
   },
   "colombo-puttalam": {
-    normal: { bus: "No. 7 - Normal", fare: "Rs. 825", duration: "3.5 hrs" },
-    ac: { bus: "No. 4-7 - AC Luxury", fare: "Rs. 880", duration: "3 hrs" },
+    normal: { bus: "No. 7", fare: "Rs. 900", duration: "3.5 hrs" },
+    ac: { bus: "No. 4-7 - AC", fare: "Rs. 960", duration: "3 hrs" },
     timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 30 mins" },
     stops: ["Colombo Fort", "Negombo", "Chilaw", "Puttalam"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 8.0408, lng: 79.8394}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 8.0408, lng: 79.8394 }]
   },
   "colombo-ampara": {
-    normal: { bus: "No. 38-4 - Normal", fare: "Rs. 1,625", duration: "7 hrs" },
-    ac: { bus: "No. 38-4 - AC", fare: "Rs. 2,180", duration: "6 hrs" },
+    normal: { bus: "No. 38-4", fare: "Rs. 1,774", duration: "7 hrs" },
+    ac: { bus: "No. 38-4 - AC", fare: "Rs. 2,379", duration: "6 hrs" },
     timing: { first: "6:30 AM", last: "6:30 PM", frequency: "Every 1 hour" },
     stops: ["Colombo Fort", "Kandy", "Polonnaruwa", "Ampara"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 7.2811, lng: 81.6747}]
-  },
-  "kandy-jaffna": {
-    normal: { bus: "No. 43/87 - Normal", fare: "Rs. 1,587", duration: "7 hrs" },
-    ac: { bus: "No. 43/87 - AC", fare: "Rs. 2,100", duration: "6 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 2 hours" },
-    stops: ["Kandy", "Dambulla", "Anuradhapura", "Vavuniya", "Jaffna"],
-    coords: [{lat: 7.2906, lng: 80.6337}, {lat: 9.6615, lng: 80.0255}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.2811, lng: 81.6747 }]
   },
   "colombo-matale": {
-    normal: { bus: "No. 8 - Normal", fare: "Rs. 551", duration: "3.5 hrs" },
-    ac: { bus: "No. 8 - AC Luxury", fare: "Rs. 990", duration: "3 hrs" },
+    normal: { bus: "No. 8", fare: "Rs. 601", duration: "3.5 hrs" },
+    ac: { bus: "No. 8 - AC", fare: "Rs. 1,080", duration: "3 hrs" },
     timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
     stops: ["Colombo Fort", "Kandy", "Matale"],
-    coords: [{lat: 6.9271, lng: 79.8612}, {lat: 7.4675, lng: 80.6234}]
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.4675, lng: 80.6234 }]
+  },
+  "colombo-vavuniya": {
+    normal: { bus: "No. 15/87", fare: "Rs. 1,343", duration: "6 hrs" },
+    ac: { bus: "No. 15/87 - AC", fare: "Rs. 1,789", duration: "5 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Vavuniya"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 8.7514, lng: 80.4971 }]
+  },
+  "colombo-mannar": {
+    normal: { bus: "No. 4", fare: "Rs. 1,643", duration: "7 hrs" },
+    ac: { bus: "No. 4 - AC", fare: "Rs. 2,193", duration: "6 hrs" },
+    timing: { first: "6:30 AM", last: "6:00 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Mannar"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 8.9810, lng: 79.9044 }]
+  },
+  "colombo-monaragala": {
+    normal: { bus: "No. 9", fare: "Rs. 1,093", duration: "6 hrs" },
+    ac: { bus: "No. 9 - AC", fare: "Rs. 1,909", duration: "5.5 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Colombo Fort", "Ratnapura", "Wellawaya", "Monaragala"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8728, lng: 81.3507 }]
+  },
+  "colombo-polonnaruwa": {
+    normal: { bus: "No. 48", fare: "Rs. 1,527", duration: "6 hrs" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 3,050", duration: "5 hrs" },
+    timing: { first: "6:00 AM", last: "7:30 PM", frequency: "Every 45 mins" },
+    stops: ["Colombo Fort", "Kandy", "Dambulla", "Polonnaruwa"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.9403, lng: 81.0188 }]
+  },
+  "colombo-hatton": {
+    normal: { bus: "No. 18-2", fare: "Rs. 711", duration: "4 hrs" },
+    ac: { bus: "No. 18-2 - AC", fare: "Rs. 950", duration: "3.5 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Colombo Fort", "Avissawella", "Ginigathena", "Hatton"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8978, lng: 80.5951 }]
+  },
+  "colombo-kataragama": {
+    normal: { bus: "No. 32", fare: "Rs. 1,542", duration: "6 hrs" },
+    ac: { bus: "No. 32 - AC", fare: "Rs. 2,059", duration: "5.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Galle", "Matara", "Hambantota", "Kataragama"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.4149, lng: 81.3322 }]
+  },
+  "colombo-embilipitiya": {
+    normal: { bus: "No. 3-1", fare: "Rs. 922", duration: "4 hrs" },
+    ac: { bus: "No. 3-1 - AC", fare: "Rs. 1,231", duration: "3.5 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Colombo Fort", "Ratnapura", "Pelmadulla", "Embilipitiya"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.3433, lng: 80.8490 }]
+  },
+  "colombo-chilaw": {
+    normal: { bus: "No. 7", fare: "Rs. 500", duration: "2.5 hrs" },
+    ac: { bus: "No. 7 - AC", fare: "Rs. 667", duration: "2 hrs" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
+    stops: ["Colombo Fort", "Negombo", "Chilaw"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.5758, lng: 79.7953 }]
+  },
+  "colombo-dambulla": {
+    normal: { bus: "No. 6", fare: "Rs. 500", duration: "3 hrs" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 667", duration: "2.5 hrs" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 30 mins" },
+    stops: ["Colombo Fort", "Kurunegala", "Dambulla"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.8742, lng: 80.6511 }]
+  },
+  "colombo-welimada": {
+    normal: { bus: "No. 2-12", fare: "Rs. 1,222", duration: "5.5 hrs" },
+    ac: { bus: "No. 2-12 - AC", fare: "Rs. 1,628", duration: "5 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Colombo Fort", "Ratnapura", "Welimada"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9018, lng: 80.9171 }]
+  },
+  "colombo-kegalle": {
+    normal: { bus: "No. 96", fare: "Rs. 375", duration: "2 hrs" },
+    ac: { bus: "No. 96 - AC", fare: "Rs. 500", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "9:30 PM", frequency: "Every 15 mins" },
+    stops: ["Colombo Fort", "Avissawella", "Kegalle"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.2513, lng: 80.3464 }]
+  },
+  "colombo-gampaha": {
+    normal: { bus: "No. 5", fare: "Rs. 164", duration: "1 hr" },
+    ac: { bus: "No. 5 - AC", fare: "Rs. 219", duration: "45 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 5 mins" },
+    stops: ["Colombo Fort", "Wattala", "Ja-Ela", "Gampaha"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.0873, lng: 80.0144 }]
+  },
+  "colombo-kalutara": {
+    normal: { bus: "No. 2", fare: "Rs. 219", duration: "1.5 hrs" },
+    ac: { bus: "No. 2 - AC", fare: "Rs. 292", duration: "1 hr" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
+    stops: ["Colombo Fort", "Moratuwa", "Panadura", "Kalutara"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.5854, lng: 79.9607 }]
+  },
+  "colombo-horana": {
+    normal: { bus: "No. 98", fare: "Rs. 219", duration: "1.5 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 292", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "9:30 PM", frequency: "Every 15 mins" },
+    stops: ["Colombo Fort", "Panadura", "Horana"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.7153, lng: 80.0615 }]
+  },
+  "colombo-avissawella": {
+    normal: { bus: "No. 96", fare: "Rs. 273", duration: "1.5 hrs" },
+    ac: { bus: "No. 96 - AC", fare: "Rs. 364", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "9:30 PM", frequency: "Every 15 mins" },
+    stops: ["Colombo Fort", "Hanwella", "Avissawella"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9497, lng: 80.2089 }]
+  },
+  "colombo-kilinochchi": {
+    normal: { bus: "No. 15/87", fare: "Rs. 1,744", duration: "8.5 hrs" },
+    ac: { bus: "No. 15/87 - AC", fare: "Rs. 2,330", duration: "7.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Anuradhapura", "Vavuniya", "Kilinochchi"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 9.3803, lng: 80.3770 }]
+  },
+  "colombo-mullaitivu": {
+    normal: { bus: "No. 15/82", fare: "Rs. 1,886", duration: "9 hrs" },
+    ac: { bus: "No. 15/82 - AC", fare: "Rs. 2,519", duration: "8 hrs" },
+    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Anuradhapura", "Vavuniya", "Mullaitivu"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 9.2671, lng: 80.8128 }]
+  },
+  "colombo-tangalle": {
+    normal: { bus: "No. 32-4", fare: "Rs. 1,080", duration: "4.5 hrs" },
+    ac: { bus: "No. 32-4 - AC", fare: "Rs. 1,442", duration: "4 hrs" },
+    timing: { first: "6:00 AM", last: "7:30 PM", frequency: "Every 1 hour" },
+    stops: ["Colombo Fort", "Galle", "Matara", "Tangalle"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.0249, lng: 80.7977 }]
+  },
+  "colombo-ambalangoda": {
+    normal: { bus: "No. 2-3", fare: "Rs. 500", duration: "2 hrs" },
+    ac: { bus: "No. 2-3 - AC", fare: "Rs. 667", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
+    stops: ["Colombo Fort", "Moratuwa", "Kalutara", "Ambalangoda"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.2357, lng: 80.0549 }]
+  },
+  "colombo-hikkaduwa": {
+    normal: { bus: "No. 2-1", fare: "Rs. 525", duration: "2 hrs" },
+    ac: { bus: "No. 2-1 - AC", fare: "Rs. 700", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
+    stops: ["Colombo Fort", "Moratuwa", "Kalutara", "Hikkaduwa"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.1399, lng: 80.1038 }]
+  },
+  "colombo-ella": {
+    normal: { bus: "No. 98-1", fare: "Rs. 1,411", duration: "6.5 hrs" },
+    ac: { bus: "No. 98-1 - AC", fare: "Rs. 1,883", duration: "6 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Ratnapura", "Welimada", "Ella"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8667, lng: 81.0466 }]
+  },
+  "colombo-bandarawela": {
+    normal: { bus: "No. 98-1", fare: "Rs. 1,356", duration: "6 hrs" },
+    ac: { bus: "No. 98-1 - AC", fare: "Rs. 1,810", duration: "5.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Ratnapura", "Welimada", "Bandarawela"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8308, lng: 80.9886 }]
+  },
+  "colombo-haputale": {
+    normal: { bus: "No. 98-1", fare: "Rs. 1,300", duration: "5.5 hrs" },
+    ac: { bus: "No. 98-1 - AC", fare: "Rs. 1,735", duration: "5 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Ratnapura", "Haputale"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.7697, lng: 80.9556 }]
+  },
+  "colombo-mahiyanganaya": {
+    normal: { bus: "No. 38-1", fare: "Rs. 1,142", duration: "5 hrs" },
+    ac: { bus: "No. 38-1 - AC", fare: "Rs. 1,524", duration: "4.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Kandy", "Mahiyanganaya"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.3280, lng: 81.0008 }]
+  },
+  "colombo-tissamaharama": {
+    normal: { bus: "No. 32-7", fare: "Rs. 1,400", duration: "5.5 hrs" },
+    ac: { bus: "No. 32-7 - AC", fare: "Rs. 1,868", duration: "5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 2 hours" },
+    stops: ["Colombo Fort", "Galle", "Matara", "Hambantota", "Tissamaharama"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.2864, lng: 81.2875 }]
+  },
+  "colombo-sigiriya": {
+    normal: { bus: "No. 6", fare: "Rs. 545", duration: "3.5 hrs" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 727", duration: "3 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Colombo Fort", "Kurunegala", "Dambulla", "Sigiriya"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.9572, lng: 80.7603 }]
+  },
+  "colombo-panadura": {
+    normal: { bus: "No. 2", fare: "Rs. 109", duration: "45 mins" },
+    ac: { bus: "No. 2 - AC", fare: "Rs. 146", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "11:00 PM", frequency: "Every 5 mins" },
+    stops: ["Colombo Fort", "Moratuwa", "Panadura"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.7131, lng: 79.9042 }]
+  },
+  "colombo-moratuwa": {
+    normal: { bus: "No. 2", fare: "Rs. 82", duration: "30 mins" },
+    ac: { bus: "No. 2 - AC", fare: "Rs. 109", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "11:00 PM", frequency: "Every 5 mins" },
+    stops: ["Colombo Fort", "Dehiwala", "Moratuwa"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.7730, lng: 79.8814 }]
+  },
+  "colombo-ja-ela": {
+    normal: { bus: "No. 4", fare: "Rs. 109", duration: "45 mins" },
+    ac: { bus: "No. 4 - AC", fare: "Rs. 146", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "11:00 PM", frequency: "Every 5 mins" },
+    stops: ["Colombo Fort", "Wattala", "Ja-Ela"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.0746, lng: 79.8916 }]
+  },
+  "colombo-katunayake": {
+    normal: { bus: "No. 4", fare: "Rs. 164", duration: "1 hr" },
+    ac: { bus: "No. 4 - AC", fare: "Rs. 219", duration: "45 mins" },
+    timing: { first: "4:30 AM", last: "11:00 PM", frequency: "Every 10 mins" },
+    stops: ["Colombo Fort", "Wattala", "Ja-Ela", "Katunayake"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 7.1696, lng: 79.8845 }]
+  },
+  "colombo-kadawatha": {
+    normal: { bus: "No. 1", fare: "Rs. 82", duration: "30 mins" },
+    ac: { bus: "No. 1 - AC", fare: "Rs. 109", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 5 mins" },
+    stops: ["Colombo Fort", "Kelaniya", "Kadawatha"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9956, lng: 79.9563 }]
+  },
+  "colombo-dehiwala": {
+    normal: { bus: "No. 2", fare: "Rs. 55", duration: "20 mins" },
+    ac: { bus: "No. 2 - AC", fare: "Rs. 73", duration: "15 mins" },
+    timing: { first: "5:00 AM", last: "11:00 PM", frequency: "Every 3 mins" },
+    stops: ["Colombo Fort", "Dehiwala"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8517, lng: 79.8647 }]
+  },
+
+  // ============ KANDY ROUTES ============
+  "kandy-jaffna": {
+    normal: { bus: "No. 43/87", fare: "Rs. 1,732", duration: "7 hrs" },
+    ac: { bus: "No. 43/87 - AC", fare: "Rs. 2,291", duration: "6 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 2 hours" },
+    stops: ["Kandy", "Dambulla", "Anuradhapura", "Vavuniya", "Jaffna"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 9.6615, lng: 80.0255 }]
+  },
+  "kandy-anuradhapura": {
+    normal: { bus: "No. 43", fare: "Rs. 693", duration: "3.5 hrs" },
+    ac: { bus: "No. 43 - AC", fare: "Rs. 928", duration: "3 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Kandy", "Dambulla", "Kekirawa", "Anuradhapura"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 8.3114, lng: 80.4037 }]
+  },
+  "kandy-nuwara eliya": {
+    normal: { bus: "No. 98", fare: "Rs. 232", duration: "2 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 437", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Kandy", "Gampola", "Nuwara Eliya"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 6.9497, lng: 80.7891 }]
+  },
+  "kandy-badulla": {
+    normal: { bus: "No. 98/1", fare: "Rs. 464", duration: "3.5 hrs" },
+    ac: { bus: "No. 98/1 - AC", fare: "Rs. 867", duration: "3 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 45 mins" },
+    stops: ["Kandy", "Nuwara Eliya", "Welimada", "Badulla"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 6.9934, lng: 81.0550 }]
+  },
+  "kandy-polonnaruwa": {
+    normal: { bus: "No. 48", fare: "Rs. 414", duration: "3 hrs" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 774", duration: "2.5 hrs" },
+    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 45 mins" },
+    stops: ["Kandy", "Matale", "Dambulla", "Polonnaruwa"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.9403, lng: 81.0188 }]
+  },
+  "kandy-trincomalee": {
+    normal: { bus: "No. 49", fare: "Rs. 633", duration: "4 hrs" },
+    ac: { bus: "No. 49 - AC", fare: "Rs. 1,189", duration: "3.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
+    stops: ["Kandy", "Dambulla", "Habarana", "Trincomalee"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 8.5874, lng: 81.2152 }]
+  },
+  "kandy-matara": {
+    normal: { bus: "No. 2", fare: "Rs. 567", duration: "4 hrs" },
+    ac: { bus: "No. 2 - AC", fare: "Rs. 1,064", duration: "3.5 hrs" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Kandy", "Colombo", "Galle", "Matara"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 5.9549, lng: 80.5550 }]
+  },
+  "kandy-hatton": {
+    normal: { bus: "No. 18-2", fare: "Rs. 219", duration: "2 hrs" },
+    ac: { bus: "No. 18-2 - AC", fare: "Rs. 411", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "7:30 PM", frequency: "Every 45 mins" },
+    stops: ["Kandy", "Gampola", "Ginigathena", "Hatton"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 6.8978, lng: 80.5951 }]
+  },
+  "kandy-matale": {
+    normal: { bus: "No. 8", fare: "Rs. 109", duration: "45 mins" },
+    ac: { bus: "No. 8 - AC", fare: "Rs. 219", duration: "30 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 10 mins" },
+    stops: ["Kandy", "Matale"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.4675, lng: 80.6234 }]
+  },
+  "kandy-kurunegala": {
+    normal: { bus: "No. 1", fare: "Rs. 232", duration: "1.5 hrs" },
+    ac: { bus: "No. 1 - AC", fare: "Rs. 437", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
+    stops: ["Kandy", "Alawwa", "Kurunegala"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.4818, lng: 80.3609 }]
+  },
+  "kandy-mahiyanganaya": {
+    normal: { bus: "No. 38-1", fare: "Rs. 232", duration: "2 hrs" },
+    ac: { bus: "No. 38-1 - AC", fare: "Rs. 437", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Kandy", "Mahiyanganaya"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.3280, lng: 81.0008 }]
+  },
+  "kandy-dambulla": {
+    normal: { bus: "No. 6", fare: "Rs. 164", duration: "1.5 hrs" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 308", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins" },
+    stops: ["Kandy", "Matale", "Dambulla"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.8742, lng: 80.6511 }]
+  },
+
+  // ============ GALLE ROUTES ============
+  "galle-matara": {
+    normal: { bus: "No. 32", fare: "Rs. 202", duration: "1 hr" },
+    ac: { bus: "No. 32 - AC", fare: "Rs. 379", duration: "45 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
+    stops: ["Galle", "Unawatuna", "Weligama", "Matara"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 5.9549, lng: 80.5550 }]
+  },
+  "galle-hambantota": {
+    normal: { bus: "No. 32-1", fare: "Rs. 414", duration: "2 hrs" },
+    ac: { bus: "No. 32-1 - AC", fare: "Rs. 777", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Galle", "Matara", "Tangalle", "Hambantota"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.1429, lng: 81.1212 }]
+  },
+  "galle-ratnapura": {
+    normal: { bus: "No. 32/3", fare: "Rs. 349", duration: "2.5 hrs" },
+    ac: { bus: "No. 32/3 - AC", fare: "Rs. 655", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Galle", "Elpitiya", "Ratnapura"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.6828, lng: 80.3992 }]
+  },
+  "galle-kataragama": {
+    normal: { bus: "No. 32-7", fare: "Rs. 707", duration: "3.5 hrs" },
+    ac: { bus: "No. 32-7 - AC", fare: "Rs. 1,328", duration: "3 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 2 hours" },
+    stops: ["Galle", "Matara", "Hambantota", "Kataragama"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.4149, lng: 81.3322 }]
+  },
+
+  // ============ JAFFNA ROUTES ============
+  "jaffna-vavuniya": {
+    normal: { bus: "No. 15", fare: "Rs. 540", duration: "2.5 hrs" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 1,013", duration: "2 hrs" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins" },
+    stops: ["Jaffna", "Kilinochchi", "Vavuniya"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 8.7514, lng: 80.4971 }]
+  },
+  "jaffna-trincomalee": {
+    normal: { bus: "No. 78", fare: "Rs. 742", duration: "4 hrs" },
+    ac: { bus: "No. 78 - AC", fare: "Rs. 1,391", duration: "3.5 hrs" },
+    timing: { first: "6:00 AM", last: "5:00 PM", frequency: "Every 2 hours" },
+    stops: ["Jaffna", "Mullaitivu", "Trincomalee"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 8.5874, lng: 81.2152 }]
+  },
+  "jaffna-mannar": {
+    normal: { bus: "No. 87", fare: "Rs. 414", duration: "2.5 hrs" },
+    ac: { bus: "No. 87 - AC", fare: "Rs. 777", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
+    stops: ["Jaffna", "Paranthan", "Mannar"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 8.9810, lng: 79.9044 }]
+  },
+  "jaffna-anuradhapura": {
+    normal: { bus: "No. 15", fare: "Rs. 953", duration: "3.5 hrs" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 1,784", duration: "3 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Jaffna", "Kilinochchi", "Vavuniya", "Anuradhapura"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 8.3114, lng: 80.4037 }]
+  },
+  "jaffna-kilinochchi": {
+    normal: { bus: "No. 15", fare: "Rs. 289", duration: "1.5 hrs" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 542", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
+    stops: ["Jaffna", "Elephant Pass", "Kilinochchi"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.3803, lng: 80.3770 }]
+  },
+
+  // ============ ANURADHAPURA ROUTES ============
+  "anuradhapura-nochchiyagama": {
+    normal: { bus: "No. 57/822/87", fare: "Rs. 107", duration: "45 mins" },
+    ac: { bus: "No. 57 - AC", fare: "Rs. 202", duration: "35 mins" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 20 mins" },
+    stops: ["Anuradhapura", "Thalawa", "Nochchiyagama"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.2833, lng: 80.2167 }],
+    alternativeBuses: [
+      { bus: "No. 57/1", fare: "Rs. 107", type: "Normal" },
+      { bus: "No. 822", fare: "Rs. 107", type: "Normal" },
+      { bus: "No. 87", fare: "Rs. 120", type: "Normal" },
+    ]
+  },
+  "anuradhapura-trincomalee": {
+    normal: { bus: "No. 49", fare: "Rs. 464", duration: "2.5 hrs" },
+    ac: { bus: "No. 49 - AC", fare: "Rs. 867", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Anuradhapura", "Kekirawa", "Habarana", "Trincomalee"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.5874, lng: 81.2152 }]
+  },
+  "anuradhapura-kurunegala": {
+    normal: { bus: "No. 6", fare: "Rs. 347", duration: "2 hrs" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 650", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Anuradhapura", "Kekirawa", "Kurunegala"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 7.4818, lng: 80.3609 }]
+  },
+  "anuradhapura-jaffna": {
+    normal: { bus: "No. 15", fare: "Rs. 953", duration: "3.5 hrs" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 1,784", duration: "3 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    stops: ["Anuradhapura", "Vavuniya", "Kilinochchi", "Jaffna"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 9.6615, lng: 80.0255 }]
+  },
+  "anuradhapura-polonnaruwa": {
+    normal: { bus: "No. 49", fare: "Rs. 347", duration: "2 hrs" },
+    ac: { bus: "No. 49 - AC", fare: "Rs. 650", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Anuradhapura", "Habarana", "Polonnaruwa"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 7.9403, lng: 81.0188 }]
+  },
+
+  // ============ TRINCOMALEE ROUTES ============
+  "trincomalee-batticaloa": {
+    normal: { bus: "No. 48", fare: "Rs. 414", duration: "2.5 hrs" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 777", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
+    stops: ["Trincomalee", "Muttur", "Batticaloa"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 7.7310, lng: 81.6747 }]
+  },
+  "trincomalee-polonnaruwa": {
+    normal: { bus: "No. 49", fare: "Rs. 311", duration: "2 hrs" },
+    ac: { bus: "No. 49 - AC", fare: "Rs. 583", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Trincomalee", "Kantale", "Polonnaruwa"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 7.9403, lng: 81.0188 }]
+  },
+  "trincomalee-vavuniya": {
+    normal: { bus: "No. 87", fare: "Rs. 347", duration: "2 hrs" },
+    ac: { bus: "No. 87 - AC", fare: "Rs. 650", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
+    stops: ["Trincomalee", "Vavuniya"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 8.7514, lng: 80.4971 }]
+  },
+
+  // ============ BATTICALOA ROUTES ============
+  "batticaloa-ampara": {
+    normal: { bus: "No. 68", fare: "Rs. 202", duration: "1.5 hrs" },
+    ac: { bus: "No. 68 - AC", fare: "Rs. 379", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins" },
+    stops: ["Batticaloa", "Kalmunai", "Ampara"],
+    coords: [{ lat: 7.7310, lng: 81.6747 }, { lat: 7.2811, lng: 81.6747 }]
+  },
+  "batticaloa-polonnaruwa": {
+    normal: { bus: "No. 48", fare: "Rs. 414", duration: "2.5 hrs" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 777", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
+    stops: ["Batticaloa", "Valaichchenai", "Polonnaruwa"],
+    coords: [{ lat: 7.7310, lng: 81.6747 }, { lat: 7.9403, lng: 81.0188 }]
+  },
+
+  // ============ MATARA ROUTES ============
+  "matara-hambantota": {
+    normal: { bus: "No. 32-1", fare: "Rs. 289", duration: "1.5 hrs" },
+    ac: { bus: "No. 32-1 - AC", fare: "Rs. 542", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins" },
+    stops: ["Matara", "Tangalle", "Hambantota"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.1429, lng: 81.1212 }]
+  },
+  "matara-badulla": {
+    normal: { bus: "No. 99", fare: "Rs. 589", duration: "4 hrs" },
+    ac: { bus: "No. 99 - AC", fare: "Rs. 1,104", duration: "3.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 2 hours" },
+    stops: ["Matara", "Wellawaya", "Badulla"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.9934, lng: 81.0550 }]
+  },
+  "matara-kataragama": {
+    normal: { bus: "No. 32-7", fare: "Rs. 464", duration: "3 hrs" },
+    ac: { bus: "No. 32-7 - AC", fare: "Rs. 870", duration: "2.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Matara", "Tangalle", "Hambantota", "Kataragama"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.4149, lng: 81.3322 }]
+  },
+
+  // ============ HAMBANTOTA ROUTES ============
+  "hambantota-monaragala": {
+    normal: { bus: "No. 99", fare: "Rs. 347", duration: "2.5 hrs" },
+    ac: { bus: "No. 99 - AC", fare: "Rs. 650", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
+    stops: ["Hambantota", "Tissamaharama", "Monaragala"],
+    coords: [{ lat: 6.1429, lng: 81.1212 }, { lat: 6.8728, lng: 81.3507 }]
+  },
+  "hambantota-matara": {
+    normal: { bus: "No. 32-1", fare: "Rs. 289", duration: "1.5 hrs" },
+    ac: { bus: "No. 32-1 - AC", fare: "Rs. 542", duration: "1 hr" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins" },
+    stops: ["Hambantota", "Tangalle", "Matara"],
+    coords: [{ lat: 6.1429, lng: 81.1212 }, { lat: 5.9549, lng: 80.5550 }]
+  },
+
+  // ============ BADULLA ROUTES ============
+  "badulla-nuwara eliya": {
+    normal: { bus: "No. 98", fare: "Rs. 232", duration: "2 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 437", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 45 mins" },
+    stops: ["Badulla", "Welimada", "Nuwara Eliya"],
+    coords: [{ lat: 6.9934, lng: 81.0550 }, { lat: 6.9497, lng: 80.7891 }]
+  },
+  "badulla-monaragala": {
+    normal: { bus: "No. 99", fare: "Rs. 202", duration: "1.5 hrs" },
+    ac: { bus: "No. 99 - AC", fare: "Rs. 379", duration: "1 hr" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Badulla", "Wellawaya", "Monaragala"],
+    coords: [{ lat: 6.9934, lng: 81.0550 }, { lat: 6.8728, lng: 81.3507 }]
+  },
+  "badulla-kandy": {
+    normal: { bus: "No. 98/1", fare: "Rs. 464", duration: "3.5 hrs" },
+    ac: { bus: "No. 98/1 - AC", fare: "Rs. 867", duration: "3 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Badulla", "Welimada", "Nuwara Eliya", "Kandy"],
+    coords: [{ lat: 6.9934, lng: 81.0550 }, { lat: 7.2906, lng: 80.6337 }]
+  },
+
+  // ============ KURUNEGALA ROUTES ============
+  "kurunegala-puttalam": {
+    normal: { bus: "No. 7", fare: "Rs. 232", duration: "1.5 hrs" },
+    ac: { bus: "No. 7 - AC", fare: "Rs. 437", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins" },
+    stops: ["Kurunegala", "Wariyapola", "Puttalam"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 8.0408, lng: 79.8394 }]
+  },
+  "kurunegala-anuradhapura": {
+    normal: { bus: "No. 15", fare: "Rs. 347", duration: "2 hrs" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 650", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Kurunegala", "Dambulla", "Anuradhapura"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 8.3114, lng: 80.4037 }]
+  },
+  "kurunegala-kandy": {
+    normal: { bus: "No. 1", fare: "Rs. 232", duration: "1.5 hrs" },
+    ac: { bus: "No. 1 - AC", fare: "Rs. 437", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
+    stops: ["Kurunegala", "Alawwa", "Kandy"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 7.2906, lng: 80.6337 }]
+  },
+
+  // ============ RATNAPURA ROUTES ============
+  "ratnapura-badulla": {
+    normal: { bus: "No. 98", fare: "Rs. 414", duration: "3 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 777", duration: "2.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
+    stops: ["Ratnapura", "Pelmadulla", "Wellawaya", "Badulla"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.9934, lng: 81.0550 }]
+  },
+  "ratnapura-galle": {
+    normal: { bus: "No. 32/3", fare: "Rs. 349", duration: "2.5 hrs" },
+    ac: { bus: "No. 32/3 - AC", fare: "Rs. 655", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Ratnapura", "Elpitiya", "Galle"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.0535, lng: 80.2210 }]
+  },
+  "ratnapura-kegalle": {
+    normal: { bus: "No. 98", fare: "Rs. 174", duration: "1 hr" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 326", duration: "45 mins" },
+    timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 20 mins" },
+    stops: ["Ratnapura", "Avissawella", "Kegalle"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 7.2513, lng: 80.3464 }]
+  },
+
+  // ============ VAVUNIYA ROUTES ============
+  "vavuniya-jaffna": {
+    normal: { bus: "No. 15", fare: "Rs. 540", duration: "2 hrs" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 1,013", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
+    stops: ["Vavuniya", "Kilinochchi", "Jaffna"],
+    coords: [{ lat: 8.7514, lng: 80.4971 }, { lat: 9.6615, lng: 80.0255 }]
+  },
+  "vavuniya-anuradhapura": {
+    normal: { bus: "No. 15", fare: "Rs. 289", duration: "1.5 hrs" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 542", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Vavuniya", "Anuradhapura"],
+    coords: [{ lat: 8.7514, lng: 80.4971 }, { lat: 8.3114, lng: 80.4037 }]
+  },
+
+  // ============ MANNAR ROUTES ============
+  "mannar-anuradhapura": {
+    normal: { bus: "No. 87", fare: "Rs. 414", duration: "2.5 hrs" },
+    ac: { bus: "No. 87 - AC", fare: "Rs. 777", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
+    stops: ["Mannar", "Medawachchiya", "Anuradhapura"],
+    coords: [{ lat: 8.9810, lng: 79.9044 }, { lat: 8.3114, lng: 80.4037 }]
+  },
+
+  // ============ PUTTALAM ROUTES ============
+  "puttalam-negombo": {
+    normal: { bus: "No. 4", fare: "Rs. 289", duration: "2 hrs" },
+    ac: { bus: "No. 4 - AC", fare: "Rs. 542", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Puttalam", "Chilaw", "Negombo"],
+    coords: [{ lat: 8.0408, lng: 79.8394 }, { lat: 7.2097, lng: 79.8350 }]
+  },
+
+  // ============ KALUTARA ROUTES ============
+  "kalutara-galle": {
+    normal: { bus: "No. 2", fare: "Rs. 289", duration: "1.5 hrs" },
+    ac: { bus: "No. 2 - AC", fare: "Rs. 542", duration: "1 hr" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins" },
+    stops: ["Kalutara", "Aluthgama", "Bentota", "Galle"],
+    coords: [{ lat: 6.5854, lng: 79.9607 }, { lat: 6.0535, lng: 80.2210 }]
+  },
+  "kalutara-ratnapura": {
+    normal: { bus: "No. 98", fare: "Rs. 232", duration: "1.5 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 437", duration: "1 hr" },
+    timing: { first: "6:00 AM", last: "7:30 PM", frequency: "Every 30 mins" },
+    stops: ["Kalutara", "Horana", "Ratnapura"],
+    coords: [{ lat: 6.5854, lng: 79.9607 }, { lat: 6.6828, lng: 80.3992 }]
+  },
+
+  // ============ NUWARA ELIYA ROUTES ============
+  "nuwara eliya-badulla": {
+    normal: { bus: "No. 98", fare: "Rs. 232", duration: "2 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 437", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 45 mins" },
+    stops: ["Nuwara Eliya", "Welimada", "Badulla"],
+    coords: [{ lat: 6.9497, lng: 80.7891 }, { lat: 6.9934, lng: 81.0550 }]
+  },
+  "nuwara eliya-kandy": {
+    normal: { bus: "No. 98", fare: "Rs. 232", duration: "2 hrs" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 437", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 30 mins" },
+    stops: ["Nuwara Eliya", "Gampola", "Kandy"],
+    coords: [{ lat: 6.9497, lng: 80.7891 }, { lat: 7.2906, lng: 80.6337 }]
+  },
+
+  // ============ MONARAGALA ROUTES ============
+  "monaragala-badulla": {
+    normal: { bus: "No. 99", fare: "Rs. 202", duration: "1.5 hrs" },
+    ac: { bus: "No. 99 - AC", fare: "Rs. 379", duration: "1 hr" },
+    timing: { first: "6:00 AM", last: "6:30 PM", frequency: "Every 1 hour" },
+    stops: ["Monaragala", "Wellawaya", "Badulla"],
+    coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 6.9934, lng: 81.0550 }]
+  },
+  "monaragala-hambantota": {
+    normal: { bus: "No. 99", fare: "Rs. 347", duration: "2.5 hrs" },
+    ac: { bus: "No. 99 - AC", fare: "Rs. 650", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
+    stops: ["Monaragala", "Tissamaharama", "Hambantota"],
+    coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 6.1429, lng: 81.1212 }]
+  },
+
+  // ============ AMPARA ROUTES ============
+  "ampara-batticaloa": {
+    normal: { bus: "No. 68", fare: "Rs. 202", duration: "1.5 hrs" },
+    ac: { bus: "No. 68 - AC", fare: "Rs. 379", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins" },
+    stops: ["Ampara", "Kalmunai", "Batticaloa"],
+    coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 7.7310, lng: 81.6747 }]
+  },
+  "ampara-monaragala": {
+    normal: { bus: "No. 99", fare: "Rs. 289", duration: "2 hrs" },
+    ac: { bus: "No. 99 - AC", fare: "Rs. 542", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
+    stops: ["Ampara", "Monaragala"],
+    coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 6.8728, lng: 81.3507 }]
+  },
+
+  // ============ KILINOCHCHI ROUTES ============
+  "kilinochchi-vavuniya": {
+    normal: { bus: "No. 15", fare: "Rs. 232", duration: "1 hr" },
+    ac: { bus: "No. 15 - AC", fare: "Rs. 437", duration: "45 mins" },
+    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
+    stops: ["Kilinochchi", "Vavuniya"],
+    coords: [{ lat: 9.3803, lng: 80.3770 }, { lat: 8.7514, lng: 80.4971 }]
+  },
+
+  // ============ MULLAITIVU ROUTES ============
+  "mullaitivu-vavuniya": {
+    normal: { bus: "No. 15/1", fare: "Rs. 347", duration: "2 hrs" },
+    ac: { bus: "No. 15/1 - AC", fare: "Rs. 650", duration: "1.5 hrs" },
+    timing: { first: "6:00 AM", last: "5:00 PM", frequency: "Every 2 hours" },
+    stops: ["Mullaitivu", "Mankulam", "Vavuniya"],
+    coords: [{ lat: 9.2671, lng: 80.8128 }, { lat: 8.7514, lng: 80.4971 }]
+  },
+
+  // ============ GAMPAHA ROUTES ============
+  "gampaha-negombo": {
+    normal: { bus: "No. 4", fare: "Rs. 87", duration: "45 mins" },
+    ac: { bus: "No. 4 - AC", fare: "Rs. 163", duration: "30 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
+    stops: ["Gampaha", "Ja-Ela", "Negombo"],
+    coords: [{ lat: 7.0873, lng: 80.0144 }, { lat: 7.2097, lng: 79.8350 }]
+  },
+  "gampaha-kandy": {
+    normal: { bus: "No. 1", fare: "Rs. 347", duration: "2 hrs" },
+    ac: { bus: "No. 1 - AC", fare: "Rs. 650", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 20 mins" },
+    stops: ["Gampaha", "Kadawatha", "Nittambuwa", "Kandy"],
+    coords: [{ lat: 7.0873, lng: 80.0144 }, { lat: 7.2906, lng: 80.6337 }]
+  },
+
+  // ============ POLONNARUWA ROUTES ============
+  "polonnaruwa-batticaloa": {
+    normal: { bus: "No. 48", fare: "Rs. 414", duration: "2.5 hrs" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 777", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour" },
+    stops: ["Polonnaruwa", "Valaichchenai", "Batticaloa"],
+    coords: [{ lat: 7.9403, lng: 81.0188 }, { lat: 7.7310, lng: 81.6747 }]
+  },
+  "polonnaruwa-anuradhapura": {
+    normal: { bus: "No. 49", fare: "Rs. 347", duration: "2 hrs" },
+    ac: { bus: "No. 49 - AC", fare: "Rs. 650", duration: "1.5 hrs" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 45 mins" },
+    stops: ["Polonnaruwa", "Habarana", "Kekirawa", "Anuradhapura"],
+    coords: [{ lat: 7.9403, lng: 81.0188 }, { lat: 8.3114, lng: 80.4037 }]
+  },
+
+  // ============ KEGALLE ROUTES ============
+  "kegalle-kandy": {
+    normal: { bus: "No. 96", fare: "Rs. 174", duration: "1 hr" },
+    ac: { bus: "No. 96 - AC", fare: "Rs. 326", duration: "45 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins" },
+    stops: ["Kegalle", "Mawanella", "Kandy"],
+    coords: [{ lat: 7.2513, lng: 80.3464 }, { lat: 7.2906, lng: 80.6337 }]
+  },
+  "kegalle-ratnapura": {
+    normal: { bus: "No. 98", fare: "Rs. 174", duration: "1 hr" },
+    ac: { bus: "No. 98 - AC", fare: "Rs. 326", duration: "45 mins" },
+    timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 20 mins" },
+    stops: ["Kegalle", "Avissawella", "Ratnapura"],
+    coords: [{ lat: 7.2513, lng: 80.3464 }, { lat: 6.6828, lng: 80.3992 }]
+  },
+
+  // ============ MATALE ROUTES ============
+  "matale-dambulla": {
+    normal: { bus: "No. 6", fare: "Rs. 116", duration: "45 mins" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 218", duration: "30 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins" },
+    stops: ["Matale", "Sigiriya Junction", "Dambulla"],
+    coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.8742, lng: 80.6511 }]
   },
 };
 function findRoute(from, to) {
@@ -865,10 +1147,19 @@ const selectTo = (location) => {
 )}
 
       {notFound && (
-        <div className="not-found">
-          <p>😕 Route not found. Try asking our AI Assistant below!</p>
-        </div>
-      )}
+  <div className="not-found">
+    <div className="not-found-icon">🔍</div>
+    <p>Route not found in our database!</p>
+    <p className="not-found-sub">👇 Ask our AI Assistant below — it knows ALL Sri Lanka bus routes!</p>
+    <button className="ask-ai-btn" onClick={() => {
+      document.querySelector('.chat-input-row input').focus();
+      document.querySelector('.chat-input-row input').value = `${from} to ${to} bus route`;
+      document.querySelector('.chat-input-row input').dispatchEvent(new Event('change', { bubbles: true }));
+    }}>
+      Ask AI Assistant →
+    </button>
+  </div>
+)}
 
       {/* Map */}
       <div className="map-container" ref={mapRef}></div>

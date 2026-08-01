@@ -876,6 +876,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const [favorites, setFavorites] = useState(() => {
+  const saved = localStorage.getItem('sl-bus-favorites');
+  return saved ? JSON.parse(saved) : [];
+});
 
   useEffect(() => {
     if (window.google && mapRef.current && !mapInstanceRef.current) {
@@ -948,6 +952,24 @@ const selectFrom = (location) => {
 const selectTo = (location) => {
   setTo(location.name);
   setShowToSuggestions(false);
+};
+const toggleFavorite = () => {
+  if (!from || !to) return;
+  const key = `${from}-${to}`;
+  const exists = favorites.find(f => f.key === key);
+  let newFavorites;
+  if (exists) {
+    newFavorites = favorites.filter(f => f.key !== key);
+  } else {
+    newFavorites = [...favorites, { key, from, to }];
+  }
+  setFavorites(newFavorites);
+  localStorage.setItem('sl-bus-favorites', JSON.stringify(newFavorites));
+};
+
+const isFavorite = () => {
+  const key = `${from}-${to}`;
+  return favorites.some(f => f.key === key);
 };
   const handleSwap = () => {
     setFrom(to);
@@ -1068,7 +1090,12 @@ const selectTo = (location) => {
     )}
   </div>
 
+ <div className="search-actions">
   <button className="search-btn" onClick={handleSearch}>Find My Bus →</button>
+  <button className="fav-btn" onClick={toggleFavorite} title="Save to favorites">
+    {isFavorite() ? '❤️' : '🤍'}
+  </button>
+</div>
 </div>
 
       {result && (
@@ -1163,6 +1190,29 @@ const selectTo = (location) => {
 
       {/* Map */}
       <div className="map-container" ref={mapRef}></div>
+      {favorites.length > 0 && (
+  <div className="quick-routes">
+    <p className="quick-title">❤️ Your Favorites</p>
+    <div className="chips">
+      {favorites.map((fav, i) => (
+        <div key={i} className="chip favorite-chip" onClick={() => {
+          setFrom(fav.from);
+          setTo(fav.to);
+          setResult(null);
+          setNotFound(false);
+        }}>
+          {fav.from} → {fav.to}
+          <span className="remove-fav" onClick={(e) => {
+            e.stopPropagation();
+            const newFavorites = favorites.filter(f => f.key !== fav.key);
+            setFavorites(newFavorites);
+            localStorage.setItem('sl-bus-favorites', JSON.stringify(newFavorites));
+          }}>✕</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
       <div className="quick-routes">
         <p className="quick-title">Popular Routes</p>

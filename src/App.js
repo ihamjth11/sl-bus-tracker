@@ -880,6 +880,10 @@ function App() {
   const saved = localStorage.getItem('sl-bus-favorites');
   return saved ? JSON.parse(saved) : [];
 });
+const [routeStats, setRouteStats] = useState(() => {
+  const saved = localStorage.getItem('sl-bus-stats');
+  return saved ? JSON.parse(saved) : {};
+});
 
   useEffect(() => {
     if (window.google && mapRef.current && !mapInstanceRef.current) {
@@ -900,6 +904,10 @@ function App() {
   const handleSearch = () => {
   if (!from || !to) return;
   const route = findRoute(from, to);
+  const key = `${from}-${to}`;
+const newStats = { ...routeStats, [key]: (routeStats[key] || 0) + 1 };
+setRouteStats(newStats);
+localStorage.setItem('sl-bus-stats', JSON.stringify(newStats));
   if (route) {
     setResult(route);
     setNotFound(false);
@@ -1215,13 +1223,32 @@ const isFavorite = () => {
 )}
 
       <div className="quick-routes">
-        <p className="quick-title">Popular Routes</p>
-        <div className="chips">
-          {["Colombo → Kandy", "Colombo → Galle", "Colombo → Jaffna", "Colombo → Negombo", "Colombo → Trincomalee", "Colombo → Badulla", "Colombo → Hambantota", "Colombo → Batticaloa"].map((chip, i) => (
-            <div className="chip" key={i} onClick={() => handleChip(chip)}>{chip}</div>
-          ))}
-        </div>
-      </div>
+  <p className="quick-title">🔥 Popular Routes</p>
+  <div className="chips">
+    {Object.keys(routeStats).length > 0
+      ? Object.entries(routeStats)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8)
+          .map(([key, count], i) => {
+            const [f, t] = key.split('-');
+            return (
+              <div className="chip" key={i} onClick={() => {
+                setFrom(f.charAt(0).toUpperCase() + f.slice(1));
+                setTo(t.charAt(0).toUpperCase() + t.slice(1));
+                setResult(null);
+                setNotFound(false);
+              }}>
+                {f.charAt(0).toUpperCase() + f.slice(1)} → {t.charAt(0).toUpperCase() + t.slice(1)}
+                <span className="count-badge">{count}</span>
+              </div>
+            );
+          })
+      : ["Colombo → Kandy", "Colombo → Galle", "Colombo → Jaffna", "Colombo → Negombo", "Colombo → Trincomalee", "Colombo → Badulla", "Colombo → Hambantota", "Colombo → Batticaloa"].map((chip, i) => (
+          <div className="chip" key={i} onClick={() => handleChip(chip)}>{chip}</div>
+        ))
+    }
+  </div>
+</div>
 
       <div className="chat-section">
         <p className="quick-title">🤖 AI Assistant</p>

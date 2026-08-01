@@ -671,3 +671,91 @@ input::placeholder { color: #475569; }
   border-radius: 10px;
   margin-left: 4px;
 }
+/* Nearby Stops */
+.nearby-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nearby-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.locate-btn {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.locate-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+}
+
+.location-error {
+  color: #f87171;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.nearby-stops {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nearby-stop {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nearby-stop:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.nearby-stop-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.nearby-stop-name {
+  color: #f1f5f9;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.nearby-stop-distance {
+  color: #38bdf8;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.nearby-stop-routes {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nearby-route-badge {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #94a3b8;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}

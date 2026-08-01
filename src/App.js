@@ -884,6 +884,9 @@ const [routeStats, setRouteStats] = useState(() => {
   const saved = localStorage.getItem('sl-bus-stats');
   return saved ? JSON.parse(saved) : {};
 });
+const [nearbyStops, setNearbyStops] = useState([]);
+const [locationLoading, setLocationLoading] = useState(false);
+const [locationError, setLocationError] = useState('');
 
   useEffect(() => {
     if (window.google && mapRef.current && !mapInstanceRef.current) {
@@ -978,6 +981,90 @@ const toggleFavorite = () => {
 const isFavorite = () => {
   const key = `${from}-${to}`;
   return favorites.some(f => f.key === key);
+};
+const findNearbyStops = () => {
+  setLocationLoading(true);
+  setLocationError('');
+  setNearbyStops([]);
+
+  if (!navigator.geolocation) {
+    setLocationError('Geolocation not supported by your browser');
+    setLocationLoading(false);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+
+      const busStops = [
+        { name: "Colombo Fort", lat: 6.9271, lng: 79.8612, routes: ["No.1", "No.2", "No.4", "No.6", "No.15"] },
+        { name: "Pettah", lat: 6.9344, lng: 79.8528, routes: ["No.1", "No.2", "No.4"] },
+        { name: "Kandy Bus Stand", lat: 7.2906, lng: 80.6337, routes: ["No.1", "No.43", "No.48", "No.98"] },
+        { name: "Galle Bus Stand", lat: 6.0535, lng: 80.2210, routes: ["No.2", "No.32"] },
+        { name: "Jaffna Bus Stand", lat: 9.6615, lng: 80.0255, routes: ["No.15", "No.78", "No.87"] },
+        { name: "Anuradhapura Bus Stand", lat: 8.3114, lng: 80.4037, routes: ["No.15", "No.43", "No.49"] },
+        { name: "Trincomalee Bus Stand", lat: 8.5874, lng: 81.2152, routes: ["No.49", "No.48", "No.78"] },
+        { name: "Batticaloa Bus Stand", lat: 7.7310, lng: 81.6747, routes: ["No.48", "No.68"] },
+        { name: "Matara Bus Stand", lat: 5.9549, lng: 80.5550, routes: ["No.2", "No.32", "No.99"] },
+        { name: "Hambantota Bus Stand", lat: 6.1429, lng: 81.1212, routes: ["No.32-1", "No.99"] },
+        { name: "Negombo Bus Stand", lat: 7.2097, lng: 79.8350, routes: ["No.4", "No.7"] },
+        { name: "Kurunegala Bus Stand", lat: 7.4818, lng: 80.3609, routes: ["No.6", "No.7", "No.15"] },
+        { name: "Ratnapura Bus Stand", lat: 6.6828, lng: 80.3992, routes: ["No.98", "No.32/3"] },
+        { name: "Badulla Bus Stand", lat: 6.9934, lng: 81.0550, routes: ["No.98", "No.99", "No.21-6"] },
+        { name: "Nuwara Eliya Bus Stand", lat: 6.9497, lng: 80.7891, routes: ["No.98", "No.2-10"] },
+        { name: "Polonnaruwa Bus Stand", lat: 7.9403, lng: 81.0188, routes: ["No.48", "No.49"] },
+        { name: "Vavuniya Bus Stand", lat: 8.7514, lng: 80.4971, routes: ["No.15", "No.87"] },
+        { name: "Mannar Bus Stand", lat: 8.9810, lng: 79.9044, routes: ["No.87", "No.4"] },
+        { name: "Ampara Bus Stand", lat: 7.2811, lng: 81.6747, routes: ["No.68", "No.38-4"] },
+        { name: "Monaragala Bus Stand", lat: 6.8728, lng: 81.3507, routes: ["No.99", "No.9"] },
+        { name: "Puttalam Bus Stand", lat: 8.0408, lng: 79.8394, routes: ["No.7", "No.4"] },
+        { name: "Matale Bus Stand", lat: 7.4675, lng: 80.6234, routes: ["No.8", "No.6"] },
+        { name: "Kegalle Bus Stand", lat: 7.2513, lng: 80.3464, routes: ["No.96", "No.98"] },
+        { name: "Kilinochchi Bus Stand", lat: 9.3803, lng: 80.3770, routes: ["No.15", "No.87"] },
+        { name: "Kalutara Bus Stand", lat: 6.5854, lng: 79.9607, routes: ["No.2", "No.98"] },
+        { name: "Gampaha Bus Stand", lat: 7.0873, lng: 80.0144, routes: ["No.5", "No.1"] },
+        { name: "Dambulla Bus Stand", lat: 7.8742, lng: 80.6511, routes: ["No.6", "No.43", "No.49"] },
+        { name: "Hatton Bus Stand", lat: 6.8978, lng: 80.5951, routes: ["No.18-2"] },
+        { name: "Ella Bus Stand", lat: 6.8667, lng: 81.0466, routes: ["No.98-1"] },
+        { name: "Bandarawela Bus Stand", lat: 6.8308, lng: 80.9886, routes: ["No.98-1", "No.99"] },
+        { name: "Embilipitiya Bus Stand", lat: 6.3433, lng: 80.8490, routes: ["No.3-1"] },
+        { name: "Tangalle Bus Stand", lat: 6.0249, lng: 80.7977, routes: ["No.32-4", "No.32-1"] },
+        { name: "Tissamaharama Bus Stand", lat: 6.2864, lng: 81.2875, routes: ["No.32-7"] },
+        { name: "Kataragama Bus Stand", lat: 6.4149, lng: 81.3322, routes: ["No.32", "No.32-7"] },
+        { name: "Avissawella Bus Stand", lat: 6.9497, lng: 80.2089, routes: ["No.96", "No.98"] },
+        { name: "Horana Bus Stand", lat: 6.7153, lng: 80.0615, routes: ["No.98"] },
+        { name: "Chilaw Bus Stand", lat: 7.5758, lng: 79.7953, routes: ["No.7"] },
+        { name: "Sigiriya Bus Stand", lat: 7.9572, lng: 80.7603, routes: ["No.6"] },
+        { name: "Mahiyanganaya Bus Stand", lat: 7.3280, lng: 81.0008, routes: ["No.38-1"] },
+        { name: "Mullaitivu Bus Stand", lat: 9.2671, lng: 80.8128, routes: ["No.15/1", "No.78"] },
+      ];
+
+      const getDistance = (lat1, lng1, lat2, lng2) => {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      };
+
+      const stopsWithDistance = busStops.map(stop => ({
+        ...stop,
+        distance: getDistance(latitude, longitude, stop.lat, stop.lng)
+      }));
+
+      stopsWithDistance.sort((a, b) => a.distance - b.distance);
+      setNearbyStops(stopsWithDistance.slice(0, 5));
+      setLocationLoading(false);
+    },
+    (error) => {
+      setLocationError('Could not get your location. Please allow location access.');
+      setLocationLoading(false);
+    }
+  );
 };
   const handleSwap = () => {
     setFrom(to);
@@ -1195,6 +1282,34 @@ const isFavorite = () => {
     </button>
   </div>
 )}
+
+{/* Nearby Bus Stops */}
+<div className="nearby-section">
+  <div className="nearby-header">
+    <p className="quick-title">📍 Nearby Bus Stops</p>
+    <button className="locate-btn" onClick={findNearbyStops}>
+      {locationLoading ? '⏳ Locating...' : '📍 Find Near Me'}
+    </button>
+  </div>
+  {locationError && <p className="location-error">{locationError}</p>}
+  {nearbyStops.length > 0 && (
+    <div className="nearby-stops">
+      {nearbyStops.map((stop, i) => (
+        <div key={i} className="nearby-stop" onClick={() => setFrom(stop.name)}>
+          <div className="nearby-stop-info">
+            <span className="nearby-stop-name">{stop.name}</span>
+            <span className="nearby-stop-distance">{stop.distance.toFixed(1)} km away</span>
+          </div>
+          <div className="nearby-stop-routes">
+            {stop.routes.slice(0, 3).map((route, j) => (
+              <span key={j} className="nearby-route-badge">{route}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
       {/* Map */}
       <div className="map-container" ref={mapRef}></div>

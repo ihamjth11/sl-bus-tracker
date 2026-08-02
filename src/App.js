@@ -1066,6 +1066,71 @@ const findNearbyStops = () => {
     }
   );
 };
+
+const getNextBus = (timing) => {
+  if (!timing) return null;
+  
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMin = now.getMinutes();
+  const currentTotalMins = currentHour * 60 + currentMin;
+
+  const parseTime = (timeStr) => {
+    const [time, period] = timeStr.split(' ');
+    let [hours, mins] = time.split(':').map(Number);
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    return hours * 60 + mins;
+  };
+
+  const getFrequencyMins = (freq) => {
+    if (freq.includes('5 mins')) return 5;
+    if (freq.includes('10 mins')) return 10;
+    if (freq.includes('15 mins')) return 15;
+    if (freq.includes('20 mins')) return 20;
+    if (freq.includes('30 mins')) return 30;
+    if (freq.includes('45 mins')) return 45;
+    if (freq.includes('1 hour')) return 60;
+    if (freq.includes('2 hours')) return 120;
+    return 60;
+  };
+
+  const firstBusMins = parseTime(timing.first);
+  const lastBusMins = parseTime(timing.last);
+  const freqMins = getFrequencyMins(timing.frequency);
+
+  if (currentTotalMins > lastBusMins) {
+    return { status: 'no_more', message: 'No more buses today', nextDay: timing.first };
+  }
+
+  if (currentTotalMins < firstBusMins) {
+    const waitMins = firstBusMins - currentTotalMins;
+    const firstHour = Math.floor(firstBusMins / 60);
+    const firstMin = firstBusMins % 60;
+    return {
+      status: 'waiting',
+      message: `First bus at ${timing.first}`,
+      wait: `${waitMins} mins to go`
+    };
+  }
+
+  const elapsed = currentTotalMins - firstBusMins;
+  const nextBusElapsed = Math.ceil(elapsed / freqMins) * freqMins;
+  const nextBusTotalMins = firstBusMins + nextBusElapsed;
+  const waitMins = nextBusTotalMins - currentTotalMins;
+  const nextHour = Math.floor(nextBusTotalMins / 60);
+  const nextMin = nextBusTotalMins % 60;
+  const period = nextHour >= 12 ? 'PM' : 'AM';
+  const displayHour = nextHour > 12 ? nextHour - 12 : nextHour === 0 ? 12 : nextHour;
+  const nextBusTime = `${displayHour}:${nextMin.toString().padStart(2, '0')} ${period}`;
+
+  return {
+    status: 'next',
+    time: nextBusTime,
+    wait: waitMins <= 1 ? 'Departing now!' : `~${waitMins} mins away`
+  };
+};
+
   const handleSwap = () => {
     setFrom(to);
     setTo(from);
@@ -1238,6 +1303,35 @@ const findNearbyStops = () => {
       <span className="timing-value">{result.timing.frequency}</span>
     </div>
   </div>
+
+  {/* Next Bus */}
+  {(() => {
+    const next = getNextBus(result.timing);
+    if (!next) return null;
+    return (
+      <div className={`next-bus-box ${next.status}`}>
+        {next.status === 'next' && (
+          <>
+            <span className="next-bus-label">🚌 Next Bus</span>
+            <span className="next-bus-time">{next.time}</span>
+            <span className="next-bus-wait">{next.wait}</span>
+          </>
+        )}
+        {next.status === 'waiting' && (
+          <>
+            <span className="next-bus-label">⏰ {next.message}</span>
+            <span className="next-bus-wait">{next.wait}</span>
+          </>
+        )}
+        {next.status === 'no_more' && (
+          <>
+            <span className="next-bus-label">😴 No more buses today</span>
+            <span className="next-bus-wait">First bus tomorrow at {next.nextDay}</span>
+          </>
+        )}
+      </div>
+    );
+  })()}
 </div>
 {/* Alternative Buses */}
 {result.alternativeBuses && result.alternativeBuses.length > 0 && (

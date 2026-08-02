@@ -1105,8 +1105,7 @@ const getNextBus = (timing) => {
 
   if (currentTotalMins < firstBusMins) {
     const waitMins = firstBusMins - currentTotalMins;
-    const firstHour = Math.floor(firstBusMins / 60);
-    const firstMin = firstBusMins % 60;
+    
     return {
       status: 'waiting',
       message: `First bus at ${timing.first}`,

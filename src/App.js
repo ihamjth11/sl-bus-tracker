@@ -2,6 +2,110 @@ import { searchLocations } from './locations';
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
+const DARK_MAP_STYLES = [
+  { elementType: "geometry", stylers: [{ color: "#131a22" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#f5a623" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#131a22" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#232e3a" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#0e1319" }] },
+];
+
+const LIGHT_MAP_STYLES = [
+  { elementType: "geometry", stylers: [{ color: "#f7f8fa" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#b45309" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#e2e6ea" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#dbe9f4" }] },
+];
+
+const icon = (children, extraProps = {}) => (props) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...extraProps} {...props}>
+    {children}
+  </svg>
+);
+
+const IconSun = icon(
+  <>
+    <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.7" />
+    <path d="M12 2.5V4.5M12 19.5V21.5M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M2.5 12H4.5M19.5 12H21.5M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+  </>
+);
+
+const IconMoon = icon(
+  <path d="M20.5 14.2C19.3 14.7 18 15 16.6 15C11.3 15 7 10.7 7 5.4C7 4 7.3 2.7 7.8 1.5C4.4 2.9 2 6.2 2 10.1C2 15.3 6.2 19.5 11.4 19.5C15.3 19.5 18.6 17.1 20 13.7C20.2 13.9 20.4 14.1 20.5 14.2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+);
+
+const IconPin = icon(
+  <>
+    <path d="M12 21.5C12 21.5 19 15.1 19 9.8C19 5.9 15.9 2.8 12 2.8C8.1 2.8 5 5.9 5 9.8C5 15.1 12 21.5 12 21.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    <circle cx="12" cy="9.7" r="2.3" stroke="currentColor" strokeWidth="1.6" />
+  </>
+);
+
+const IconFlag = icon(
+  <>
+    <path d="M6 21V4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M6 4.5C7.2 3.6 8.7 3.6 10 4.3C11.6 5.1 13.5 5.1 15 4.2C16 3.6 17.2 3.7 18 4.5V13C17.2 12.2 16 12.1 15 12.7C13.5 13.6 11.6 13.6 10 12.8C8.7 12.1 7.2 12.1 6 13V4.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+  </>
+);
+
+const IconSwap = icon(
+  <path d="M7 4V18M7 18L3.5 14.5M7 18L10.5 14.5M17 20V6M17 6L13.5 9.5M17 6L20.5 9.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+);
+
+const IconHeart = ({ filled, ...rest }) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...rest}>
+    <path d="M12 20.3C12 20.3 3.5 15.4 3.5 9.3C3.5 6.4 5.8 4.1 8.6 4.1C10.1 4.1 11.3 4.8 12 5.9C12.7 4.8 13.9 4.1 15.4 4.1C18.2 4.1 20.5 6.4 20.5 9.3C20.5 15.4 12 20.3 12 20.3Z"
+      stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"
+      fill={filled ? 'currentColor' : 'none'} />
+  </svg>
+);
+
+const IconBus = icon(
+  <>
+    <path d="M4 16V6.6C4 5.2 5.2 4.3 7 4.1C9 3.9 15 3.9 17 4.1C18.8 4.3 20 5.2 20 6.6V16C20 16.7 19.4 17.3 18.7 17.3H18.3C17.6 17.3 17 17.9 17 18.6V19C17 19.4 16.7 19.7 16.3 19.7H14.7C14.3 19.7 14 19.4 14 19V18.6C14 17.9 13.4 17.3 12.7 17.3H11.3C10.6 17.3 10 17.9 10 18.6V19C10 19.4 9.7 19.7 9.3 19.7H7.7C7.3 19.7 7 19.4 7 19V18.6C7 17.9 6.4 17.3 5.7 17.3H5.3C4.6 17.3 4 16.7 4 16Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M4 10.5H20" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="7.5" cy="14" r="0.9" fill="currentColor" />
+    <circle cx="16.5" cy="14" r="0.9" fill="currentColor" />
+  </>
+);
+
+const IconSearch = icon(
+  <>
+    <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="1.7" />
+    <path d="M20 20L16 16" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+  </>
+);
+
+const IconTrending = icon(
+  <path d="M3 17L9.5 10.5L13.5 14.5L21 7M21 7H15.5M21 7V12.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+);
+
+const IconSparkle = icon(
+  <path d="M12 3L13.6 8.6L19 10.2L13.6 11.8L12 17.4L10.4 11.8L5 10.2L10.4 8.6L12 3Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+);
+
+const IconLocate = icon(
+  <>
+    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.7" />
+    <path d="M12 2.5V5.5M12 18.5V21.5M21.5 12H18.5M5.5 12H2.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+  </>
+);
+
+const IconTicket = icon(
+  <>
+    <path d="M3 9.5C4.1 9.5 5 10.4 5 11.5C5 12.6 4.1 13.5 3 13.5V16.5C3 17.6 3.9 18.5 5 18.5H19C20.1 18.5 21 17.6 21 16.5V13.5C19.9 13.5 19 12.6 19 11.5C19 10.4 19.9 9.5 21 9.5V6.5C21 5.4 20.1 4.5 19 4.5H5C3.9 4.5 3 5.4 3 6.5V9.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M9.5 4.5V18.5" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2.4 2.4" />
+  </>
+);
+
+const IconClock = icon(
+  <>
+    <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M12 7.5V12L15 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+  </>
+);
+
 const busRoutes = {
   // ============ COLOMBO ROUTES ============
   "colombo-kandy": {
@@ -887,22 +991,31 @@ const [routeStats, setRouteStats] = useState(() => {
 const [nearbyStops, setNearbyStops] = useState([]);
 const [locationLoading, setLocationLoading] = useState(false);
 const [locationError, setLocationError] = useState('');
+const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
+
+useEffect(() => {
+  localStorage.setItem('sl-bus-theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+}, [theme]);
+
+const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
 
   useEffect(() => {
     if (window.google && mapRef.current && !mapInstanceRef.current) {
       mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
         center: { lat: 7.8731, lng: 80.7718 },
         zoom: 7,
-        styles: [
-          { elementType: "geometry", stylers: [{ color: "#0a0a1a" }] },
-          { elementType: "labels.text.fill", stylers: [{ color: "#38bdf8" }] },
-          { elementType: "labels.text.stroke", stylers: [{ color: "#0a0a1a" }] },
-          { featureType: "road", elementType: "geometry", stylers: [{ color: "#1e293b" }] },
-          { featureType: "water", elementType: "geometry", stylers: [{ color: "#0f172a" }] },
-        ],
+        styles: theme === 'dark' ? DARK_MAP_STYLES : LIGHT_MAP_STYLES,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.setOptions({ styles: theme === 'dark' ? DARK_MAP_STYLES : LIGHT_MAP_STYLES });
+    }
+  }, [theme]);
 
   const handleSearch = () => {
   if (!from || !to) return;
@@ -1177,13 +1290,31 @@ const getNextBus = (timing) => {
     <div className="app">
       <div className="header">
         <div className="logo">
-          <div className="logo-icon">SL</div>
+          <div className="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 16.5V6.8C4 5.2 5.3 4.3 7 4.1C9 3.9 15 3.9 17 4.1C18.7 4.3 20 5.2 20 6.8V16.5C20 17.3 19.3 18 18.5 18H18C17.4 18 17 18.4 17 19V19.3C17 19.7 16.7 20 16.3 20H14.7C14.3 20 14 19.7 14 19.3V19C14 18.4 13.6 18 13 18H11C10.4 18 10 18.4 10 19V19.3C10 19.7 9.7 20 9.3 20H7.7C7.3 20 7 19.7 7 19.3V19C7 18.4 6.6 18 6 18H5.5C4.7 18 4 17.3 4 16.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
+              <path d="M4 11H20" stroke="currentColor" strokeWidth="1.6"/>
+              <path d="M7.5 14.3H7.51" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
+              <path d="M16.5 14.3H16.51" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
+              <path d="M6.5 7.2H17.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+            </svg>
+          </div>
           <div className="logo-text">
             <h1>BusTracker</h1>
             <span>Sri Lanka 🇱🇰</span>
           </div>
         </div>
-        <div className="badge">● Live</div>
+        <div className="header-actions">
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
+          </button>
+          <div className="badge">● Live</div>
+        </div>
       </div>
 
       <div className="hero">
@@ -1195,7 +1326,7 @@ const getNextBus = (timing) => {
   {/* From Input */}
   <div className="input-wrapper">
     <div className="input-group">
-      <span className="input-icon">📍</span>
+      <span className="input-icon"><IconPin className="icon" /></span>
       <input
         type="text"
         placeholder="From — Colombo, Kandy..."
@@ -1220,14 +1351,14 @@ const getNextBus = (timing) => {
   {/* Swap */}
   <div className="divider">
     <div className="divider-line"></div>
-    <div className="swap-btn" onClick={handleSwap}>⇅</div>
+    <div className="swap-btn" onClick={handleSwap}><IconSwap className="icon" /></div>
     <div className="divider-line"></div>
   </div>
 
   {/* To Input */}
   <div className="input-wrapper">
     <div className="input-group">
-      <span className="input-icon">🏁</span>
+      <span className="input-icon"><IconFlag className="icon" /></span>
       <input
         type="text"
         placeholder="To — Galle, Jaffna..."
@@ -1252,42 +1383,42 @@ const getNextBus = (timing) => {
  <div className="search-actions">
   <button className="search-btn" onClick={handleSearch}>Find My Bus →</button>
   <button className="fav-btn" onClick={toggleFavorite} title="Save to favorites">
-    {isFavorite() ? '❤️' : '🤍'}
+    <IconHeart filled={isFavorite()} className="icon" />
   </button>
 </div>
 </div>
 
       {result && (
   <div className="result-card">
-    <p className="result-title">🚌 Available Buses</p>
+    <p className="result-title"><IconTicket className="icon" /> Available Buses</p>
 
     {/* Normal Bus */}
     <div className="bus-option normal-bus">
       <div className="bus-option-header">
-        <span className="bus-type-badge normal-badge">🚌 Normal</span>
+        <span className="bus-type-badge normal-badge"><IconBus className="icon" /> Normal</span>
         <span className="bus-fare-tag">{result.normal.fare}</span>
       </div>
       <div className="bus-option-info">
-        <span>📋 {result.normal.bus}</span>
-        <span>⏱ {result.normal.duration}</span>
+        <span>{result.normal.bus}</span>
+        <span className="info-with-icon"><IconClock className="icon-xs" /> {result.normal.duration}</span>
       </div>
     </div>
 
     {/* AC Bus */}
     <div className="bus-option ac-bus">
       <div className="bus-option-header">
-        <span className="bus-type-badge ac-badge">❄️ AC Intercity</span>
+        <span className="bus-type-badge ac-badge">AC Intercity</span>
         <span className="bus-fare-tag ac-fare">{result.ac.fare}</span>
       </div>
       <div className="bus-option-info">
-        <span>📋 {result.ac.bus}</span>
-        <span>⏱ {result.ac.duration}</span>
+        <span>{result.ac.bus}</span>
+        <span className="info-with-icon"><IconClock className="icon-xs" /> {result.ac.duration}</span>
       </div>
     </div>
 
     {/* Timing */}
 <div className="timing-box">
-  <div className="timing-title">🕐 Bus Timings</div>
+  <div className="timing-title"><IconClock className="icon-xs" /> Bus Timings</div>
   <div className="timing-grid">
     <div className="timing-item">
       <span className="timing-label">First Bus</span>
@@ -1311,20 +1442,20 @@ const getNextBus = (timing) => {
       <div className={`next-bus-box ${next.status}`}>
         {next.status === 'next' && (
           <>
-            <span className="next-bus-label">🚌 Next Bus</span>
+            <span className="next-bus-label"><IconBus className="icon-xs" /> Next Bus</span>
             <span className="next-bus-time">{next.time}</span>
             <span className="next-bus-wait">{next.wait}</span>
           </>
         )}
         {next.status === 'waiting' && (
           <>
-            <span className="next-bus-label">⏰ {next.message}</span>
+            <span className="next-bus-label"><IconClock className="icon-xs" /> {next.message}</span>
             <span className="next-bus-wait">{next.wait}</span>
           </>
         )}
         {next.status === 'no_more' && (
           <>
-            <span className="next-bus-label">😴 No more buses today</span>
+            <span className="next-bus-label"><IconMoon className="icon-xs" /> No more buses today</span>
             <span className="next-bus-wait">First bus tomorrow at {next.nextDay}</span>
           </>
         )}
@@ -1335,7 +1466,7 @@ const getNextBus = (timing) => {
 {/* Alternative Buses */}
 {result.alternativeBuses && result.alternativeBuses.length > 0 && (
   <div className="alt-buses">
-    <div className="alt-buses-title">🚌 Other Buses on this Route</div>
+    <div className="alt-buses-title"><IconBus className="icon-xs" /> Other Buses on this Route</div>
     <div className="alt-buses-list">
       {result.alternativeBuses.map((bus, i) => (
         <div key={i} className="alt-bus-item">
@@ -1349,7 +1480,7 @@ const getNextBus = (timing) => {
 )}
 
     {/* Stops */}
-    <div className="stops-title">🗺️ Stops</div>
+    <div className="stops-title"><IconFlag className="icon-xs" /> Stops</div>
     <div className="stops">
       {result.stops.map((stop, i) => (
         <div className="stop" key={i}>
@@ -1363,9 +1494,9 @@ const getNextBus = (timing) => {
 
       {notFound && (
   <div className="not-found">
-    <div className="not-found-icon">🔍</div>
+    <div className="not-found-icon"><IconSearch className="icon-lg" /></div>
     <p>Route not found in our database!</p>
-    <p className="not-found-sub">👇 Ask our AI Assistant below — it knows ALL Sri Lanka bus routes!</p>
+    <p className="not-found-sub">Ask our AI Assistant below — it knows ALL Sri Lanka bus routes!</p>
     <button className="ask-ai-btn" onClick={() => {
       document.querySelector('.chat-input-row input').focus();
       document.querySelector('.chat-input-row input').value = `${from} to ${to} bus route`;
@@ -1379,9 +1510,9 @@ const getNextBus = (timing) => {
 {/* Nearby Bus Stops */}
 <div className="nearby-section">
   <div className="nearby-header">
-    <p className="quick-title">📍 Nearby Bus Stops</p>
+    <p className="quick-title"><IconPin className="icon-xs" /> Nearby Bus Stops</p>
     <button className="locate-btn" onClick={findNearbyStops}>
-      {locationLoading ? '⏳ Locating...' : '📍 Find Near Me'}
+      <IconLocate className="icon-xs" /> {locationLoading ? 'Locating...' : 'Find Near Me'}
     </button>
   </div>
   {locationError && <p className="location-error">{locationError}</p>}
@@ -1408,7 +1539,7 @@ const getNextBus = (timing) => {
       <div className="map-container" ref={mapRef}></div>
       {favorites.length > 0 && (
   <div className="quick-routes">
-    <p className="quick-title">❤️ Your Favorites</p>
+    <p className="quick-title"><IconHeart filled className="icon-xs" /> Your Favorites</p>
     <div className="chips">
       {favorites.map((fav, i) => (
         <div key={i} className="chip favorite-chip" onClick={() => {
@@ -1431,7 +1562,7 @@ const getNextBus = (timing) => {
 )}
 
       <div className="quick-routes">
-  <p className="quick-title">🔥 Popular Routes</p>
+  <p className="quick-title"><IconTrending className="icon-xs" /> Popular Routes</p>
   <div className="chips">
     {Object.keys(routeStats).length > 0
       ? Object.entries(routeStats)
@@ -1459,7 +1590,7 @@ const getNextBus = (timing) => {
 </div>
 
       <div className="chat-section">
-        <p className="quick-title">🤖 AI Assistant</p>
+        <p className="quick-title"><IconSparkle className="icon-xs" /> AI Assistant</p>
         <div className="chat-box">
           {chat.length === 0 && <p className="chat-placeholder">Ask me anything about Sri Lanka buses! 🇱🇰</p>}
           {chat.map((msg, i) => (

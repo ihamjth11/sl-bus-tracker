@@ -532,6 +532,78 @@ body {
 }
 .next-bus-wait { font-size: 12px; color: var(--text-dim); }
 
+.schedule-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 12px;
+  background: var(--surface-2);
+  border: none;
+  border-radius: 12px;
+  padding: 11px 14px;
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.schedule-toggle:hover { background: var(--surface-3); color: var(--text); }
+
+.schedule-chevron {
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.schedule-chevron.open { transform: rotate(180deg); }
+
+.schedule-panel {
+  margin-top: 12px;
+  animation: ticket-in 0.25s ease;
+}
+
+.schedule-note {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin: 0 0 10px;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+@media (min-width: 480px) {
+  .schedule-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.schedule-slot {
+  text-align: center;
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+}
+
+.schedule-slot.passed {
+  color: var(--text-faint);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-weight: 500;
+}
+
 .alt-buses { margin-top: 18px; }
 
 .alt-buses-list { display: flex; flex-direction: column; gap: 4px; }

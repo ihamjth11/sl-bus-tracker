@@ -611,6 +611,27 @@ const busRoutes = {
       { bus: "No. 87", fare: "Rs. 120", type: "Normal" },
     ]
   },
+  // Route 42-05, verified via NTC permit registry + operator timetable (Jayasekara Express, NC-6719).
+  // Single scheduled daily departure — not a frequent-service route. Fare is estimated
+  // (calibrated against colombo-kandy Rs/km) — not independently confirmed, flag to rider.
+  "nochchiyagama-kandy": {
+    normal: { bus: "No. 42-05", fare: "Rs. 570 (est.)", duration: "5 hrs" },
+    ac: { bus: "No. 42-05 - AC", fare: "Rs. 1,025 (est.)", duration: "4.5 hrs" },
+    timing: { first: "5:15 AM", last: "5:15 AM", frequency: "Once daily" },
+    stops: ["Nochchiyagama", "Galadivulwewa", "Tambuttegama", "Kalawewa", "Kekirawa", "Dambulla", "Naula", "Matale", "Akurana", "Katugastota", "Kandy"],
+    coords: [{ lat: 8.2833, lng: 80.2167 }, { lat: 7.2906, lng: 80.6337 }]
+  },
+  // Frequent local shuttle from Anuradhapura New Town bus stand — fare (Rs.30) and last-bus
+  // (7:00 PM) confirmed via multiple independent traveler accounts. No fixed route number or
+  // published frequency found (typical for short hub shuttles) — frequency below is a
+  // conservative estimate, not confirmed.
+  "anuradhapura-mihintale": {
+    normal: { bus: "Mihintale Shuttle", fare: "Rs. 30", duration: "20 mins" },
+    ac: { bus: "Mihintale Shuttle", fare: "Rs. 30", duration: "20 mins" },
+    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Anuradhapura New Town", "Mihintale"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.3500, lng: 80.5167 }]
+  },
   "anuradhapura-trincomalee": {
     normal: { bus: "No. 49", fare: "Rs. 464", duration: "2.5 hrs" },
     ac: { bus: "No. 49 - AC", fare: "Rs. 867", duration: "2 hrs" },
@@ -992,6 +1013,7 @@ const [nearbyStops, setNearbyStops] = useState([]);
 const [locationLoading, setLocationLoading] = useState(false);
 const [locationError, setLocationError] = useState('');
 const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
+const [showFullSchedule, setShowFullSchedule] = useState(false);
 
 useEffect(() => {
   localStorage.setItem('sl-bus-theme', theme);
@@ -1019,6 +1041,7 @@ const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
 
   const handleSearch = () => {
   if (!from || !to) return;
+  setShowFullSchedule(false);
   const route = findRoute(from, to);
   const key = `${from}-${to}`;
 const newStats = { ...routeStats, [key]: (routeStats[key] || 0) + 1 };
@@ -1178,6 +1201,53 @@ const findNearbyStops = () => {
       setLocationLoading(false);
     }
   );
+};
+
+const generateFullSchedule = (timing) => {
+  if (!timing) return [];
+
+  const parseTime = (timeStr) => {
+    const [time, period] = timeStr.split(' ');
+    let [hours, mins] = time.split(':').map(Number);
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    return hours * 60 + mins;
+  };
+
+  const formatTime = (totalMins) => {
+    let h = Math.floor(totalMins / 60) % 24;
+    const m = totalMins % 60;
+    const period = h >= 12 ? 'PM' : 'AM';
+    let h12 = h % 12;
+    if (h12 === 0) h12 = 12;
+    return `${h12}:${m.toString().padStart(2, '0')} ${period}`;
+  };
+
+  const getFrequencyMins = (freq) => {
+    if (freq.includes('3 mins')) return 3;
+    if (freq.includes('5 mins')) return 5;
+    if (freq.includes('10 mins')) return 10;
+    if (freq.includes('15 mins')) return 15;
+    if (freq.includes('20 mins')) return 20;
+    if (freq.includes('30 mins')) return 30;
+    if (freq.includes('45 mins')) return 45;
+    if (freq.includes('1 hour')) return 60;
+    if (freq.includes('2 hours')) return 120;
+    return 60;
+  };
+
+  const firstMins = parseTime(timing.first);
+  const lastMins = parseTime(timing.last);
+  const freqMins = getFrequencyMins(timing.frequency);
+
+  const now = new Date();
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+
+  const slots = [];
+  for (let t = firstMins; t <= lastMins; t += freqMins) {
+    slots.push({ mins: t, label: formatTime(t), passed: t < nowMins });
+  }
+  return slots;
 };
 
 const getNextBus = (timing) => {
@@ -1459,6 +1529,34 @@ const getNextBus = (timing) => {
             <span className="next-bus-wait">First bus tomorrow at {next.nextDay}</span>
           </>
         )}
+      </div>
+    );
+  })()}
+
+  {/* Full Day Schedule — works for every route, derived from first/last/frequency */}
+  <button
+    className="schedule-toggle"
+    onClick={() => setShowFullSchedule(s => !s)}
+  >
+    <IconClock className="icon-xs" />
+    {showFullSchedule ? 'Hide Full Day Schedule' : 'View Full Day Schedule'}
+    <span className={`schedule-chevron ${showFullSchedule ? 'open' : ''}`}>⌄</span>
+  </button>
+
+  {showFullSchedule && (() => {
+    const slots = generateFullSchedule(result.timing);
+    return (
+      <div className="schedule-panel">
+        <p className="schedule-note">
+          Every {result.timing.frequency.replace('Every ', '')} · {slots.length} buses between {result.timing.first} and {result.timing.last}
+        </p>
+        <div className="schedule-grid">
+          {slots.map((slot, i) => (
+            <span key={i} className={`schedule-slot ${slot.passed ? 'passed' : ''}`}>
+              {slot.label}
+            </span>
+          ))}
+        </div>
       </div>
     );
   })()}

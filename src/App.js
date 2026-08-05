@@ -973,6 +973,54 @@ const busRoutes = {
     stops: ["Kurunegala", "Wariyapola", "Puttalam"],
     coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 8.0408, lng: 79.8394 }]
   },
+  // Distances sourced (distancesfrom.com / Rome2Rio). No published fare/frequency table found for
+  // these local hub routes — fares calibrated from this app's own kurunegala-kandy rate, frequency
+  // is a reasonable estimate for district-hub corridors, both flagged (est./approx.).
+  "kurunegala-wariyapola": {
+    normal: { bus: "Local service", fare: "Rs. 105 (est.)", duration: "30 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 195 (est.)", duration: "25 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Kurunegala", "Wariyapola"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 7.6333, lng: 80.2333 }]
+  },
+  "kurunegala-kuliyapitiya": {
+    normal: { bus: "Local service", fare: "Rs. 210 (est.)", duration: "50 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 395 (est.)", duration: "40 mins" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Kurunegala", "Kuliyapitiya"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 7.4706, lng: 80.0456 }]
+  },
+  "kurunegala-nikaweratiya": {
+    normal: { bus: "Local service", fare: "Rs. 215 (est.)", duration: "55 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 405 (est.)", duration: "45 mins" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Kurunegala", "Nikaweratiya"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 7.7475, lng: 80.1156 }]
+  },
+  "kurunegala-pannala": {
+    normal: { bus: "Local service", fare: "Rs. 245 (est.)", duration: "1 hr" },
+    ac: { bus: "Local service - AC", fare: "Rs. 465 (est.)", duration: "50 mins" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Kurunegala", "Pannala"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 7.3389, lng: 80.0997 }]
+  },
+  // Ibbagamuwa and Alawwa are both stops on the busy Kurunegala-Colombo/Trincomalee trunk highway
+  // (confirmed route: Trincomalee-...-Ibbagamuwa-Kurunegala-Polgahawela-Alawwa-...-Colombo), so
+  // effectively frequent trunk traffic serves them rather than a single dedicated local route.
+  "kurunegala-ibbagamuwa": {
+    normal: { bus: "Trunk corridor buses", fare: "Rs. 45 (est.)", duration: "15 mins" },
+    ac: { bus: "Trunk corridor buses - AC", fare: "Rs. 85 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 10 mins (approx., trunk corridor)" },
+    stops: ["Kurunegala", "Ibbagamuwa"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 7.5333, lng: 80.4500 }]
+  },
+  "kurunegala-alawwa": {
+    normal: { bus: "Trunk corridor buses", fare: "Rs. 110 (est.)", duration: "30 mins" },
+    ac: { bus: "Trunk corridor buses - AC", fare: "Rs. 205 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 10 mins (approx., trunk corridor)" },
+    stops: ["Kurunegala", "Alawwa"],
+    coords: [{ lat: 7.4818, lng: 80.3609 }, { lat: 7.2833, lng: 80.2167 }]
+  },
   "kurunegala-anuradhapura": {
     normal: { bus: "No. 15", fare: "Rs. 347", duration: "2 hrs" },
     ac: { bus: "No. 15 - AC", fare: "Rs. 650", duration: "1.5 hrs" },

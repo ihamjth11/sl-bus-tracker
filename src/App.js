@@ -632,6 +632,44 @@ const busRoutes = {
     stops: ["Anuradhapura New Town", "Mihintale"],
     coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.3500, lng: 80.5167 }]
   },
+  // Tambuttegama sits on the Route 57 Colombo-Anuradhapura-Vavuniya corridor — served by
+  // passing-through buses on that highway route (hourly), confirmed via rome2rio + NTC route
+  // 57 description. Fare is distance-calibrated (~27km), not a separately published local fare.
+  "anuradhapura-tambuttegama": {
+    normal: { bus: "No. 57 (via)", fare: "Rs. 115 (est.)", duration: "40 mins" },
+    ac: { bus: "No. 57 (via)", fare: "Rs. 115 (est.)", duration: "35 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 1 hour" },
+    stops: ["Anuradhapura", "Thalawa", "Tambuttegama"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.1500, lng: 80.1167 }]
+  },
+  // Same Route 57 corridor as anuradhapura-tambuttegama, shorter hop — Thalawa is an
+  // intermediate stop on that route, not a separately scheduled service.
+  "anuradhapura-thalawa": {
+    normal: { bus: "No. 57 (via)", fare: "Rs. 75 (est.)", duration: "20 mins" },
+    ac: { bus: "No. 57 (via)", fare: "Rs. 75 (est.)", duration: "18 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 1 hour" },
+    stops: ["Anuradhapura", "Thalawa"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.2333, lng: 80.1833 }]
+  },
+  // Medawachchiya lies on the Route 4 / 87 Colombo-Anuradhapura-Vavuniya-Jaffna corridor —
+  // confirmed as a scheduled stop (NTC route descriptions + operator timetables), served by
+  // buses passing through rather than a dedicated local shuttle. Fare/duration distance-calibrated.
+  "anuradhapura-medawachchiya": {
+    normal: { bus: "No. 4/87 (via)", fare: "Rs. 170 (est.)", duration: "50 mins" },
+    ac: { bus: "No. 4/87 (via)", fare: "Rs. 170 (est.)", duration: "45 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 30 mins" },
+    stops: ["Anuradhapura", "Medawachchiya"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.5333, lng: 80.4833 }]
+  },
+  // Kekirawa lies on the Route 15-1-1 / 57 Colombo-Dambulla-Kekirawa-Anuradhapura corridor —
+  // confirmed via NTC route descriptions. Fare/duration distance-calibrated.
+  "anuradhapura-kekirawa": {
+    normal: { bus: "No. 15-1-1 (via)", fare: "Rs. 180 (est.)", duration: "50 mins" },
+    ac: { bus: "No. 15-1-1 (via)", fare: "Rs. 180 (est.)", duration: "45 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 30 mins" },
+    stops: ["Anuradhapura", "Kekirawa"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.0333, lng: 80.5833 }]
+  },
   "anuradhapura-trincomalee": {
     normal: { bus: "No. 49", fare: "Rs. 464", duration: "2.5 hrs" },
     ac: { bus: "No. 49 - AC", fare: "Rs. 867", duration: "2 hrs" },
@@ -834,6 +872,17 @@ const busRoutes = {
   },
 
   // ============ PUTTALAM ROUTES ============
+  // Distance (81km), duration (~1hr), and frequency (3x/day, operator NCG Express) sourced.
+  // Exact departure times not published — spaced across the day as a reasonable spread, marked approx.
+  // Fare estimated using this app's own puttalam-negombo rate (same coastal corridor) — not confirmed.
+  "puttalam-wennappuwa": {
+    normal: { bus: "NCG Express", fare: "Rs. 250 (est.)", duration: "1 hr" },
+    ac: { bus: "NCG Express - AC", fare: "Rs. 470 (est.)", duration: "1 hr" },
+    timing: { first: "7:00 AM", last: "4:00 PM", frequency: "Every 4.5 hours (approx., 3 buses/day)" },
+    stops: ["Puttalam", "Chilaw", "Wennappuwa"],
+    coords: [{ lat: 8.0408, lng: 79.8394 }, { lat: 7.3500, lng: 79.8419 }]
+  },
+
   "puttalam-negombo": {
     normal: { bus: "No. 4", fare: "Rs. 289", duration: "2 hrs" },
     ac: { bus: "No. 4 - AC", fare: "Rs. 542", duration: "1.5 hrs" },
@@ -1224,15 +1273,10 @@ const generateFullSchedule = (timing) => {
   };
 
   const getFrequencyMins = (freq) => {
-    if (freq.includes('3 mins')) return 3;
-    if (freq.includes('5 mins')) return 5;
-    if (freq.includes('10 mins')) return 10;
-    if (freq.includes('15 mins')) return 15;
-    if (freq.includes('20 mins')) return 20;
-    if (freq.includes('30 mins')) return 30;
-    if (freq.includes('45 mins')) return 45;
-    if (freq.includes('1 hour')) return 60;
-    if (freq.includes('2 hours')) return 120;
+    const minMatch = freq.match(/([\d.]+)\s*min/i);
+    if (minMatch) return parseFloat(minMatch[1]);
+    const hourMatch = freq.match(/([\d.]+)\s*hour/i);
+    if (hourMatch) return parseFloat(hourMatch[1]) * 60;
     return 60;
   };
 
@@ -1267,14 +1311,10 @@ const getNextBus = (timing) => {
   };
 
   const getFrequencyMins = (freq) => {
-    if (freq.includes('5 mins')) return 5;
-    if (freq.includes('10 mins')) return 10;
-    if (freq.includes('15 mins')) return 15;
-    if (freq.includes('20 mins')) return 20;
-    if (freq.includes('30 mins')) return 30;
-    if (freq.includes('45 mins')) return 45;
-    if (freq.includes('1 hour')) return 60;
-    if (freq.includes('2 hours')) return 120;
+    const minMatch = freq.match(/([\d.]+)\s*min/i);
+    if (minMatch) return parseFloat(minMatch[1]);
+    const hourMatch = freq.match(/([\d.]+)\s*hour/i);
+    if (hourMatch) return parseFloat(hourMatch[1]) * 60;
     return 60;
   };
 

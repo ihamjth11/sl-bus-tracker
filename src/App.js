@@ -883,6 +883,26 @@ const busRoutes = {
     coords: [{ lat: 8.0408, lng: 79.8394 }, { lat: 7.3500, lng: 79.8419 }]
   },
 
+  // Distance/duration sourced (Rome2Rio). Frequency inferred from the same coastal-corridor
+  // NCG Express service (Puttalam-Mahawewa, twice daily) — nearby but not route-identical, so
+  // flagged approx. Fares are calibrated estimates (this app's puttalam-negombo Rs/km), not
+  // independently confirmed.
+  "puttalam-marawila": {
+    normal: { bus: "NCG Express", fare: "Rs. 230 (est.)", duration: "55 mins" },
+    ac: { bus: "NCG Express - AC", fare: "Rs. 430 (est.)", duration: "55 mins" },
+    timing: { first: "7:00 AM", last: "5:00 PM", frequency: "Every 5 hours (approx., twice daily)" },
+    stops: ["Puttalam", "Chilaw", "Marawila"],
+    coords: [{ lat: 8.0408, lng: 79.8394 }, { lat: 7.4258, lng: 79.8306 }]
+  },
+
+  "puttalam-nattandiya": {
+    normal: { bus: "NCG Express", fare: "Rs. 235 (est.)", duration: "59 mins" },
+    ac: { bus: "NCG Express - AC", fare: "Rs. 440 (est.)", duration: "59 mins" },
+    timing: { first: "7:00 AM", last: "5:00 PM", frequency: "Every 5 hours (approx., twice daily)" },
+    stops: ["Puttalam", "Chilaw", "Nattandiya"],
+    coords: [{ lat: 8.0408, lng: 79.8394 }, { lat: 7.4083, lng: 79.8556 }]
+  },
+
   "puttalam-negombo": {
     normal: { bus: "No. 4", fare: "Rs. 289", duration: "2 hrs" },
     ac: { bus: "No. 4 - AC", fare: "Rs. 542", duration: "1.5 hrs" },

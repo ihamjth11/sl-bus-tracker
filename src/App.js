@@ -538,6 +538,79 @@ const busRoutes = {
   },
 
   // ============ KANDY ROUTES ============
+  // Route 654, well-documented: Torrington bus stand, Kandy -> Digana (35 min) -> Teldeniya (50 min),
+  // buses every 5 minutes (multiple independent sources agree). Duration/frequency solidly sourced.
+  "kandy-digana": {
+    normal: { bus: "No. 654", fare: "Rs. 45 (est.)", duration: "35 mins" },
+    ac: { bus: "No. 654 - AC", fare: "Rs. 90 (est.)", duration: "30 mins" },
+    timing: { first: "5:30 AM", last: "9:30 PM", frequency: "Every 5 mins" },
+    stops: ["Kandy", "Kundasale", "Digana"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.2833, lng: 80.7167 }]
+  },
+  "kandy-teldeniya": {
+    normal: { bus: "No. 654", fare: "Rs. 90 (est.)", duration: "50 mins" },
+    ac: { bus: "No. 654 - AC", fare: "Rs. 175 (est.)", duration: "40 mins" },
+    timing: { first: "5:30 AM", last: "9:30 PM", frequency: "Every 5 mins" },
+    stops: ["Kandy", "Kundasale", "Digana", "Teldeniya"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.3167, lng: 80.7500 }]
+  },
+  // Route 722, confirmed (ceylonlanka.info route directory).
+  "kandy-kundasale": {
+    normal: { bus: "No. 722", fare: "Rs. 34 (est.)", duration: "20 mins" },
+    ac: { bus: "No. 722 - AC", fare: "Rs. 60 (est.)", duration: "15 mins" },
+    timing: { first: "5:30 AM", last: "9:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Kandy", "Kundasale"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.2953, lng: 80.6714 }]
+  },
+  // Route 718, confirmed (ceylonlanka.info route directory).
+  "kandy-gampola": {
+    normal: { bus: "No. 718", fare: "Rs. 70 (est.)", duration: "40 mins" },
+    ac: { bus: "No. 718 - AC", fare: "Rs. 140 (est.)", duration: "30 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Kandy", "Peradeniya", "Gampola"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.1647, lng: 80.5736 }]
+  },
+  // Route 725, confirmed (ceylonlanka.info route directory).
+  "kandy-nawalapitiya": {
+    normal: { bus: "No. 725", fare: "Rs. 125 (est.)", duration: "1 hr" },
+    ac: { bus: "No. 725 - AC", fare: "Rs. 250 (est.)", duration: "45 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Kandy", "Peradeniya", "Gampola", "Nawalapitiya"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.0528, lng: 80.5347 }]
+  },
+  // Route 729, confirmed (ceylonlanka.info route directory).
+  "kandy-katugastota": {
+    normal: { bus: "No. 729", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "No. 729 - AC", fare: "Rs. 45 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 5 mins (approx.)" },
+    stops: ["Kandy", "Katugastota"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.3269, lng: 80.6244 }]
+  },
+  // No dedicated local route number found — these 3 are stops directly on the very frequent
+  // Kandy-Colombo/Kandy-Kegalle trunk highway (A1), so effectively any Colombo-bound bus serves
+  // them. Distance/duration well-established; frequency reflects the trunk corridor, flagged approx.
+  "kandy-peradeniya": {
+    normal: { bus: "Colombo-bound trunk buses", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "Colombo-bound trunk buses - AC", fare: "Rs. 48 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins (approx., trunk corridor)" },
+    stops: ["Kandy", "Peradeniya"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.2599, lng: 80.5977 }]
+  },
+  "kandy-pilimatalawa": {
+    normal: { bus: "Colombo-bound trunk buses", fare: "Rs. 45 (est.)", duration: "25 mins" },
+    ac: { bus: "Colombo-bound trunk buses - AC", fare: "Rs. 90 (est.)", duration: "20 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins (approx., trunk corridor)" },
+    stops: ["Kandy", "Peradeniya", "Pilimatalawa"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.2672, lng: 80.5667 }]
+  },
+  "kandy-akurana": {
+    normal: { bus: "Local service", fare: "Rs. 35 (est.)", duration: "20 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 70 (est.)", duration: "15 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Kandy", "Katugastota", "Akurana"],
+    coords: [{ lat: 7.2906, lng: 80.6337 }, { lat: 7.3667, lng: 80.6167 }]
+  },
+
   "kandy-jaffna": {
     normal: { bus: "No. 43/87", fare: "Rs. 1,732", duration: "7 hrs" },
     ac: { bus: "No. 43/87 - AC", fare: "Rs. 2,291", duration: "6 hrs" },

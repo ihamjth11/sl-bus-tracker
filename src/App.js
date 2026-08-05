@@ -445,6 +445,98 @@ const busRoutes = {
     coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8517, lng: 79.8647 }]
   },
 
+  // Route 138, verified stop sequence (routemaster.lk / ceylonlanka.info): Pettah - Nugegoda -
+  // Maharagama - Pannipitiya - Kottawa - Homagama, one of Colombo's busiest suburban corridors.
+  // Fares/frequency estimated by calibrating against this app's own colombo-kadawatha rate (Rs/km) —
+  // no published city-route fare table found, so flagged (est.).
+  "colombo-nugegoda": {
+    normal: { bus: "No. 138", fare: "Rs. 50 (est.)", duration: "30 mins" },
+    ac: { bus: "No. 138 - AC", fare: "Rs. 65 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Colombo Fort", "Thummulla", "Kirillapone", "Nugegoda"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8649, lng: 79.8997 }]
+  },
+  "colombo-maharagama": {
+    normal: { bus: "No. 138", fare: "Rs. 90 (est.)", duration: "45 mins" },
+    ac: { bus: "No. 138 - AC", fare: "Rs. 120 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Colombo Fort", "Nugegoda", "Delkanda", "Navinna", "Maharagama"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8481, lng: 79.9267 }]
+  },
+  "colombo-homagama": {
+    normal: { bus: "No. 138", fare: "Rs. 130 (est.)", duration: "1 hr" },
+    ac: { bus: "No. 138 - AC", fare: "Rs. 170 (est.)", duration: "45 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Colombo Fort", "Nugegoda", "Maharagama", "Pannipitiya", "Kottawa", "Homagama"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8447, lng: 80.0025 }]
+  },
+  // Route 123, confirmed via Wikipedia (Rukmale article cross-reference).
+  "colombo-athurugiriya": {
+    normal: { bus: "No. 123", fare: "Rs. 100 (est.)", duration: "50 mins" },
+    ac: { bus: "No. 123 - AC", fare: "Rs. 130 (est.)", duration: "40 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Colombo Fort", "Rajagiriya", "Kottawa", "Athurugiriya"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8747, lng: 79.9764 }]
+  },
+
+  // Route 177, verified stop sequence (routemaster.lk): Kollupitiya - Borella - Rajagiriya -
+  // Welikada - Battaramulla - Koswatta - Thalangama - Malabe - Kaduwela.
+  "colombo-rajagiriya": {
+    normal: { bus: "No. 177", fare: "Rs. 35 (est.)", duration: "20 mins" },
+    ac: { bus: "No. 177 - AC", fare: "Rs. 45 (est.)", duration: "15 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Colombo Fort", "Borella", "Rajagiriya"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9096, lng: 79.8912 }]
+  },
+  "colombo-battaramulla": {
+    normal: { bus: "No. 177", fare: "Rs. 45 (est.)", duration: "30 mins" },
+    ac: { bus: "No. 177 - AC", fare: "Rs. 60 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Colombo Fort", "Borella", "Rajagiriya", "Welikada", "Battaramulla"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9017, lng: 79.9192 }]
+  },
+  "colombo-malabe": {
+    normal: { bus: "No. 177", fare: "Rs. 65 (est.)", duration: "45 mins" },
+    ac: { bus: "No. 177 - AC", fare: "Rs. 85 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Colombo Fort", "Rajagiriya", "Battaramulla", "Koswatta", "Thalangama", "Malabe"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9147, lng: 79.9722 }]
+  },
+  // Route 107, verified (autoslanka.com / ceylonlanka.info): Elakanda - Wattala - Peliyagoda -
+  // Old Kelani Bridge - Bloemendhal - Pettah - Fort.
+  "colombo-wattala": {
+    normal: { bus: "No. 107", fare: "Rs. 55 (est.)", duration: "30 mins" },
+    ac: { bus: "No. 107 - AC", fare: "Rs. 70 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Colombo Fort", "Peliyagoda", "Wattala"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9894, lng: 79.8919 }]
+  },
+  // Route 135, verified — multiple independent rider reviews (routemaster.lk) confirm ~15 min
+  // Borella-Kelaniya and buses "once every four minutes", among Colombo's fastest/most frequent routes.
+  "colombo-kelaniya": {
+    normal: { bus: "No. 135", fare: "Rs. 50 (est.)", duration: "30 mins" },
+    ac: { bus: "No. 135 - AC", fare: "Rs. 65 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "10:30 PM", frequency: "Every 4 mins" },
+    stops: ["Colombo Fort", "Borella", "Peliyagoda", "Kelaniya"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.9553, lng: 79.9217 }]
+  },
+  // Route 120, verified (ceylonlanka.info): Pettah - ... - Kohuwala - Rattanapitiya -
+  // Boralesgamuwa - Piliyandala - Kesbewa - ... - Horana.
+  "colombo-piliyandala": {
+    normal: { bus: "No. 120", fare: "Rs. 80 (est.)", duration: "50 mins" },
+    ac: { bus: "No. 120 - AC", fare: "Rs. 105 (est.)", duration: "40 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Colombo Fort", "Kohuwala", "Boralesgamuwa", "Piliyandala"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8006, lng: 79.9228 }]
+  },
+  "colombo-boralesgamuwa": {
+    normal: { bus: "No. 120", fare: "Rs. 60 (est.)", duration: "40 mins" },
+    ac: { bus: "No. 120 - AC", fare: "Rs. 80 (est.)", duration: "30 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Colombo Fort", "Kohuwala", "Boralesgamuwa"],
+    coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 6.8394, lng: 79.9014 }]
+  },
+
   // ============ KANDY ROUTES ============
   "kandy-jaffna": {
     normal: { bus: "No. 43/87", fare: "Rs. 1,732", duration: "7 hrs" },

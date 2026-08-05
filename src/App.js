@@ -726,6 +726,57 @@ const busRoutes = {
     coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.4149, lng: 81.3322 }]
   },
 
+  // Route 752, verified via sprpta.lk (Southern Province Road Passenger Transport Authority live
+  // schedule system) — Elpitiya-Galle via Aluthwala, 39.90km, 95 min.
+  "galle-elpitiya": {
+    normal: { bus: "No. 752", fare: "Rs. 180 (est.)", duration: "1 hr 35 mins" },
+    ac: { bus: "No. 752 - AC", fare: "Rs. 340 (est.)", duration: "1 hr 15 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Galle", "Aluthwala", "Elpitiya"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.2856, lng: 80.1650 }]
+  },
+  // Route 378, confirmed (ceylonlanka.info route directory); distance estimated (between Galle and Elpitiya).
+  "galle-baddegama": {
+    normal: { bus: "No. 378", fare: "Rs. 85 (est.)", duration: "35 mins" },
+    ac: { bus: "No. 378 - AC", fare: "Rs. 160 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Galle", "Baddegama"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.1667, lng: 80.1667 }]
+  },
+  // Unawatuna, Ahangama, and Weligama are documented stops on this app's own existing galle-matara
+  // Route 32 (every 10 min) — same operator/frequency, just shorter legs of that route.
+  "galle-unawatuna": {
+    normal: { bus: "No. 32", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "No. 32 - AC", fare: "Rs. 45 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
+    stops: ["Galle", "Unawatuna"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.0108, lng: 80.2492 }]
+  },
+  "galle-ahangama": {
+    normal: { bus: "No. 32", fare: "Rs. 75 (est.)", duration: "30 mins" },
+    ac: { bus: "No. 32 - AC", fare: "Rs. 140 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
+    stops: ["Galle", "Unawatuna", "Ahangama"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 5.9739, lng: 80.3625 }]
+  },
+  "galle-weligama": {
+    normal: { bus: "No. 32", fare: "Rs. 125 (est.)", duration: "45 mins" },
+    ac: { bus: "No. 32 - AC", fare: "Rs. 230 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
+    stops: ["Galle", "Unawatuna", "Ahangama", "Weligama"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 5.9739, lng: 80.4292 }]
+  },
+  // Balapitiya sits on the Colombo-Galle coastal trunk highway (same corridor as this app's
+  // colombo-galle/colombo-ambalangoda routes), so it's served by very frequent trunk traffic
+  // rather than one dedicated local route.
+  "galle-balapitiya": {
+    normal: { bus: "Trunk corridor buses", fare: "Rs. 100 (est.)", duration: "35 mins" },
+    ac: { bus: "Trunk corridor buses - AC", fare: "Rs. 190 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins (approx., trunk corridor)" },
+    stops: ["Galle", "Ambalangoda", "Balapitiya"],
+    coords: [{ lat: 6.0535, lng: 80.2210 }, { lat: 6.2544, lng: 80.0392 }]
+  },
+
   // ============ JAFFNA ROUTES ============
   "jaffna-vavuniya": {
     normal: { bus: "No. 15", fare: "Rs. 540", duration: "2.5 hrs" },

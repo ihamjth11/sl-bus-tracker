@@ -982,6 +982,38 @@ const busRoutes = {
   },
 
   // ============ BATTICALOA ROUTES ============
+  // All 4 towns confirmed on this app's own Route 48 corridor (already used in batticaloa-polonnaruwa,
+  // which lists Valaichchenai as a stop) — flickr operator listing independently confirms the exact
+  // stop order: Batticaloa-Eravur-Chenkalady-...-Valaichchenai direction, and Kalmunai the other way.
+  "batticaloa-kalmunai": {
+    normal: { bus: "No. 48", fare: "Rs. 125 (est.)", duration: "45 mins" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 240 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins (approx., trunk corridor)" },
+    stops: ["Batticaloa", "Kalmunai"],
+    coords: [{ lat: 7.7310, lng: 81.6747 }, { lat: 7.4083, lng: 81.8306 }]
+  },
+  "batticaloa-valaichchenai": {
+    normal: { bus: "No. 48", fare: "Rs. 70 (est.)", duration: "30 mins" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 135 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins (approx., trunk corridor)" },
+    stops: ["Batticaloa", "Eravur", "Valaichchenai"],
+    coords: [{ lat: 7.7310, lng: 81.6747 }, { lat: 7.9167, lng: 81.5333 }]
+  },
+  "batticaloa-eravur": {
+    normal: { bus: "No. 48", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 55 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Batticaloa", "Eravur"],
+    coords: [{ lat: 7.7310, lng: 81.6747 }, { lat: 7.7667, lng: 81.6167 }]
+  },
+  // Chenkalady distance (15km NW of Batticaloa) Wikipedia-confirmed.
+  "batticaloa-chenkalady": {
+    normal: { bus: "No. 48", fare: "Rs. 45 (est.)", duration: "20 mins" },
+    ac: { bus: "No. 48 - AC", fare: "Rs. 85 (est.)", duration: "15 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Batticaloa", "Eravur", "Chenkalady"],
+    coords: [{ lat: 7.7310, lng: 81.6747 }, { lat: 7.7833, lng: 81.6000 }]
+  },
   "batticaloa-ampara": {
     normal: { bus: "No. 68", fare: "Rs. 202", duration: "1.5 hrs" },
     ac: { bus: "No. 68 - AC", fare: "Rs. 379", duration: "1 hr" },
@@ -1329,6 +1361,46 @@ const busRoutes = {
     timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins" },
     stops: ["Ampara", "Kalmunai", "Batticaloa"],
     coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 7.7310, lng: 81.6747 }]
+  },
+
+  // Sammanthurai and Uhana confirmed directly on the Dilanka Express corridor through Ampara
+  // (bustimetable.lk: Nintavur-Karaitivu-Samanthurai-Ampara-Uhana-MahaOya-...-Kandy-Colombo).
+  "ampara-sammanthurai": {
+    normal: { bus: "Local service", fare: "Rs. 50 (est.)", duration: "25 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 90 (est.)", duration: "20 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Ampara", "Sammanthurai"],
+    coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 7.3717, lng: 81.8181 }]
+  },
+  "ampara-uhana": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 48 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Ampara", "Uhana"],
+    coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 7.3333, lng: 81.6167 }]
+  },
+  // Akkaraipattu, Pottuvil, and Lahugala are all confirmed on the same long-distance corridor
+  // (nextbus.lk: Akkaraipattu-Thirukkovil-Komari-Pottuvil-Lahugala-Siyambalanduwa-Monaragala...).
+  "ampara-akkaraipattu": {
+    normal: { bus: "Local service", fare: "Rs. 95 (est.)", duration: "45 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 180 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Ampara", "Sammanthurai", "Akkaraipattu"],
+    coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 7.2167, lng: 81.8500 }]
+  },
+  "ampara-lahugala": {
+    normal: { bus: "Local service", fare: "Rs. 175 (est.)", duration: "1 hr 20 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 330 (est.)", duration: "1 hr" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Ampara", "Akkaraipattu", "Lahugala"],
+    coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 6.9167, lng: 81.6333 }]
+  },
+  "ampara-pottuvil": {
+    normal: { bus: "Local service", fare: "Rs. 210 (est.)", duration: "1 hr 45 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 390 (est.)", duration: "1 hr 20 mins" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Ampara", "Akkaraipattu", "Lahugala", "Pottuvil"],
+    coords: [{ lat: 7.2811, lng: 81.6747 }, { lat: 6.8667, lng: 81.8333 }]
   },
   "ampara-monaragala": {
     normal: { bus: "No. 99", fare: "Rs. 289", duration: "2 hrs" },

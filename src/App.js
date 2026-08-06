@@ -977,6 +977,62 @@ const busRoutes = {
     coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.4149, lng: 81.3322 }]
   },
 
+  // Route 360/1, verified via sprpta.lk live schedule system: Matara-Akuressa, 24.20km, 55 min.
+  "matara-akuressa": {
+    normal: { bus: "No. 360/1", fare: "Rs. 110 (est.)", duration: "55 mins" },
+    ac: { bus: "No. 360/1 - AC", fare: "Rs. 210 (est.)", duration: "45 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Matara", "Akuressa"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.1000, lng: 80.4778 }]
+  },
+  // Wikipedia-confirmed: "About two buses an hour run from Matara to Deniyaya, through Akuressa."
+  "matara-deniyaya": {
+    normal: { bus: "Local service", fare: "Rs. 295 (est.)", duration: "1 hr 45 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 550 (est.)", duration: "1 hr 30 mins" },
+    timing: { first: "5:00 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Matara", "Akuressa", "Deniyaya"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.3444, lng: 80.5583 }]
+  },
+  // Route 353, confirmed (ceylonlanka.info route directory).
+  "matara-kamburupitiya": {
+    normal: { bus: "No. 353", fare: "Rs. 60 (est.)", duration: "25 mins" },
+    ac: { bus: "No. 353 - AC", fare: "Rs. 110 (est.)", duration: "20 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Matara", "Kamburupitiya"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.0725, lng: 80.5589 }]
+  },
+  "matara-hakmana": {
+    normal: { bus: "Local service", fare: "Rs. 70 (est.)", duration: "30 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 130 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Matara", "Kamburupitiya", "Hakmana"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 6.0833, lng: 80.6167 }]
+  },
+  // Dickwella sits on the same Matara-Tangalle-Kataragama coastal trunk corridor as this app's own
+  // matara-kataragama route (which already stops at Tangalle).
+  "matara-dickwella": {
+    normal: { bus: "Trunk corridor buses", fare: "Rs. 140 (est.)", duration: "45 mins" },
+    ac: { bus: "Trunk corridor buses - AC", fare: "Rs. 260 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins (approx., trunk corridor)" },
+    stops: ["Matara", "Dickwella"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 5.9667, lng: 80.6833 }]
+  },
+  "matara-devinuwara": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 52 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Matara", "Devinuwara"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 5.9333, lng: 80.5833 }]
+  },
+  // Same Route 32 corridor as this app's existing galle-weligama entry.
+  "matara-weligama": {
+    normal: { bus: "No. 32", fare: "Rs. 65 (est.)", duration: "25 mins" },
+    ac: { bus: "No. 32 - AC", fare: "Rs. 120 (est.)", duration: "20 mins" },
+    timing: { first: "5:00 AM", last: "10:00 PM", frequency: "Every 10 mins" },
+    stops: ["Matara", "Weligama"],
+    coords: [{ lat: 5.9549, lng: 80.5550 }, { lat: 5.9739, lng: 80.4292 }]
+  },
+
   // ============ HAMBANTOTA ROUTES ============
   "hambantota-monaragala": {
     normal: { bus: "No. 99", fare: "Rs. 347", duration: "2.5 hrs" },

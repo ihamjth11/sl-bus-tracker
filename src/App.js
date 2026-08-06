@@ -938,6 +938,49 @@ const busRoutes = {
     coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 8.7514, lng: 80.4971 }]
   },
 
+  // Trincomalee-Pulmodai local shuttle, confirmed by a firsthand traveler account: runs 04:30-19:30,
+  // every 30-60 min, fare starting Rs.44 depending on distance. Uppuveli and Nilaveli are both on
+  // this exact road/service, so fare/frequency below are drawn directly from that source.
+  "trincomalee-uppuveli": {
+    normal: { bus: "Local shuttle", fare: "Rs. 44", duration: "15 mins" },
+    ac: { bus: "Local shuttle - AC", fare: "Rs. 85 (est.)", duration: "10 mins" },
+    timing: { first: "4:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
+    stops: ["Trincomalee", "Uppuveli"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 8.6167, lng: 81.2000 }]
+  },
+  "trincomalee-nilaveli": {
+    normal: { bus: "Local shuttle", fare: "Rs. 65 (est.)", duration: "25 mins" },
+    ac: { bus: "Local shuttle - AC", fare: "Rs. 125 (est.)", duration: "20 mins" },
+    timing: { first: "4:30 AM", last: "7:30 PM", frequency: "Every 30 mins" },
+    stops: ["Trincomalee", "Uppuveli", "Nilaveli"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 8.6667, lng: 81.1833 }]
+  },
+  // Kinniya and Kantale are both on the busy Colombo-Trincomalee trunk highway (Route 49, per
+  // nextbus.lk's through-route listing) — distances Rome2Rio-confirmed.
+  "trincomalee-kinniya": {
+    normal: { bus: "Trunk corridor buses", fare: "Rs. 75 (est.)", duration: "25 mins" },
+    ac: { bus: "Trunk corridor buses - AC", fare: "Rs. 140 (est.)", duration: "20 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins (approx., trunk corridor)" },
+    stops: ["Trincomalee", "Kinniya"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 8.4919, lng: 81.1997 }]
+  },
+  "trincomalee-kantale": {
+    normal: { bus: "Trunk corridor buses", fare: "Rs. 175 (est.)", duration: "50 mins" },
+    ac: { bus: "Trunk corridor buses - AC", fare: "Rs. 330 (est.)", duration: "40 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 30 mins (approx., trunk corridor)" },
+    stops: ["Trincomalee", "Kinniya", "Kantale"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 8.3667, lng: 80.9833 }]
+  },
+  // Distance sourced (Rome2Rio, 18.6mi/30km). No published bus frequency found — estimated
+  // conservatively given it's a smaller cross-harbour route, not a trunk corridor.
+  "trincomalee-mutur": {
+    normal: { bus: "Local service", fare: "Rs. 135 (est.)", duration: "1 hr" },
+    ac: { bus: "Local service - AC", fare: "Rs. 255 (est.)", duration: "50 mins" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour (approx.)" },
+    stops: ["Trincomalee", "Mutur"],
+    coords: [{ lat: 8.5874, lng: 81.2152 }, { lat: 8.4500, lng: 81.2667 }]
+  },
+
   // ============ BATTICALOA ROUTES ============
   "batticaloa-ampara": {
     normal: { bus: "No. 68", fare: "Rs. 202", duration: "1.5 hrs" },

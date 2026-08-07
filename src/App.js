@@ -1639,6 +1639,45 @@ const busRoutes = {
     coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 6.1429, lng: 81.1212 }]
   },
 
+  // Well-documented A4/A22 corridor (nextbus.lk, bustimetable.lk, multiple operators): the exact
+  // real sequence is Monaragala-Buttala-Wellawaya one direction, Monaragala-Siyambalanduwa the
+  // other, and Kataragama-Buttala-Monaragala-Bibile-Mahiyanganaya on the third.
+  "monaragala-buttala": {
+    normal: { bus: "Local service", fare: "Rs. 65 (est.)", duration: "25 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 120 (est.)", duration: "20 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins" },
+    stops: ["Monaragala", "Buttala"],
+    coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 6.7667, lng: 81.2333 }]
+  },
+  "monaragala-wellawaya": {
+    normal: { bus: "Local service", fare: "Rs. 95 (est.)", duration: "40 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 180 (est.)", duration: "30 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins" },
+    stops: ["Monaragala", "Buttala", "Wellawaya"],
+    coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 6.7333, lng: 81.1000 }]
+  },
+  "monaragala-siyambalanduwa": {
+    normal: { bus: "Local service", fare: "Rs. 80 (est.)", duration: "35 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 150 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "8:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Monaragala", "Siyambalanduwa"],
+    coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 7.0333, lng: 81.5333 }]
+  },
+  "monaragala-bibile": {
+    normal: { bus: "Local service", fare: "Rs. 110 (est.)", duration: "50 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 210 (est.)", duration: "40 mins" },
+    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Monaragala", "Bibile"],
+    coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 7.1667, lng: 81.2167 }]
+  },
+  "monaragala-kataragama": {
+    normal: { bus: "Local service", fare: "Rs. 160 (est.)", duration: "1 hr 15 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 300 (est.)", duration: "1 hr" },
+    timing: { first: "5:00 AM", last: "7:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Monaragala", "Buttala", "Kataragama"],
+    coords: [{ lat: 6.8728, lng: 81.3507 }, { lat: 6.4149, lng: 81.3322 }]
+  },
+
   // ============ AMPARA ROUTES ============
   "ampara-batticaloa": {
     normal: { bus: "No. 68", fare: "Rs. 202", duration: "1.5 hrs" },

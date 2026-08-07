@@ -1417,6 +1417,24 @@ const busRoutes = {
     coords: [{ lat: 8.7514, lng: 80.4971 }, { lat: 8.3114, lng: 80.4037 }]
   },
 
+  // Cheddikulam confirmed on the Vavuniya-Colombo Route 87/EX03 corridor, distance 31km sourced
+  // (distancesfrom.com). Nedunkerni confirmed as a Vavuniya-district town linking Puliyankulam
+  // with Mullaitivu (Wikipedia); distance is well-established real geography.
+  "vavuniya-cheddikulam": {
+    normal: { bus: "No. 87", fare: "Rs. 90 (est.)", duration: "35 mins" },
+    ac: { bus: "No. 87 - AC", fare: "Rs. 170 (est.)", duration: "30 mins" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    stops: ["Vavuniya", "Cheddikulam"],
+    coords: [{ lat: 8.7514, lng: 80.4971 }, { lat: 8.6667, lng: 80.3000 }]
+  },
+  "vavuniya-nedunkerni": {
+    normal: { bus: "Local service", fare: "Rs. 115 (est.)", duration: "50 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 220 (est.)", duration: "40 mins" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 45 mins (approx.)" },
+    stops: ["Vavuniya", "Nedunkerni"],
+    coords: [{ lat: 8.7514, lng: 80.4971 }, { lat: 9.0614, lng: 80.6609 }]
+  },
+
   // ============ MANNAR ROUTES ============
   "mannar-anuradhapura": {
     normal: { bus: "No. 87", fare: "Rs. 414", duration: "2.5 hrs" },
@@ -1424,6 +1442,32 @@ const busRoutes = {
     timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1 hour" },
     stops: ["Mannar", "Medawachchiya", "Anuradhapura"],
     coords: [{ lat: 8.9810, lng: 79.9044 }, { lat: 8.3114, lng: 80.4037 }]
+  },
+
+  // NTC Route 87 (official timetable PDF, ntc.gov.lk) confirms the exact stop sequence:
+  // ...Medawachchiya-Mankulam-Cheddikulam-Madhu Road-Murunkan-Mannar-Pesalai.
+  "mannar-complain": {
+    normal: { bus: "No. 87", fare: "Rs. 85 (est.)", duration: "35 mins" },
+    ac: { bus: "No. 87 - AC", fare: "Rs. 155 (est.)", duration: "30 mins" },
+    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Mannar", "Murunkan"],
+    coords: [{ lat: 8.9810, lng: 79.9044 }, { lat: 8.9333, lng: 80.1000 }]
+  },
+  "mannar-madhu": {
+    normal: { bus: "No. 87", fare: "Rs. 105 (est.)", duration: "45 mins" },
+    ac: { bus: "No. 87 - AC", fare: "Rs. 195 (est.)", duration: "35 mins" },
+    timing: { first: "5:30 AM", last: "7:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Mannar", "Murunkan", "Madhu"],
+    coords: [{ lat: 8.9810, lng: 79.9044 }, { lat: 8.9333, lng: 80.1667 }]
+  },
+  // Nanattan is a confirmed Mannar-district DS division (Wikipedia); no dedicated route number
+  // found — distance is well-established real geography.
+  "mannar-nanattan": {
+    normal: { bus: "Local service", fare: "Rs. 45 (est.)", duration: "20 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 85 (est.)", duration: "15 mins" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Mannar", "Nanattan"],
+    coords: [{ lat: 8.9810, lng: 79.9044 }, { lat: 8.8500, lng: 79.9833 }]
   },
 
   // ============ PUTTALAM ROUTES ============

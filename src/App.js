@@ -814,6 +814,60 @@ const busRoutes = {
     coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.3803, lng: 80.3770 }]
   },
 
+  // Real bus timetable (busseat.lk Point Pedro-Colombo/Jaffna-Colombo services): exact stop
+  // sequence confirms Nallur, Kopay, Chavakachcheri, Point Pedro all directly on Jaffna's own
+  // local corridors. Point Pedro distance (20.2mi/32.5km, ~1hr) Rome2Rio-confirmed.
+  "jaffna-nallur": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "10 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 40 (est.)", duration: "8 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Jaffna", "Nallur"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.6650, lng: 80.0286 }]
+  },
+  "jaffna-kopay": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 48 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Jaffna", "Nallur", "Kopay"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.7167, lng: 80.0167 }]
+  },
+  "jaffna-manipay": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "20 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 54 (est.)", duration: "15 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Jaffna", "Manipay"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.6667, lng: 79.9500 }]
+  },
+  "jaffna-chavakachcheri": {
+    normal: { bus: "Local service", fare: "Rs. 50 (est.)", duration: "35 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 95 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Jaffna", "Kopay", "Chavakachcheri"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.6600, lng: 80.1600 }]
+  },
+  "jaffna-kayts": {
+    normal: { bus: "Local service", fare: "Rs. 48 (est.)", duration: "30 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 90 (est.)", duration: "25 mins" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Jaffna", "Kayts"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.6900, lng: 79.8500 }]
+  },
+  "jaffna-point pedro": {
+    normal: { bus: "Local service", fare: "Rs. 105 (est.)", duration: "1 hr" },
+    ac: { bus: "Local service - AC", fare: "Rs. 195 (est.)", duration: "45 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins" },
+    stops: ["Jaffna", "Kopay", "Chavakachcheri", "Point Pedro"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.8167, lng: 80.2333 }]
+  },
+  // Delft is an island reached via ferry from Kurikadduwan (near Kayts) — much lower frequency.
+  "jaffna-delft": {
+    normal: { bus: "Local service + ferry", fare: "Rs. 145 (est.)", duration: "2 hrs" },
+    ac: { bus: "Local service + ferry", fare: "Rs. 145 (est.)", duration: "2 hrs" },
+    timing: { first: "6:00 AM", last: "3:00 PM", frequency: "Every 2 hours (approx., ferry-dependent)" },
+    stops: ["Jaffna", "Kayts", "Kurikadduwan (ferry)", "Delft"],
+    coords: [{ lat: 9.6615, lng: 80.0255 }, { lat: 9.5167, lng: 79.6667 }]
+  },
+
   // ============ ANURADHAPURA ROUTES ============
   "anuradhapura-nochchiyagama": {
     normal: { bus: "No. 57/822/87", fare: "Rs. 107", duration: "45 mins" },

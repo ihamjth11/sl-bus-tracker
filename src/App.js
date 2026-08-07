@@ -1803,6 +1803,40 @@ const busRoutes = {
     stops: ["Polonnaruwa", "Valaichchenai", "Batticaloa"],
     coords: [{ lat: 7.9403, lng: 81.0188 }, { lat: 7.7310, lng: 81.6747 }]
   },
+
+  // Kaduruwela is Polonnaruwa's modern "New Town" — essentially adjacent (route directory
+  // literally calls it "Kaduruwela (Polonnaruwa)"). Route 52 confirmed: Kandy-Medirigiriya-
+  // Hingurakgoda. Routes 48-4 (Medirigiriya-Colombo) and 48-6 (Hingurakgoda-Colombo) confirmed
+  // via ceylonlanka.info route directory.
+  "polonnaruwa-kaduruwela": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "10 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 40 (est.)", duration: "8 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 10 mins (approx.)" },
+    stops: ["Polonnaruwa", "Kaduruwela"],
+    coords: [{ lat: 7.9403, lng: 81.0188 }, { lat: 7.9297, lng: 81.0158 }]
+  },
+  "polonnaruwa-hingurakgoda": {
+    normal: { bus: "No. 48-6", fare: "Rs. 70 (est.)", duration: "30 mins" },
+    ac: { bus: "No. 48-6 - AC", fare: "Rs. 125 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Polonnaruwa", "Kaduruwela", "Hingurakgoda"],
+    coords: [{ lat: 7.9403, lng: 81.0188 }, { lat: 8.0500, lng: 80.9500 }]
+  },
+  "polonnaruwa-medirigiriya": {
+    normal: { bus: "No. 48-4", fare: "Rs. 100 (est.)", duration: "45 mins" },
+    ac: { bus: "No. 48-4 - AC", fare: "Rs. 190 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "8:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Polonnaruwa", "Hingurakgoda", "Medirigiriya"],
+    coords: [{ lat: 7.9403, lng: 81.0188 }, { lat: 8.1505, lng: 80.9790 }]
+  },
+  // No published route number found for Lankapura — distance is well-established real geography.
+  "polonnaruwa-lankapura": {
+    normal: { bus: "Local service", fare: "Rs. 50 (est.)", duration: "25 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 95 (est.)", duration: "20 mins" },
+    timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Polonnaruwa", "Lankapura"],
+    coords: [{ lat: 7.9403, lng: 81.0188 }, { lat: 7.8500, lng: 81.0333 }]
+  },
   "polonnaruwa-anuradhapura": {
     normal: { bus: "No. 49", fare: "Rs. 347", duration: "2 hrs" },
     ac: { bus: "No. 49 - AC", fare: "Rs. 650", duration: "1.5 hrs" },

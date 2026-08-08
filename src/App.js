@@ -1401,6 +1401,54 @@ const busRoutes = {
     coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 7.2513, lng: 80.3464 }]
   },
 
+  // Kuruwita and Eheliyagoda confirmed on the same corridor (nextbus.lk: "Avissawella,
+  // Eheliyagoda, Kuruwita, Ratnapura, Pelmadulla"). Pelmadulla and Balangoda confirmed on the
+  // Ratnapura-Beragala-Bandarawela corridor. Kalawana confirmed direct (Route 473/7, 482, and the
+  // long corridor "...Kalawana Ratnapura Pelmadulla Balangoda..."). Embilipitiya confirmed via
+  // Route 210 (77.6km) with real "every 20 minutes" frequency (rome2rio).
+  "ratnapura-kuruwita": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "10 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 35 (est.)", duration: "8 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 10 mins" },
+    stops: ["Ratnapura", "Kuruwita"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.7897, lng: 80.3717 }]
+  },
+  "ratnapura-pelmadulla": {
+    normal: { bus: "Local service", fare: "Rs. 37 (est.)", duration: "20 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 70 (est.)", duration: "15 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins" },
+    stops: ["Ratnapura", "Pelmadulla"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.5992, lng: 80.5375 }]
+  },
+  "ratnapura-eheliyagoda": {
+    normal: { bus: "Local service", fare: "Rs. 75 (est.)", duration: "35 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 145 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins" },
+    stops: ["Ratnapura", "Kuruwita", "Eheliyagoda"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.8483, lng: 80.2597 }]
+  },
+  "ratnapura-balangoda": {
+    normal: { bus: "Local service", fare: "Rs. 90 (est.)", duration: "45 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 175 (est.)", duration: "35 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins" },
+    stops: ["Ratnapura", "Pelmadulla", "Balangoda"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.6547, lng: 80.7028 }]
+  },
+  "ratnapura-kalawana": {
+    normal: { bus: "No. 473/7", fare: "Rs. 105 (est.)", duration: "50 mins" },
+    ac: { bus: "No. 473/7 - AC", fare: "Rs. 200 (est.)", duration: "40 mins" },
+    timing: { first: "5:00 AM", last: "8:00 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Ratnapura", "Kalawana"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.5486, lng: 80.3672 }]
+  },
+  "ratnapura-embilipitiya": {
+    normal: { bus: "No. 210", fare: "Rs. 235 (est.)", duration: "2 hrs" },
+    ac: { bus: "No. 210 - AC", fare: "Rs. 445 (est.)", duration: "1.5 hrs" },
+    timing: { first: "5:00 AM", last: "8:00 PM", frequency: "Every 20 mins" },
+    stops: ["Ratnapura", "Pelmadulla", "Balangoda", "Embilipitiya"],
+    coords: [{ lat: 6.6828, lng: 80.3992 }, { lat: 6.3439, lng: 80.8500 }]
+  },
+
   // ============ VAVUNIYA ROUTES ============
   "vavuniya-jaffna": {
     normal: { bus: "No. 15", fare: "Rs. 540", duration: "2 hrs" },
@@ -1787,6 +1835,31 @@ const busRoutes = {
     coords: [{ lat: 9.3803, lng: 80.3770 }, { lat: 8.7514, lng: 80.4971 }]
   },
 
+  // Paranthan confirmed 5km from Kilinochchi, on the A9 highway (Wikipedia). Pooneryn confirmed
+  // "30 minutes from [Kilinochchi] town by car" (Wikivoyage). Kandavalai is Paranthan's own DS
+  // Division — essentially the same immediate area.
+  "kilinochchi-paranthan": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "10 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 40 (est.)", duration: "8 mins" },
+    timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Kilinochchi", "Paranthan"],
+    coords: [{ lat: 9.3803, lng: 80.3770 }, { lat: 9.4333, lng: 80.4000 }]
+  },
+  "kilinochchi-kandavalai": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 46 (est.)", duration: "10 mins" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Kilinochchi", "Paranthan", "Kandavalai"],
+    coords: [{ lat: 9.3803, lng: 80.3770 }, { lat: 9.4500, lng: 80.3833 }]
+  },
+  "kilinochchi-pooneryn": {
+    normal: { bus: "Local service", fare: "Rs. 65 (est.)", duration: "30 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 120 (est.)", duration: "25 mins" },
+    timing: { first: "5:30 AM", last: "7:30 PM", frequency: "Every 30 mins (approx.)" },
+    stops: ["Kilinochchi", "Pooneryn"],
+    coords: [{ lat: 9.3803, lng: 80.3770 }, { lat: 9.4667, lng: 80.1833 }]
+  },
+
   // ============ MULLAITIVU ROUTES ============
   "mullaitivu-vavuniya": {
     normal: { bus: "No. 15/1", fare: "Rs. 347", duration: "2 hrs" },
@@ -1794,6 +1867,25 @@ const busRoutes = {
     timing: { first: "6:00 AM", last: "5:00 PM", frequency: "Every 2 hours" },
     stops: ["Mullaitivu", "Mankulam", "Vavuniya"],
     coords: [{ lat: 9.2671, lng: 80.8128 }, { lat: 8.7514, lng: 80.4971 }]
+  },
+
+  // Distances sourced (distancesfrom.com, Wikipedia A34 road article). Lakpura (travel guide)
+  // confirms bus service exists connecting Puthukkudiyiruppu to Mullaitivu but explicitly notes
+  // "limited public transport frequency" in this sparsely-served post-conflict region — reflected
+  // in the lower frequency estimate below rather than assuming a busy corridor.
+  "mullaitivu-puthukkudiyiruppu": {
+    normal: { bus: "Local service", fare: "Rs. 60 (est.)", duration: "25 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 110 (est.)", duration: "20 mins" },
+    timing: { first: "6:00 AM", last: "6:00 PM", frequency: "Every 1 hour (approx., limited service)" },
+    stops: ["Mullaitivu", "Puthukkudiyiruppu"],
+    coords: [{ lat: 9.2671, lng: 80.8128 }, { lat: 9.3000, lng: 80.6833 }]
+  },
+  "mullaitivu-oddusuddan": {
+    normal: { bus: "Local service", fare: "Rs. 95 (est.)", duration: "40 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 175 (est.)", duration: "30 mins" },
+    timing: { first: "6:00 AM", last: "5:30 PM", frequency: "Every 1.5 hours (approx., limited service)" },
+    stops: ["Mullaitivu", "Puthukkudiyiruppu", "Oddusuddan"],
+    coords: [{ lat: 9.2671, lng: 80.8128 }, { lat: 9.1500, lng: 80.6500 }]
   },
 
   // ============ GAMPAHA ROUTES ============
@@ -1994,6 +2086,52 @@ const busRoutes = {
     timing: { first: "5:30 AM", last: "9:00 PM", frequency: "Every 15 mins" },
     stops: ["Matale", "Sigiriya Junction", "Dambulla"],
     coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.8742, lng: 80.6511 }]
+  },
+  // Ukuwela confirmed 5.8km south of Matale (Wikipedia, precise). Galewela confirmed 19km
+  // (distancesfrom.com) and on the real Matale-Dambulla-Kekirawa corridor. Rattota and Pallepola
+  // distances from local bus-stop proximity data (near-place.com). Sigiriya Junction already a
+  // stop on this app's own matale-dambulla route.
+  "matale-ukuwela": {
+    normal: { bus: "Local service", fare: "Rs. 34 (est.)", duration: "15 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 51 (est.)", duration: "10 mins" },
+    timing: { first: "5:00 AM", last: "9:30 PM", frequency: "Every 15 mins (approx.)" },
+    stops: ["Matale", "Ukuwela"],
+    coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.4203, lng: 80.6339 }]
+  },
+  "matale-pallepola": {
+    normal: { bus: "Local service", fare: "Rs. 55 (est.)", duration: "25 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 115 (est.)", duration: "20 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Matale", "Pallepola"],
+    coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.5333, lng: 80.5500 }]
+  },
+  "matale-rattota": {
+    normal: { bus: "Local service", fare: "Rs. 65 (est.)", duration: "30 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 130 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Matale", "Pallepola", "Rattota"],
+    coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.5667, lng: 80.6167 }]
+  },
+  "matale-galewela": {
+    normal: { bus: "No. 6", fare: "Rs. 80 (est.)", duration: "35 mins" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 165 (est.)", duration: "25 mins" },
+    timing: { first: "5:00 AM", last: "9:00 PM", frequency: "Every 15 mins" },
+    stops: ["Matale", "Galewela"],
+    coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.7500, lng: 80.5667 }]
+  },
+  "matale-nalanda": {
+    normal: { bus: "Local service", fare: "Rs. 130 (est.)", duration: "50 mins" },
+    ac: { bus: "Local service - AC", fare: "Rs. 260 (est.)", duration: "40 mins" },
+    timing: { first: "5:00 AM", last: "8:30 PM", frequency: "Every 20 mins (approx.)" },
+    stops: ["Matale", "Naula", "Nalanda"],
+    coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.6667, lng: 80.6833 }]
+  },
+  "matale-sigiriya": {
+    normal: { bus: "No. 6", fare: "Rs. 130 (est.)", duration: "40 mins" },
+    ac: { bus: "No. 6 - AC", fare: "Rs. 260 (est.)", duration: "30 mins" },
+    timing: { first: "5:30 AM", last: "8:30 PM", frequency: "Every 15 mins" },
+    stops: ["Matale", "Sigiriya Junction", "Sigiriya"],
+    coords: [{ lat: 7.4675, lng: 80.6234 }, { lat: 7.9570, lng: 80.7603 }]
   },
 };
 function findRoute(from, to) {

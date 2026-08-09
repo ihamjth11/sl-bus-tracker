@@ -170,7 +170,59 @@ const formatFare = (fareStr) => {
   return `${symbol}${converted} (${fareStr})`;
 };
 const [showFullSchedule, setShowFullSchedule] = useState(false);
+const TRANSLATIONS = {
+  en: {
+    heroLine1: 'Where are you', heroLine2: 'heading today?', heroSub: 'Smart routes across all Sri Lanka',
+    installTitle: 'Install BusTracker', installSub: 'Works offline, opens like an app', installCta: 'Install',
+    findBus: 'Find My Bus →', availableBuses: 'Available Buses', busTimings: 'Bus Timings',
+    otherBuses: 'Other Buses on this Route', stops: 'Stops',
+    notFound: 'Route not found in our database!', notFoundSub: 'Ask our AI Assistant below — it knows ALL Sri Lanka bus routes!',
+    askAI: 'Ask AI Assistant →', nearbyStops: 'Nearby Bus Stops', locating: 'Locating...', findNearMe: 'Find Near Me',
+    yourFavorites: 'Your Favorites', popularRoutes: 'Popular Routes', touristTrail: 'Classic Tourist Trail',
+    trailSub: 'Tap each leg to search it — all confirmed real routes.',
+    trailNote: 'Galle is usually done as a separate trip from Colombo (search "Colombo → Galle") rather than continuing on from Ella.',
+    hideTips: 'Hide Tourist Tips', showTips: 'First Time in Sri Lanka? Bus Tips', aiAssistant: 'AI Assistant',
+    chatPlaceholder: 'Ask about any route...', chatEmpty: 'Ask me anything about Sri Lanka buses! 🇱🇰',
+    remindMe: 'Remind me', reminderSet: 'Reminder set',
+  },
+  si: {
+    heroLine1: 'ඔබ අද', heroLine2: 'කොහෙද යන්නේ?', heroSub: 'ශ්‍රී ලංකාව පුරා බස් මාර්ග',
+    installTitle: 'BusTracker ස්ථාපනය කරන්න', installSub: 'නොබැඳුනු විට ක්‍රියා කරයි, යෙදුමක් ලෙස විවෘත වේ', installCta: 'ස්ථාපනය',
+    findBus: 'මගේ බස් සොයන්න →', availableBuses: 'ලබා ගත හැකි බස්', busTimings: 'බස් වේලාවන්',
+    otherBuses: 'මෙම මාර්ගයේ අනෙකුත් බස්', stops: 'නැවතුම්',
+    notFound: 'මාර්ගය අපගේ දත්ත ගබඩාවේ හමු නොවීය!', notFoundSub: 'පහත AI සහායකයෙන් අසන්න — එය සියලුම ශ්‍රී ලංකා බස් මාර්ග දනී!',
+    askAI: 'AI සහායකගෙන් අසන්න →', nearbyStops: 'ආසන්න බස් නැවතුම්', locating: 'සොයමින්...', findNearMe: 'ආසන්නය සොයන්න',
+    yourFavorites: 'ඔබේ ප්‍රියතමයන්', popularRoutes: 'ජනප්‍රිය මාර්ග', touristTrail: 'සම්භාව්‍ය සංචාරක මාර්ගය',
+    trailSub: 'සෙවීමට එක් එක් කොටස ස්පර්ශ කරන්න — සියල්ල තහවුරු කළ මාර්ග.',
+    trailNote: 'ගාල්ල සාමාන්‍යයෙන් කොළඹ සිට වෙනම ගමනක් ලෙස කරනු ලැබේ ("කොළඹ → ගාල්ල" සොයන්න), ඇල්ල සිට දිගටම නොව.',
+    hideTips: 'ඉඟි සඟවන්න', showTips: 'ශ්‍රී ලංකාවේ පළමු වතාවද? බස් ඉඟි', aiAssistant: 'AI සහායක',
+    chatPlaceholder: 'ඕනෑම මාර්ගයක් ගැන අසන්න...', chatEmpty: 'ශ්‍රී ලංකා බස් ගැන ඕනෑම දෙයක් අසන්න! 🇱🇰',
+    remindMe: 'මට මතක් කරන්න', reminderSet: 'මතක් කිරීම සකසා ඇත',
+  },
+  ta: {
+    heroLine1: 'நீங்கள் இன்று', heroLine2: 'எங்கு செல்கிறீர்கள்?', heroSub: 'இலங்கை முழுவதும் ஸ்மார்ட் பாதைகள்',
+    installTitle: 'BusTracker நிறுவவும்', installSub: 'ஆஃப்லைனிலும் வேலை செய்யும், ஆப் போல் திறக்கும்', installCta: 'நிறுவு',
+    findBus: 'என் பஸ்-ஐ கண்டுபிடி →', availableBuses: 'கிடைக்கும் பஸ்கள்', busTimings: 'பஸ் நேரங்கள்',
+    otherBuses: 'இந்த வழியில் மற்ற பஸ்கள்', stops: 'நிறுத்தங்கள்',
+    notFound: 'எங்கள் தரவுத்தளத்தில் வழி கிடைக்கவில்லை!', notFoundSub: 'கீழே AI உதவியாளரிடம் கேளுங்கள் — அது இலங்கையின் அனைத்து பஸ் வழிகளையும் அறியும்!',
+    askAI: 'AI உதவியாளரிடம் கேளுங்கள் →', nearbyStops: 'அருகிலுள்ள பஸ் நிறுத்தங்கள்', locating: 'கண்டறிகிறது...', findNearMe: 'அருகில் கண்டுபிடி',
+    yourFavorites: 'உங்கள் விருப்பங்கள்', popularRoutes: 'பிரபல வழிகள்', touristTrail: 'சுற்றுலா பாதை',
+    trailSub: 'ஒவ்வொரு பகுதியையும் தேட தொடவும் — அனைத்தும் உறுதிப்படுத்தப்பட்ட வழிகள்.',
+    trailNote: 'எல்லாவை விட்டு தொடர்வதற்கு பதிலாக, காலி பொதுவாக கொழும்பில் இருந்து தனி பயணமாக செய்யப்படும் ("Colombo → Galle" தேடவும்).',
+    hideTips: 'குறிப்புகளை மறை', showTips: 'இலங்கைக்கு முதல் முறையா? பஸ் குறிப்புகள்', aiAssistant: 'AI உதவியாளர்',
+    chatPlaceholder: 'எந்த வழி பற்றியும் கேளுங்கள்...', chatEmpty: 'இலங்கை பஸ்கள் பற்றி எதுவும் கேளுங்கள்! 🇱🇰',
+    remindMe: 'எனக்கு நினைவூட்டு', reminderSet: 'நினைவூட்டல் அமைக்கப்பட்டது',
+  },
+};
+
 const [showTouristTips, setShowTouristTips] = useState(false);
+const [uiLang, setUiLang] = useState(() => localStorage.getItem('sl-bus-lang') || 'en');
+
+useEffect(() => {
+  localStorage.setItem('sl-bus-lang', uiLang);
+}, [uiLang]);
+
+const t = (key) => TRANSLATIONS[uiLang]?.[key] ?? TRANSLATIONS.en[key] ?? key;
 const [installPrompt, setInstallPrompt] = useState(null);
 
 useEffect(() => {
@@ -308,6 +360,38 @@ const shareRoute = () => {
   ];
   const text = encodeURIComponent(lines.join('\n'));
   window.open(`https://wa.me/?text=${text}`, '_blank');
+};
+
+const [reminderKey, setReminderKey] = useState(null);
+
+const scheduleReminder = (busTime, waitMins, routeLabel) => {
+  if (!('Notification' in window)) {
+    alert('Notifications are not supported in this browser.');
+    return;
+  }
+  const arm = () => {
+    // Notify ~10 min before departure, or immediately if less than 10 min remain.
+    const leadMins = 10;
+    const fireInMins = Math.max(waitMins - leadMins, 0);
+    const fireInMs = fireInMins * 60 * 1000;
+    setTimeout(() => {
+      new Notification('🚌 Bus reminder', {
+        body: `${routeLabel} — bus at ${busTime} is coming up soon!`,
+        icon: '/logo192.png',
+      });
+    }, fireInMs);
+    setReminderKey(`${from}-${to}-${busTime}`);
+  };
+
+  if (Notification.permission === 'granted') {
+    arm();
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then((perm) => {
+      if (perm === 'granted') arm();
+    });
+  } else {
+    alert('Notifications are blocked for this site. Please enable them in your browser settings to use reminders.');
+  }
 };
 
 const findNearbyStops = () => {
@@ -492,7 +576,8 @@ const getNextBus = (timing) => {
   return {
     status: 'next',
     time: nextBusTime,
-    wait: waitMins <= 1 ? 'Departing now!' : `~${waitMins} mins away`
+    wait: waitMins <= 1 ? 'Departing now!' : `~${waitMins} mins away`,
+    waitMins,
   };
 };
 
@@ -559,6 +644,13 @@ const getNextBus = (timing) => {
         </div>
         <div className="header-actions">
           <button
+            className="currency-toggle lang-toggle"
+            onClick={() => setUiLang(l => l === 'en' ? 'si' : l === 'si' ? 'ta' : 'en')}
+            title="Change language / භාෂාව මාරු කරන්න / மொழியை மாற்று"
+          >
+            {uiLang.toUpperCase()}
+          </button>
+          <button
             className="currency-toggle"
             onClick={() => setCurrency(c => c === 'LKR' ? 'USD' : c === 'USD' ? 'EUR' : 'LKR')}
             title="Show fares in another currency (approximate)"
@@ -578,18 +670,18 @@ const getNextBus = (timing) => {
       </div>
 
       <div className="hero">
-        <h2>Where are you<br /><span>heading today?</span></h2>
-        <p>Smart routes across all Sri Lanka</p>
+        <h2>{t('heroLine1')}<br /><span>{t('heroLine2')}</span></h2>
+        <p>{t('heroSub')}</p>
       </div>
 
       {installPrompt && (
         <button className="install-banner" onClick={handleInstallClick}>
           <IconBus className="icon" />
           <span>
-            <strong>Install BusTracker</strong>
-            <small>Works offline, opens like an app</small>
+            <strong>{t('installTitle')}</strong>
+            <small>{t('installSub')}</small>
           </span>
-          <span className="install-cta">Install</span>
+          <span className="install-cta">{t('installCta')}</span>
         </button>
       )}
 
@@ -652,7 +744,7 @@ const getNextBus = (timing) => {
   </div>
 
  <div className="search-actions">
-  <button className="search-btn" onClick={handleSearch}>Find My Bus →</button>
+  <button className="search-btn" onClick={handleSearch}>{t('findBus')}</button>
   <button className="fav-btn" onClick={toggleFavorite} title="Save to favorites">
     <IconHeart filled={isFavorite()} className="icon" />
   </button>
@@ -662,7 +754,7 @@ const getNextBus = (timing) => {
       {result && (
   <div className="result-card">
     <div className="result-title-row">
-      <p className="result-title"><IconTicket className="icon" /> Available Buses</p>
+      <p className="result-title"><IconTicket className="icon" /> {t('availableBuses')}</p>
       <button className="share-btn" onClick={shareRoute} title="Share on WhatsApp">
         <IconShare className="icon-xs" /> Share
       </button>
@@ -694,7 +786,7 @@ const getNextBus = (timing) => {
 
     {/* Timing */}
 <div className="timing-box">
-  <div className="timing-title"><IconClock className="icon-xs" /> Bus Timings</div>
+  <div className="timing-title"><IconClock className="icon-xs" /> {t('busTimings')}</div>
   <div className="timing-grid">
     <div className="timing-item">
       <span className="timing-label">First Bus</span>
@@ -721,6 +813,13 @@ const getNextBus = (timing) => {
             <span className="next-bus-label"><IconBus className="icon-xs" /> Next Bus</span>
             <span className="next-bus-time">{next.time}</span>
             <span className="next-bus-wait">{next.wait}</span>
+            <button
+              className="remind-btn"
+              onClick={() => scheduleReminder(next.time, next.waitMins, `${from} → ${to}`)}
+              disabled={reminderKey === `${from}-${to}-${next.time}`}
+            >
+              {reminderKey === `${from}-${to}-${next.time}` ? t('reminderSet') : t('remindMe')}
+            </button>
           </>
         )}
         {next.status === 'waiting' && (
@@ -770,7 +869,7 @@ const getNextBus = (timing) => {
 {/* Alternative Buses */}
 {result.alternativeBuses && result.alternativeBuses.length > 0 && (
   <div className="alt-buses">
-    <div className="alt-buses-title"><IconBus className="icon-xs" /> Other Buses on this Route</div>
+    <div className="alt-buses-title"><IconBus className="icon-xs" /> {t('otherBuses')}</div>
     <div className="alt-buses-list">
       {result.alternativeBuses.map((bus, i) => (
         <div key={i} className="alt-bus-item">
@@ -784,7 +883,7 @@ const getNextBus = (timing) => {
 )}
 
     {/* Stops */}
-    <div className="stops-title"><IconFlag className="icon-xs" /> Stops</div>
+    <div className="stops-title"><IconFlag className="icon-xs" /> {t('stops')}</div>
     <div className="stops">
       {result.stops.map((stop, i) => (
         <div className="stop" key={i}>
@@ -799,14 +898,14 @@ const getNextBus = (timing) => {
       {notFound && (
   <div className="not-found">
     <div className="not-found-icon"><IconSearch className="icon-lg" /></div>
-    <p>Route not found in our database!</p>
-    <p className="not-found-sub">Ask our AI Assistant below — it knows ALL Sri Lanka bus routes!</p>
+    <p>{t('notFound')}</p>
+    <p className="not-found-sub">{t('notFoundSub')}</p>
     <button className="ask-ai-btn" onClick={() => {
       document.querySelector('.chat-input-row input').focus();
       document.querySelector('.chat-input-row input').value = `${from} to ${to} bus route`;
       document.querySelector('.chat-input-row input').dispatchEvent(new Event('change', { bubbles: true }));
     }}>
-      Ask AI Assistant →
+      {t('askAI')}
     </button>
   </div>
 )}
@@ -814,9 +913,9 @@ const getNextBus = (timing) => {
 {/* Nearby Bus Stops */}
 <div className="nearby-section">
   <div className="nearby-header">
-    <p className="quick-title"><IconPin className="icon-xs" /> Nearby Bus Stops</p>
+    <p className="quick-title"><IconPin className="icon-xs" /> {t('nearbyStops')}</p>
     <button className="locate-btn" onClick={findNearbyStops}>
-      <IconLocate className="icon-xs" /> {locationLoading ? 'Locating...' : 'Find Near Me'}
+      <IconLocate className="icon-xs" /> {locationLoading ? t('locating') : t('findNearMe')}
     </button>
   </div>
   {locationError && <p className="location-error">{locationError}</p>}
@@ -843,7 +942,7 @@ const getNextBus = (timing) => {
       <div className="map-container" ref={mapRef}></div>
       {favorites.length > 0 && (
   <div className="quick-routes">
-    <p className="quick-title"><IconHeart filled className="icon-xs" /> Your Favorites</p>
+    <p className="quick-title"><IconHeart filled className="icon-xs" /> {t('yourFavorites')}</p>
     <div className="chips">
       {favorites.map((fav, i) => (
         <div key={i} className="chip favorite-chip" onClick={() => {
@@ -866,7 +965,7 @@ const getNextBus = (timing) => {
 )}
 
       <div className="quick-routes">
-  <p className="quick-title"><IconTrending className="icon-xs" /> Popular Routes</p>
+  <p className="quick-title"><IconTrending className="icon-xs" /> {t('popularRoutes')}</p>
   <div className="chips">
     {Object.keys(routeStats).length > 0
       ? Object.entries(routeStats)
@@ -894,20 +993,20 @@ const getNextBus = (timing) => {
 </div>
 
       <div className="quick-routes">
-  <p className="quick-title"><IconFlag className="icon-xs" /> Classic Tourist Trail</p>
-  <p className="trail-sub">Tap each leg to search it — all confirmed real routes.</p>
+  <p className="quick-title"><IconFlag className="icon-xs" /> {t('touristTrail')}</p>
+  <p className="trail-sub">{t('trailSub')}</p>
   <div className="chips">
     {["Colombo → Kandy", "Kandy → Badulla", "Badulla → Ella"].map((chip, i) => (
       <div className="chip" key={i} onClick={() => handleChip(chip)}>{chip}</div>
     ))}
   </div>
-  <p className="trail-note">Galle is usually done as a separate trip from Colombo (search "Colombo → Galle") rather than continuing on from Ella.</p>
+  <p className="trail-note">{t('trailNote')}</p>
 </div>
 
       <div className="quick-routes">
   <button className="schedule-toggle" onClick={() => setShowTouristTips(s => !s)}>
     <IconSparkle className="icon-xs" />
-    {showTouristTips ? 'Hide Tourist Tips' : 'First Time in Sri Lanka? Bus Tips'}
+    {showTouristTips ? t('hideTips') : t('showTips')}
     <span className={`schedule-chevron ${showTouristTips ? 'open' : ''}`}>⌄</span>
   </button>
   {showTouristTips && (
@@ -933,9 +1032,9 @@ const getNextBus = (timing) => {
 </div>
 
       <div className="chat-section">
-        <p className="quick-title"><IconSparkle className="icon-xs" /> AI Assistant</p>
+        <p className="quick-title"><IconSparkle className="icon-xs" /> {t('aiAssistant')}</p>
         <div className="chat-box">
-          {chat.length === 0 && <p className="chat-placeholder">Ask me anything about Sri Lanka buses! 🇱🇰</p>}
+          {chat.length === 0 && <p className="chat-placeholder">{t('chatEmpty')}</p>}
           {chat.map((msg, i) => (
             <div key={i} className={`chat-msg ${msg.role}`}>
               <p>{msg.text}</p>
@@ -944,7 +1043,7 @@ const getNextBus = (timing) => {
           {loading && <div className="chat-msg assistant"><p>Typing...</p></div>}
         </div>
         <div className="chat-input-row">
-          <input type="text" placeholder="Ask about any route..." value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleChat()} />
+          <input type="text" placeholder={t('chatPlaceholder')} value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleChat()} />
           <button onClick={handleChat}>Send</button>
         </div>
       </div>

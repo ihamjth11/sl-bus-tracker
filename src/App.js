@@ -100,6 +100,15 @@ const IconTicket = icon(
   </>
 );
 
+const IconShare = icon(
+  <>
+    <circle cx="18" cy="5" r="2.6" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="6" cy="12" r="2.6" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="18" cy="19" r="2.6" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8.3 10.6L15.7 6.4M8.3 13.4L15.7 17.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+  </>
+);
+
 const IconClock = icon(
   <>
     <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
@@ -140,7 +149,28 @@ const [nearbyStops, setNearbyStops] = useState([]);
 const [locationLoading, setLocationLoading] = useState(false);
 const [locationError, setLocationError] = useState('');
 const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
+const [currency, setCurrency] = useState(() => localStorage.getItem('sl-bus-currency') || 'LKR');
+
+useEffect(() => {
+  localStorage.setItem('sl-bus-currency', currency);
+}, [currency]);
+
+// Approximate mid-market rates (LKR per unit) — for tourist reference only, not live/exact.
+const FX_RATES = { USD: 335.4, EUR: 387.7 };
+
+const formatFare = (fareStr) => {
+  if (!fareStr || currency === 'LKR') return fareStr;
+  const match = fareStr.match(/Rs\.\s*([\d,]+)/);
+  if (!match) return fareStr;
+  const lkr = parseFloat(match[1].replace(/,/g, ''));
+  const rate = FX_RATES[currency];
+  if (!rate) return fareStr;
+  const converted = (lkr / rate).toFixed(2);
+  const symbol = currency === 'USD' ? '$' : '€';
+  return `${symbol}${converted} (${fareStr})`;
+};
 const [showFullSchedule, setShowFullSchedule] = useState(false);
+const [showTouristTips, setShowTouristTips] = useState(false);
 
 useEffect(() => {
   localStorage.setItem('sl-bus-theme', theme);
@@ -245,6 +275,24 @@ const isFavorite = () => {
   const key = `${from}-${to}`;
   return favorites.some(f => f.key === key);
 };
+
+const shareRoute = () => {
+  if (!result) return;
+  const origin = result.stops?.[0] || from;
+  const destination = result.stops?.[result.stops.length - 1] || to;
+  const lines = [
+    `🚌 ${origin} → ${destination}`,
+    `Normal: ${result.normal.fare} (${result.normal.duration})`,
+    `AC: ${result.ac.fare} (${result.ac.duration})`,
+    `First bus: ${result.timing.first} | Last bus: ${result.timing.last}`,
+    `Frequency: ${result.timing.frequency}`,
+    ``,
+    `Via SL Bus Tracker: https://slbustracker.vercel.app`,
+  ];
+  const text = encodeURIComponent(lines.join('\n'));
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+};
+
 const findNearbyStops = () => {
   setLocationLoading(true);
   setLocationError('');
@@ -494,6 +542,13 @@ const getNextBus = (timing) => {
         </div>
         <div className="header-actions">
           <button
+            className="currency-toggle"
+            onClick={() => setCurrency(c => c === 'LKR' ? 'USD' : c === 'USD' ? 'EUR' : 'LKR')}
+            title="Show fares in another currency (approximate)"
+          >
+            {currency}
+          </button>
+          <button
             className="theme-toggle"
             onClick={toggleTheme}
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -578,13 +633,18 @@ const getNextBus = (timing) => {
 
       {result && (
   <div className="result-card">
-    <p className="result-title"><IconTicket className="icon" /> Available Buses</p>
+    <div className="result-title-row">
+      <p className="result-title"><IconTicket className="icon" /> Available Buses</p>
+      <button className="share-btn" onClick={shareRoute} title="Share on WhatsApp">
+        <IconShare className="icon-xs" /> Share
+      </button>
+    </div>
 
     {/* Normal Bus */}
     <div className="bus-option normal-bus">
       <div className="bus-option-header">
         <span className="bus-type-badge normal-badge"><IconBus className="icon" /> Normal</span>
-        <span className="bus-fare-tag">{result.normal.fare}</span>
+        <span className="bus-fare-tag">{formatFare(result.normal.fare)}</span>
       </div>
       <div className="bus-option-info">
         <span>{result.normal.bus}</span>
@@ -596,7 +656,7 @@ const getNextBus = (timing) => {
     <div className="bus-option ac-bus">
       <div className="bus-option-header">
         <span className="bus-type-badge ac-badge">AC Intercity</span>
-        <span className="bus-fare-tag ac-fare">{result.ac.fare}</span>
+        <span className="bus-fare-tag ac-fare">{formatFare(result.ac.fare)}</span>
       </div>
       <div className="bus-option-info">
         <span>{result.ac.bus}</span>
@@ -688,7 +748,7 @@ const getNextBus = (timing) => {
         <div key={i} className="alt-bus-item">
           <span className="alt-bus-number">{bus.bus}</span>
           <span className="alt-bus-type">{bus.type}</span>
-          <span className="alt-bus-fare">{bus.fare}</span>
+          <span className="alt-bus-fare">{formatFare(bus.fare)}</span>
         </div>
       ))}
     </div>
@@ -803,6 +863,45 @@ const getNextBus = (timing) => {
         ))
     }
   </div>
+</div>
+
+      <div className="quick-routes">
+  <p className="quick-title"><IconFlag className="icon-xs" /> Classic Tourist Trail</p>
+  <p className="trail-sub">Tap each leg to search it — all confirmed real routes.</p>
+  <div className="chips">
+    {["Colombo → Kandy", "Kandy → Badulla", "Badulla → Ella"].map((chip, i) => (
+      <div className="chip" key={i} onClick={() => handleChip(chip)}>{chip}</div>
+    ))}
+  </div>
+  <p className="trail-note">Galle is usually done as a separate trip from Colombo (search "Colombo → Galle") rather than continuing on from Ella.</p>
+</div>
+
+      <div className="quick-routes">
+  <button className="schedule-toggle" onClick={() => setShowTouristTips(s => !s)}>
+    <IconSparkle className="icon-xs" />
+    {showTouristTips ? 'Hide Tourist Tips' : 'First Time in Sri Lanka? Bus Tips'}
+    <span className={`schedule-chevron ${showTouristTips ? 'open' : ''}`}>⌄</span>
+  </button>
+  {showTouristTips && (
+    <div className="schedule-panel tips-panel">
+      <div className="tip-block">
+        <p className="tip-heading">Catching a bus</p>
+        <p className="tip-text">Buses don't always stop unless you flag them down — stick your arm out and wave clearly as it approaches. Buses display their destination on the front windscreen (ask a local or the AI assistant below if you can't read it).</p>
+      </div>
+      <div className="tip-block">
+        <p className="tip-heading">Paying</p>
+        <p className="tip-text">Pay the conductor in cash once you're seated (not the driver). Small notes help — conductors often can't break large bills. Ask "how much to [destination]?" if unsure.</p>
+      </div>
+      <div className="tip-block">
+        <p className="tip-heading">Avoiding overcharging</p>
+        <p className="tip-text">Check the fare shown in this app before boarding so you know roughly what to expect. Normal buses have fixed government fares — if a conductor asks for noticeably more, politely mention the standard fare.</p>
+      </div>
+      <div className="tip-block">
+        <p className="tip-heading">General safety</p>
+        <p className="tip-text">Keep bags on your lap or between your feet, not in overhead racks unless you can see them. Intercity buses can be very fast on winding roads — a window seat with a view is nice, but hold on.</p>
+      </div>
+    </div>
+  )}
 </div>
 
       <div className="chat-section">

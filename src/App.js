@@ -171,6 +171,23 @@ const formatFare = (fareStr) => {
 };
 const [showFullSchedule, setShowFullSchedule] = useState(false);
 const [showTouristTips, setShowTouristTips] = useState(false);
+const [installPrompt, setInstallPrompt] = useState(null);
+
+useEffect(() => {
+  const handler = (e) => {
+    e.preventDefault();
+    setInstallPrompt(e);
+  };
+  window.addEventListener('beforeinstallprompt', handler);
+  return () => window.removeEventListener('beforeinstallprompt', handler);
+}, []);
+
+const handleInstallClick = async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  setInstallPrompt(null);
+};
 
 useEffect(() => {
   localStorage.setItem('sl-bus-theme', theme);
@@ -564,6 +581,17 @@ const getNextBus = (timing) => {
         <h2>Where are you<br /><span>heading today?</span></h2>
         <p>Smart routes across all Sri Lanka</p>
       </div>
+
+      {installPrompt && (
+        <button className="install-banner" onClick={handleInstallClick}>
+          <IconBus className="icon" />
+          <span>
+            <strong>Install BusTracker</strong>
+            <small>Works offline, opens like an app</small>
+          </span>
+          <span className="install-cta">Install</span>
+        </button>
+      )}
 
       <div className="search-card">
   {/* From Input */}

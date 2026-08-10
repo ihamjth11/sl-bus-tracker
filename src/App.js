@@ -1,6 +1,7 @@
 import { searchLocations } from './locations';
 import { busRoutes } from './routesData';
 import React, { useState, useEffect, useRef } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import './App.css';
 
 const DARK_MAP_STYLES = [
@@ -130,6 +131,13 @@ function App() {
   const [showToSuggestions, setShowToSuggestions] = useState(false);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const toParam = searchParams.get('to');
+    if (toParam) setTo(toParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [result, setResult] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [chat, setChat] = useState([]);
@@ -643,6 +651,9 @@ const getNextBus = (timing) => {
           </div>
         </div>
         <div className="header-actions">
+          <Link to="/explore" className="theme-toggle explore-link" title="Explore Sri Lanka">
+            <IconFlag className="icon" />
+          </Link>
           <button
             className="currency-toggle lang-toggle"
             onClick={() => setUiLang(l => l === 'en' ? 'si' : l === 'si' ? 'ta' : 'en')}

@@ -191,6 +191,13 @@ body {
 }
 
 .theme-toggle:hover { background: var(--surface-2); }
+
+.explore-link {
+  text-decoration: none;
+  color: var(--text-dim);
+}
+
+.explore-link:hover { color: var(--accent); }
 .theme-toggle:active { transform: scale(0.9); }
 
 .currency-toggle {

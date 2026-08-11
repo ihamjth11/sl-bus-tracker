@@ -181,7 +181,7 @@ const [showFullSchedule, setShowFullSchedule] = useState(false);
 const TRANSLATIONS = {
   en: {
     heroLine1: 'Where are you', heroLine2: 'heading today?', heroSub: 'Smart routes across all Sri Lanka',
-    installTitle: 'Install BusTracker', installSub: 'Works offline, opens like an app', installCta: 'Install',
+    installTitle: 'Install Lankora', installSub: 'Works offline, opens like an app', installCta: 'Install',
     findBus: 'Find My Bus →', availableBuses: 'Available Buses', busTimings: 'Bus Timings',
     otherBuses: 'Other Buses on this Route', stops: 'Stops',
     notFound: 'Route not found in our database!', notFoundSub: 'Ask our AI Assistant below — it knows ALL Sri Lanka bus routes!',
@@ -195,7 +195,7 @@ const TRANSLATIONS = {
   },
   si: {
     heroLine1: 'ඔබ අද', heroLine2: 'කොහෙද යන්නේ?', heroSub: 'ශ්‍රී ලංකාව පුරා බස් මාර්ග',
-    installTitle: 'BusTracker ස්ථාපනය කරන්න', installSub: 'නොබැඳුනු විට ක්‍රියා කරයි, යෙදුමක් ලෙස විවෘත වේ', installCta: 'ස්ථාපනය',
+    installTitle: 'Lankora ස්ථාපනය කරන්න', installSub: 'නොබැඳුනු විට ක්‍රියා කරයි, යෙදුමක් ලෙස විවෘත වේ', installCta: 'ස්ථාපනය',
     findBus: 'මගේ බස් සොයන්න →', availableBuses: 'ලබා ගත හැකි බස්', busTimings: 'බස් වේලාවන්',
     otherBuses: 'මෙම මාර්ගයේ අනෙකුත් බස්', stops: 'නැවතුම්',
     notFound: 'මාර්ගය අපගේ දත්ත ගබඩාවේ හමු නොවීය!', notFoundSub: 'පහත AI සහායකයෙන් අසන්න — එය සියලුම ශ්‍රී ලංකා බස් මාර්ග දනී!',
@@ -209,7 +209,7 @@ const TRANSLATIONS = {
   },
   ta: {
     heroLine1: 'நீங்கள் இன்று', heroLine2: 'எங்கு செல்கிறீர்கள்?', heroSub: 'இலங்கை முழுவதும் ஸ்மார்ட் பாதைகள்',
-    installTitle: 'BusTracker நிறுவவும்', installSub: 'ஆஃப்லைனிலும் வேலை செய்யும், ஆப் போல் திறக்கும்', installCta: 'நிறுவு',
+    installTitle: 'Lankora நிறுவவும்', installSub: 'ஆஃப்லைனிலும் வேலை செய்யும், ஆப் போல் திறக்கும்', installCta: 'நிறுவு',
     findBus: 'என் பஸ்-ஐ கண்டுபிடி →', availableBuses: 'கிடைக்கும் பஸ்கள்', busTimings: 'பஸ் நேரங்கள்',
     otherBuses: 'இந்த வழியில் மற்ற பஸ்கள்', stops: 'நிறுத்தங்கள்',
     notFound: 'எங்கள் தரவுத்தளத்தில் வழி கிடைக்கவில்லை!', notFoundSub: 'கீழே AI உதவியாளரிடம் கேளுங்கள் — அது இலங்கையின் அனைத்து பஸ் வழிகளையும் அறியும்!',
@@ -364,7 +364,7 @@ const shareRoute = () => {
     `First bus: ${result.timing.first} | Last bus: ${result.timing.last}`,
     `Frequency: ${result.timing.frequency}`,
     ``,
-    `Via SL Bus Tracker: https://slbustracker.vercel.app`,
+    `Via Lankora: https://slbustracker.vercel.app`,
   ];
   const text = encodeURIComponent(lines.join('\n'));
   window.open(`https://wa.me/?text=${text}`, '_blank');
@@ -638,16 +638,14 @@ const getNextBus = (timing) => {
         <div className="logo">
           <div className="logo-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 16.5V6.8C4 5.2 5.3 4.3 7 4.1C9 3.9 15 3.9 17 4.1C18.7 4.3 20 5.2 20 6.8V16.5C20 17.3 19.3 18 18.5 18H18C17.4 18 17 18.4 17 19V19.3C17 19.7 16.7 20 16.3 20H14.7C14.3 20 14 19.7 14 19.3V19C14 18.4 13.6 18 13 18H11C10.4 18 10 18.4 10 19V19.3C10 19.7 9.7 20 9.3 20H7.7C7.3 20 7 19.7 7 19.3V19C7 18.4 6.6 18 6 18H5.5C4.7 18 4 17.3 4 16.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-              <path d="M4 11H20" stroke="currentColor" strokeWidth="1.6"/>
-              <path d="M7.5 14.3H7.51" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
-              <path d="M16.5 14.3H16.51" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
-              <path d="M6.5 7.2H17.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+              <path d="M6.5 4.8V17.3H12" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M16.3 5.76C14.1 5.76 12.24 7.58 12.24 9.84C12.24 12.84 16.32 17.76 16.32 17.76C16.32 17.76 20.4 12.84 20.4 9.84C20.4 7.58 18.58 5.76 16.32 5.76Z" fill="currentColor"/>
+              <path d="M10.1 18.7H19.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="0.2 2.1"/>
             </svg>
           </div>
           <div className="logo-text">
-            <h1>BusTracker</h1>
-            <span>Sri Lanka 🇱🇰</span>
+            <h1>Lankora</h1>
+            <span>Buses · Explore 🇱🇰</span>
           </div>
         </div>
         <div className="header-actions">
@@ -676,7 +674,7 @@ const getNextBus = (timing) => {
           >
             {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
           </button>
-          <div className="badge">● Live</div>
+          <div className="badge">Live</div>
         </div>
       </div>
 

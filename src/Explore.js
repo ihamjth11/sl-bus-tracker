@@ -115,7 +115,7 @@ export default function Explore() {
       <div className="header">
         <Link to="/" className="back-link">
           <IconBack className="icon" />
-          <span>Bus Tracker</span>
+          <span>Lankora</span>
         </Link>
         <div className="header-actions">
           <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
@@ -177,7 +177,7 @@ export default function Explore() {
         </div>
       </div>
 
-      <p className="explore-footer">Part of <Link to="/">SL Bus Tracker</Link> — bus routes, fares, and timings across all 25 districts.</p>
+      <p className="explore-footer">Part of <Link to="/">Lankora</Link> — bus routes, fares, and timings across all 25 districts.</p>
     </div>
   );
 }

@@ -23,7 +23,7 @@ function buildRouteKnowledge() {
 function buildSystemPrompt() {
   const routeKnowledge = buildRouteKnowledge();
 
-  return `You are an expert Sri Lanka bus transport assistant for the SL Bus Tracker app. Always answer in the same language as the user (Tamil, Sinhala, or English). Be friendly, accurate and helpful.
+  return `You are an expert Sri Lanka bus transport assistant for the Lankora app. Always answer in the same language as the user (Tamil, Sinhala, or English). Be friendly, accurate and helpful.
 
 VERIFIED ROUTE DATABASE (this is the app's own real data — routes marked "(est.)" in fare or "(approx.)" in frequency are estimated/calibrated, not officially published; everything else is sourced from NTC records, official timetables, or confirmed operator data):
 

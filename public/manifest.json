@@ -1,6 +1,7 @@
 {
-  "short_name": "BusTracker",
-  "name": "SL Bus Tracker - Sri Lanka Bus Routes & Fares",
+  "short_name": "Lankora",
+  "name": "Lankora - Sri Lanka Bus Routes, Fares & Travel Guide",
+  "description": "Find bus routes, fares, and timings across all 25 Sri Lanka districts, plus tourist destinations and travel tips.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,17 +11,40 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",
+  "id": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#0d1117",
-  "background_color": "#0a0d12"
+  "background_color": "#0a0d12",
+  "shortcuts": [
+    {
+      "name": "Explore Sri Lanka",
+      "url": "/explore",
+      "description": "Browse tourist destinations"
+    }
+  ]
 }

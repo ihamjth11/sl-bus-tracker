@@ -637,11 +637,7 @@ const getNextBus = (timing) => {
       <div className="header">
         <div className="logo">
           <div className="logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.5 4.8V17.3H12" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M16.3 5.76C14.1 5.76 12.24 7.58 12.24 9.84C12.24 12.84 16.32 17.76 16.32 17.76C16.32 17.76 20.4 12.84 20.4 9.84C20.4 7.58 18.58 5.76 16.32 5.76Z" fill="currentColor"/>
-              <path d="M10.1 18.7H19.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="0.2 2.1"/>
-            </svg>
+            <img src="/logo-icon.png" alt="Lankora" />
           </div>
           <div className="logo-text">
             <h1>Lankora</h1>

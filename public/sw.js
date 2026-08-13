@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-globals */
-const CACHE_NAME = 'sl-bus-tracker-v1';
-const APP_SHELL = ['/', '/index.html', '/manifest.json', '/favicon.svg'];
+const CACHE_NAME = 'lankora-v3';
+const APP_SHELL = ['/', '/index.html', '/track', '/explore', '/manifest.json', '/favicon.svg'];
+const CACHEABLE_CROSS_ORIGIN = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -27,10 +28,13 @@ self.addEventListener('fetch', (event) => {
   // Never cache the live AI chat API — always needs a fresh network response.
   if (url.pathname.startsWith('/api/')) return;
 
-  // Google Maps / external scripts: let the browser handle normally, don't intercept.
-  if (url.origin !== self.location.origin) return;
+  const isSameOrigin = url.origin === self.location.origin;
+  const isCacheableFont = CACHEABLE_CROSS_ORIGIN.includes(url.hostname);
 
-  // App shell / static assets: cache-first, falling back to network, and cache what we fetch.
+  // Everything else cross-origin (Google Maps, etc.): let the browser handle normally.
+  if (!isSameOrigin && !isCacheableFont) return;
+
+  // App shell, static assets, and Google Fonts: cache-first, falling back to network.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;

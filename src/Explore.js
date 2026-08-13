@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 import './Explore.css';
+import Navbar from './Navbar';
 
 const icon = (children) => (props) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -47,16 +48,30 @@ const IconTicketExternal = icon(
   </>
 );
 
+const IconTip = icon(
+  <>
+    <path d="M9 18H15M10 21H14M8 10C8 6.7 10.7 4 14 4C17.3 4 20 6.7 20 10C20 12.5 18.5 14 17.3 15.1C16.6 15.7 16 16.4 16 17.2V18H12V17.2C12 16.4 11.4 15.7 10.7 15.1C9.5 14 8 12.5 8 10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </>
+);
+
+const IconInfo = icon(
+  <>
+    <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M12 11V16.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <circle cx="12" cy="8" r="1" fill="currentColor" />
+  </>
+);
+
 const CATEGORIES = [
   {
     id: 'ancient',
     label: 'Ancient Cities',
     accent: '#c2740a',
     places: [
-      { name: 'Sigiriya', district: 'Matale', blurb: 'A 180m granite rock fortress with 5th-century frescoes and gardens at its base — a UNESCO World Heritage Site and one of the most photographed sights in the country.' },
-      { name: 'Anuradhapura', district: 'Anuradhapura', blurb: "Sri Lanka's first ancient capital, with 2,000+ year old dagobas (stupas), the sacred Sri Maha Bodhi tree, and sprawling monastery ruins." },
-      { name: 'Polonnaruwa', district: 'Polonnaruwa', blurb: 'The compact, well-preserved second ancient capital — easy to explore by bicycle in a day, with the famous Gal Vihara rock-cut Buddha statues.' },
-      { name: 'Dambulla', district: 'Matale', blurb: 'Cave temple complex carved into a rock face, with over 150 Buddha statues and painted ceilings dating back more than 2,000 years.' },
+      { name: 'Sigiriya', district: 'Matale', blurb: 'A 180m granite rock fortress with 5th-century frescoes and gardens at its base — a UNESCO World Heritage Site and one of the most photographed sights in the country.', tip: 'Climb early (gates open ~7am) to beat the heat and crowds.' },
+      { name: 'Anuradhapura', district: 'Anuradhapura', blurb: "Sri Lanka's first ancient capital, with 2,000+ year old dagobas (stupas), the sacred Sri Maha Bodhi tree, and sprawling monastery ruins.", tip: 'Rent a bicycle locally — the sacred city area is large and spread out.' },
+      { name: 'Polonnaruwa', district: 'Polonnaruwa', blurb: 'The compact, well-preserved second ancient capital — easy to explore by bicycle in a day, with the famous Gal Vihara rock-cut Buddha statues.', tip: 'Cover shoulders and knees — this is an active sacred site.' },
+      { name: 'Dambulla', district: 'Matale', blurb: 'Cave temple complex carved into a rock face, with over 150 Buddha statues and painted ceilings dating back more than 2,000 years.', tip: 'Combine with Sigiriya — they\'re only about 20km apart.' },
     ],
   },
   {
@@ -64,10 +79,10 @@ const CATEGORIES = [
     label: 'Hill Country',
     accent: '#0f9d78',
     places: [
-      { name: 'Kandy', district: 'Kandy', blurb: 'The cultural capital — home to the Temple of the Sacred Tooth Relic, a scenic lake, and the gateway to the hill country train line.' },
-      { name: 'Ella', district: 'Badulla', blurb: 'Laid-back hill town famous for the Nine Arch Bridge, Little Adam\'s Peak, and tea-country views — a backpacker favorite.' },
-      { name: 'Nuwara Eliya', district: 'Nuwara Eliya', blurb: '"Little England" — cool climate, rolling tea plantations, colonial-era buildings, and Sri Lanka\'s highest peaks nearby.' },
-      { name: 'Haputale', district: 'Badulla', blurb: 'A quieter alternative to Ella, with dramatic escarpment views over the southern plains, especially at sunrise from Lipton\'s Seat.' },
+      { name: 'Kandy', district: 'Kandy', blurb: 'The cultural capital — home to the Temple of the Sacred Tooth Relic, a scenic lake, and the gateway to the hill country train line.', tip: 'The Kandy-Ella train is one of the world\'s most scenic — book seats ahead.' },
+      { name: 'Ella', district: 'Badulla', blurb: 'Laid-back hill town famous for the Nine Arch Bridge, Little Adam\'s Peak, and tea-country views — a backpacker favorite.', tip: 'Nine Arch Bridge is best at sunrise, before tour groups arrive.' },
+      { name: 'Nuwara Eliya', district: 'Nuwara Eliya', blurb: '"Little England" — cool climate, rolling tea plantations, colonial-era buildings, and Sri Lanka\'s highest peaks nearby.', tip: 'Bring a light jacket — evenings get genuinely cold here.' },
+      { name: 'Haputale', district: 'Badulla', blurb: 'A quieter alternative to Ella, with dramatic escarpment views over the southern plains, especially at sunrise from Lipton\'s Seat.', tip: 'Lipton\'s Seat is a rewarding early-morning walk through tea estates.' },
     ],
   },
   {
@@ -75,10 +90,10 @@ const CATEGORIES = [
     label: 'Beaches',
     accent: '#2b7fd1',
     places: [
-      { name: 'Mirissa', district: 'Matara', blurb: 'Crescent-shaped beach known for whale watching (blue whales, Nov-Apr) and a lively beachfront strip of cafes.' },
-      { name: 'Unawatuna', district: 'Galle', blurb: 'A sheltered, calm bay close to Galle Fort — popular for swimming, snorkeling, and easy beach access.' },
-      { name: 'Arugam Bay', district: 'Ampara', blurb: "The east coast's premier surf town, with a laid-back backpacker scene and consistent right-hand point breaks." },
-      { name: 'Trincomalee', district: 'Trincomalee', blurb: 'Deep natural harbour with Nilaveli and Uppuveli beaches nearby — clear water, snorkeling, and Pigeon Island National Park.' },
+      { name: 'Mirissa', district: 'Matara', blurb: 'Crescent-shaped beach known for whale watching (blue whales, Nov-Apr) and a lively beachfront strip of cafes.', tip: 'Whale watching boats leave early (~6:30am) — seas are calmer.' },
+      { name: 'Unawatuna', district: 'Galle', blurb: 'A sheltered, calm bay close to Galle Fort — popular for swimming, snorkeling, and easy beach access.', tip: 'Walk or tuk-tuk to Galle Fort for sunset — about 15 minutes away.' },
+      { name: 'Arugam Bay', district: 'Ampara', blurb: "The east coast's premier surf town, with a laid-back backpacker scene and consistent right-hand point breaks.", tip: 'Best surf season is Apr-Oct, opposite to the west/south coast.' },
+      { name: 'Trincomalee', district: 'Trincomalee', blurb: 'Deep natural harbour with Nilaveli and Uppuveli beaches nearby — clear water, snorkeling, and Pigeon Island National Park.', tip: 'Visit Apr-Sep — this coast has the opposite monsoon pattern to the south.' },
     ],
   },
   {
@@ -86,10 +101,21 @@ const CATEGORIES = [
     label: 'Wildlife',
     accent: '#a4460f',
     places: [
-      { name: 'Yala National Park', district: 'Hambantota', blurb: 'One of the best places in the world to spot wild leopards, alongside elephants, sloth bears, and abundant birdlife.' },
-      { name: 'Udawalawe', district: 'Ratnapura', blurb: "Reliable elephant sightings in open grassland — often easier viewing than Yala's denser jungle terrain." },
-      { name: 'Minneriya', district: 'Polonnaruwa', blurb: 'Famous for "the Gathering" — hundreds of wild elephants congregating around the reservoir in the dry season (Jul-Oct).' },
-      { name: 'Sinharaja Forest Reserve', district: 'Ratnapura', blurb: "Sri Lanka's last major rainforest, a UNESCO biosphere reserve rich in endemic birds and plant species." },
+      { name: 'Yala National Park', district: 'Hambantota', blurb: 'One of the best places in the world to spot wild leopards, alongside elephants, sloth bears, and abundant birdlife.', tip: 'Book an early-morning safari — animals are most active then.' },
+      { name: 'Udawalawe', district: 'Ratnapura', blurb: "Reliable elephant sightings in open grassland — often easier viewing than Yala's denser jungle terrain.", tip: 'Also home to the Elephant Transit Home, which feeds orphaned calves.' },
+      { name: 'Minneriya', district: 'Polonnaruwa', blurb: 'Famous for "the Gathering" — hundreds of wild elephants congregating around the reservoir in the dry season (Jul-Oct).', tip: 'Visit Jul-Oct specifically for the large elephant gatherings.' },
+      { name: 'Sinharaja Forest Reserve', district: 'Ratnapura', blurb: "Sri Lanka's last major rainforest, a UNESCO biosphere reserve rich in endemic birds and plant species.", tip: 'A local guide is required and genuinely improves the birdwatching.' },
+    ],
+  },
+  {
+    id: 'hidden',
+    label: 'Hidden Gems',
+    accent: '#9147c2',
+    places: [
+      { name: 'Ritigala', district: 'Anuradhapura', blurb: 'Forested ruins of an ancient monastery on a misty mountain — one of the least-visited archaeological sites, with none of the crowds of Sigiriya.', tip: 'Bring water and good shoes — this is a real forest hike, not a paved path.' },
+      { name: 'Meemure', district: 'Kandy', blurb: "One of Sri Lanka's most remote traditional villages, tucked inside the Knuckles mountain range — reachable only by a rough final stretch of road.", tip: 'Popular as a base for multi-day Knuckles Range hikes.' },
+      { name: 'Riverston', district: 'Matale', blurb: 'A lesser-known viewpoint in the Knuckles range with dramatic cliff-edge views and cooler weather, minus the Ella crowds.', tip: 'Mist rolls in fast in the afternoon — aim to arrive by mid-morning.' },
+      { name: 'Kalpitiya', district: 'Puttalam', blurb: 'A quiet peninsula known for kitesurfing and dolphin pods (sometimes hundreds at once) — a different pace from the south coast beach towns.', tip: 'Best kite season is May-Oct; dolphin tours run most of the year.' },
     ],
   },
 ];
@@ -150,9 +176,28 @@ export default function Explore() {
             </div>
             <h3 className="place-name">{place.name}</h3>
             <p className="place-blurb">{place.blurb}</p>
-            <Link to={`/?to=${encodeURIComponent(place.name)}`} className="place-bus-btn">
-              <IconBus className="icon-xs" /> Find Bus Here
-            </Link>
+            {place.tip && (
+              <p className="place-tip"><IconTip className="icon-xs" /> {place.tip}</p>
+            )}
+            <div className="place-actions">
+              <Link to={`/?to=${encodeURIComponent(place.name)}`} className="place-bus-btn">
+                <IconBus className="icon-xs" /> Find Bus
+              </Link>
+              <a
+                href={`https://en.wikipedia.org/wiki/${encodeURIComponent(place.name.replace(/ /g, '_'))}`}
+                target="_blank" rel="noopener noreferrer"
+                className="place-action-btn"
+              >
+                <IconInfo className="icon-xs" /> View
+              </a>
+              <a
+                href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(place.name + ', Sri Lanka')}`}
+                target="_blank" rel="noopener noreferrer"
+                className="place-action-btn"
+              >
+                <IconBed className="icon-xs" /> Stay
+              </a>
+            </div>
           </div>
         ))}
       </div>

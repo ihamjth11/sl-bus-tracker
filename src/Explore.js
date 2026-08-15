@@ -10,10 +10,6 @@ const icon = (children) => (props) => (
   </svg>
 );
 
-const IconBack = icon(
-  <path d="M15 5L8 12L15 19" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-);
-
 const IconSun = icon(
   <>
     <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.7" />
@@ -138,17 +134,13 @@ export default function Explore() {
 
   return (
     <div className="app explore-page">
-      <div className="header">
-        <Link to="/" className="back-link">
-          <IconBack className="icon" />
-          <span>Lankora</span>
-        </Link>
-        <div className="header-actions">
+      <Navbar
+        extra={
           <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
             {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
           </button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="hero">
         <h2>Explore <span>Sri Lanka</span></h2>

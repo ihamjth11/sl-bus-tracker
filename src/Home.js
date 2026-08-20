@@ -45,15 +45,14 @@ const IconMoon = icon(
 );
 
 // Stable Wikimedia Commons URLs — same source as the Explore carousel
-const HERO_IMAGE =
-  "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sigiriya_2019.jpg";
+const HERO_IMAGE = "https://commons.wikimedia.org/wiki/Special:FilePath/Sigiriya.jpg";
 
 const FEATURES = [
   {
     to: '/track',
     accent: '#f0a83f',
     Icon: IconBus,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Kandy_Lake_and_Temple_of_the_Tooth.jpg',
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Kandy_lake.jpg',
     title: 'Track Buses',
     desc: 'Find routes, fares, and timings across all 25 districts of Sri Lanka — with live schedule search and an AI travel assistant.',
     cta: 'Find your bus',
@@ -62,7 +61,7 @@ const FEATURES = [
     to: '/explore',
     accent: '#0f9d78',
     Icon: IconCompass,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Nine_Arches_Bridge%2C_Ella%2C_Sri_Lanka.jpg',
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Nine_Arches_Bridge.jpg',
     title: 'Explore Sri Lanka',
     desc: 'Ancient cities, hill country, beaches, wildlife, and hidden gems — discover where to go, then find the bus to get there.',
     cta: 'Discover places',
@@ -71,7 +70,7 @@ const FEATURES = [
     to: '/#book',
     accent: '#2b7fd1',
     Icon: IconBed,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Mirissa_Beach.jpg',
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Secret_beach_-_Mirissa_Sri_Lanka.jpg',
     title: 'Book Your Stay',
     desc: 'Reserve intercity bus seats and find hotels or villas near your destination — all from one trip planner.',
     cta: 'Plan your trip',

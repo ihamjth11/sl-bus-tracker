@@ -8,35 +8,35 @@ const SLIDES = [
     title: "Sigiriya",
     subtitle: "Ancient Rock Fortress",
     image:
-      "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sigiriya_2019.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sigiriya.jpg",
   },
   {
     id: "ella",
     title: "Ella",
     subtitle: "Hill Country Views",
     image:
-      "https://upload.wikimedia.org/wikipedia/commons/4/44/Nine_Arches_Bridge%2C_Ella%2C_Sri_Lanka.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nine_Arches_Bridge.jpg",
   },
   {
     id: "mirissa",
     title: "Mirissa",
     subtitle: "Whale Watching & Beaches",
     image:
-      "https://upload.wikimedia.org/wikipedia/commons/3/3a/Mirissa_Beach.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Secret_beach_-_Mirissa_Sri_Lanka.jpg",
   },
   {
     id: "kandy",
     title: "Kandy",
     subtitle: "Temple of the Sacred Tooth",
     image:
-      "https://upload.wikimedia.org/wikipedia/commons/7/7e/Kandy_Lake_and_Temple_of_the_Tooth.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Kandy_lake.jpg",
   },
   {
     id: "yala",
     title: "Yala",
     subtitle: "Leopards & Wildlife",
     image:
-      "https://upload.wikimedia.org/wikipedia/commons/7/76/Leopard_in_Yala.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sri_Lankan_Leopard_-_Yala_National_Park.jpg",
   },
 ];
 

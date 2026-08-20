@@ -24,14 +24,13 @@ const LIGHT_MAP_STYLES = [
 
 // Same verified Wikimedia Commons image already used on the Home page.
 // onError below falls back to a plain gradient if it ever fails to load.
-const HERO_IMAGE =
-  "https://upload.wikimedia.org/wikipedia/commons/7/7e/Kandy_Lake_and_Temple_of_the_Tooth.jpg";
+const HERO_IMAGE = "https://commons.wikimedia.org/wiki/Special:FilePath/Kandy_lake.jpg";
 
 // Mini rotating teaser shown on the hero — tapping it goes to /explore.
 const TEASER_IMAGES = [
-  "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sigiriya_2019.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/4/44/Nine_Arches_Bridge%2C_Ella%2C_Sri_Lanka.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/3/3a/Mirissa_Beach.jpg",
+  "https://commons.wikimedia.org/wiki/Special:FilePath/Sigiriya.jpg",
+  "https://commons.wikimedia.org/wiki/Special:FilePath/Nine_Arches_Bridge.jpg",
+  "https://commons.wikimedia.org/wiki/Special:FilePath/Secret_beach_-_Mirissa_Sri_Lanka.jpg",
 ];
 
 const icon = (children, extraProps = {}) => (props) => (

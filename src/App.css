@@ -1188,7 +1188,7 @@ input:focus-visible,
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  width: 68px;
+  width: 92px;
   transition: transform 0.15s ease;
 }
 
@@ -1197,9 +1197,9 @@ input:focus-visible,
 
 .hero-teaser-images {
   position: relative;
-  width: 68px;
-  height: 68px;
-  border-radius: 16px;
+  width: 92px;
+  height: 92px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.18);
 }
@@ -1233,6 +1233,6 @@ input:focus-visible,
 }
 
 @media (min-width: 720px) {
-  .hero-teaser { top: 20px; right: 20px; width: 80px; }
-  .hero-teaser-images { width: 80px; height: 80px; }
+  .hero-teaser { top: 20px; right: 20px; width: 108px; }
+  .hero-teaser-images { width: 108px; height: 108px; }
 }

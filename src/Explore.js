@@ -1,8 +1,10 @@
+import FeaturedCarousel from "./components/FeaturedCarousel";
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 import './Explore.css';
 import Navbar from './Navbar';
+
 
 const icon = (children) => (props) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -134,13 +136,15 @@ export default function Explore() {
 
   return (
     <div className="app explore-page">
-      <Navbar
+           <Navbar
         extra={
           <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
             {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
           </button>
         }
       />
+
+      <FeaturedCarousel />
 
       <div className="hero">
         <h2>Explore <span>Sri Lanka</span></h2>

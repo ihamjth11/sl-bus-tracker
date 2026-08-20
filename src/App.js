@@ -3,6 +3,8 @@ import { busRoutes } from './routesData';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import './App.css';
+import Navbar from './Navbar';
+import NavMoreMenu from './NavMoreMenu';
 
 const DARK_MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#131a22" }] },
@@ -18,6 +20,18 @@ const LIGHT_MAP_STYLES = [
   { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
   { featureType: "road", elementType: "geometry", stylers: [{ color: "#e2e6ea" }] },
   { featureType: "water", elementType: "geometry", stylers: [{ color: "#dbe9f4" }] },
+];
+
+// Same verified Wikimedia Commons image already used on the Home page.
+// onError below falls back to a plain gradient if it ever fails to load.
+const HERO_IMAGE =
+  "https://upload.wikimedia.org/wikipedia/commons/7/7e/Kandy_Lake_and_Temple_of_the_Tooth.jpg";
+
+// Mini rotating teaser shown on the hero — tapping it goes to /explore.
+const TEASER_IMAGES = [
+  "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sigiriya_2019.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/4/44/Nine_Arches_Bridge%2C_Ella%2C_Sri_Lanka.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/3/3a/Mirissa_Beach.jpg",
 ];
 
 const icon = (children, extraProps = {}) => (props) => (
@@ -117,6 +131,13 @@ const IconClock = icon(
   </>
 );
 
+const IconCompass = icon(
+  <>
+    <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M15 9L13 13L9 15L11 11L15 9Z" fill="currentColor" />
+  </>
+);
+
 
 function findRoute(from, to) {
   const key1 = `${from.toLowerCase()}-${to.toLowerCase()}`;
@@ -132,6 +153,15 @@ function App() {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [searchParams] = useSearchParams();
+  const [heroImgFailed, setHeroImgFailed] = useState(false);
+  const [teaserIndex, setTeaserIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setTeaserIndex((i) => (i + 1) % TEASER_IMAGES.length);
+    }, 2500);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const toParam = searchParams.get('to');
@@ -634,49 +664,55 @@ const getNextBus = (timing) => {
 
   return (
     <div className="app">
-      <div className="header">
-        <div className="logo">
-          <div className="logo-icon">
-            <img src="/logo-icon.png" alt="Lankora" />
-          </div>
-          <div className="logo-text">
-            <h1>Lankora</h1>
-            <span>Buses · Explore 🇱🇰</span>
-          </div>
-        </div>
-        <div className="header-actions">
-          <Link to="/explore" className="theme-toggle explore-link" title="Explore Sri Lanka">
-            <IconFlag className="icon" />
-          </Link>
-          <button
-            className="currency-toggle lang-toggle"
-            onClick={() => setUiLang(l => l === 'en' ? 'si' : l === 'si' ? 'ta' : 'en')}
-            title="Change language / භාෂාව මාරු කරන්න / மொழியை மாற்று"
-          >
-            {uiLang.toUpperCase()}
-          </button>
-          <button
-            className="currency-toggle"
-            onClick={() => setCurrency(c => c === 'LKR' ? 'USD' : c === 'USD' ? 'EUR' : 'LKR')}
-            title="Show fares in another currency (approximate)"
-          >
-            {currency}
-          </button>
-          <button
-            className="theme-toggle"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
-          </button>
-          <div className="badge">Live</div>
-        </div>
-      </div>
+      <Navbar
+        extra={
+          <>
+            <div className="badge">Live</div>
+            <NavMoreMenu
+              theme={theme}
+              toggleTheme={toggleTheme}
+              uiLang={uiLang}
+              setUiLang={setUiLang}
+              currency={currency}
+              setCurrency={setCurrency}
+            />
+          </>
+        }
+      />
 
-      <div className="hero">
-        <h2>{t('heroLine1')}<br /><span>{t('heroLine2')}</span></h2>
-        <p>{t('heroSub')}</p>
+      <div
+        className="hero hero-photo"
+        style={!heroImgFailed ? { backgroundImage: `url(${HERO_IMAGE})` } : undefined}
+      >
+        {/* Hidden img used only to detect load failure and trigger the plain-gradient fallback */}
+        <img
+          src={HERO_IMAGE}
+          alt=""
+          style={{ display: 'none' }}
+          onError={() => setHeroImgFailed(true)}
+        />
+        <div className="hero-photo-overlay" />
+
+        <Link to="/explore" className="hero-teaser" aria-label="Explore Sri Lanka">
+          <div className="hero-teaser-images">
+            {TEASER_IMAGES.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt=""
+                className={`hero-teaser-img ${i === teaserIndex ? 'active' : ''}`}
+              />
+            ))}
+          </div>
+          <span className="hero-teaser-label">
+            <IconCompass className="icon-xs" /> Explore
+          </span>
+        </Link>
+
+        <div className="hero-photo-content">
+          <h2>{t('heroLine1')}<br /><span>{t('heroLine2')}</span></h2>
+          <p>{t('heroSub')}</p>
+        </div>
       </div>
 
       {installPrompt && (

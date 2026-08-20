@@ -280,6 +280,82 @@ body {
 }
 
 /* ===================================================================
+   HERO PHOTO — opt-in variant used by the tracker page (App.js).
+   The plain .hero class above is untouched, so Explore.js (which
+   doesn't use a photo) keeps working exactly as before.
+=================================================================== */
+.hero-photo {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  min-height: 220px;
+  display: flex;
+  align-items: flex-end;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface-2);
+  box-shadow: var(--shadow-lg);
+  padding: 0;
+}
+
+.hero-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 13, 18, 0.2) 0%,
+    rgba(10, 13, 18, 0.6) 60%,
+    rgba(10, 13, 18, 0.92) 100%
+  );
+}
+
+[data-theme="light"] .hero-photo-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 13, 18, 0.3) 0%,
+    rgba(10, 13, 18, 0.65) 60%,
+    rgba(10, 13, 18, 0.94) 100%
+  );
+}
+
+.hero-photo-content {
+  position: relative;
+  z-index: 1;
+  padding: 22px 20px 20px;
+  width: 100%;
+}
+
+.hero-photo-content h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.16;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.hero-photo-content h2 span {
+  background: linear-gradient(95deg, var(--accent-strong), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-photo-content p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13.5px;
+  font-weight: 450;
+}
+
+@media (min-width: 720px) {
+  .hero-photo { min-height: 280px; }
+  .hero-photo-content { padding: 32px 30px 28px; }
+  .hero-photo-content h2 { font-size: 34px; }
+}
+
+/* ===================================================================
    SEARCH CARD
 =================================================================== */
 .install-banner {
@@ -1097,4 +1173,66 @@ input:focus-visible,
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ===================================================================
+   HERO TEASER — small rotating "Explore" card on the tracker hero,
+   tap/click navigates to /explore.
+=================================================================== */
+.hero-teaser {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  width: 68px;
+  transition: transform 0.15s ease;
+}
+
+.hero-teaser:hover { transform: translateY(-2px); }
+.hero-teaser:active { transform: scale(0.96); }
+
+.hero-teaser-images {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.18);
+}
+
+.hero-teaser-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.hero-teaser-img.active { opacity: 1; }
+
+.hero-teaser-label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 5px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10.5px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 3px 8px;
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+@media (min-width: 720px) {
+  .hero-teaser { top: 20px; right: 20px; width: 80px; }
+  .hero-teaser-images { width: 80px; height: 80px; }
 }

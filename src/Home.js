@@ -44,11 +44,16 @@ const IconMoon = icon(
   <path d="M20.5 14.2C19.3 14.7 18 15 16.6 15C11.3 15 7 10.7 7 5.4C7 4 7.3 2.7 7.8 1.5C4.4 2.9 2 6.2 2 10.1C2 15.3 6.2 19.5 11.4 19.5C15.3 19.5 18.6 17.1 20 13.7C20.2 13.9 20.4 14.1 20.5 14.2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
 );
 
+// Stable Wikimedia Commons URLs — same source as the Explore carousel
+const HERO_IMAGE =
+  "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sigiriya_2019.jpg";
+
 const FEATURES = [
   {
     to: '/track',
     accent: '#f0a83f',
     Icon: IconBus,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Kandy_Lake_and_Temple_of_the_Tooth.jpg',
     title: 'Track Buses',
     desc: 'Find routes, fares, and timings across all 25 districts of Sri Lanka — with live schedule search and an AI travel assistant.',
     cta: 'Find your bus',
@@ -57,6 +62,7 @@ const FEATURES = [
     to: '/explore',
     accent: '#0f9d78',
     Icon: IconCompass,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Nine_Arches_Bridge%2C_Ella%2C_Sri_Lanka.jpg',
     title: 'Explore Sri Lanka',
     desc: 'Ancient cities, hill country, beaches, wildlife, and hidden gems — discover where to go, then find the bus to get there.',
     cta: 'Discover places',
@@ -65,6 +71,7 @@ const FEATURES = [
     to: '/#book',
     accent: '#2b7fd1',
     Icon: IconBed,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Mirissa_Beach.jpg',
     title: 'Book Your Stay',
     desc: 'Reserve intercity bus seats and find hotels or villas near your destination — all from one trip planner.',
     cta: 'Plan your trip',
@@ -100,17 +107,23 @@ export default function Home() {
         }
       />
 
-      <div className="home-hero">
-        <span className="home-eyebrow">Track · Travel · Explore</span>
-        <h1>Your journey across <span>Sri Lanka</span> starts here</h1>
-        <p>Real bus routes, real fares, real places — one app for getting around and discovering the island.</p>
-        <div className="home-hero-actions">
-          <Link to="/track" className="home-cta-primary">
-            <IconBus className="icon-xs" /> Find a bus
-          </Link>
-          <Link to="/explore" className="home-cta-secondary">
-            <IconCompass className="icon-xs" /> Explore places
-          </Link>
+      <div
+        className="home-hero home-hero-photo"
+        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
+      >
+        <div className="home-hero-overlay" />
+        <div className="home-hero-content">
+          <span className="home-eyebrow">Track · Travel · Explore</span>
+          <h1>Your journey across <span>Sri Lanka</span> starts here</h1>
+          <p>Real bus routes, real fares, real places — one app for getting around and discovering the island.</p>
+          <div className="home-hero-actions">
+            <Link to="/track" className="home-cta-primary">
+              <IconBus className="icon-xs" /> Find a bus
+            </Link>
+            <Link to="/explore" className="home-cta-secondary">
+              <IconCompass className="icon-xs" /> Explore places
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -126,12 +139,19 @@ export default function Home() {
       <div className="home-features" id="book">
         {FEATURES.map((f, i) => (
           <Link to={f.to} className="home-feature-card" key={i} style={{ '--feature-accent': f.accent }}>
-            <div className="home-feature-icon">
-              <f.Icon className="icon" />
+            <div
+              className="home-feature-photo"
+              style={{ backgroundImage: `url(${f.image})` }}
+            >
+              <div className="home-feature-icon">
+                <f.Icon className="icon" />
+              </div>
             </div>
-            <h3>{f.title}</h3>
-            <p>{f.desc}</p>
-            <span className="home-feature-cta">{f.cta} →</span>
+            <div className="home-feature-body">
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
+              <span className="home-feature-cta">{f.cta} →</span>
+            </div>
           </Link>
         ))}
       </div>

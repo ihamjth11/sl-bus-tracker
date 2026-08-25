@@ -31,7 +31,7 @@ const IconBed = icon(
 const NAV_ITEMS = [
   { to: '/', label: 'Home', Icon: IconHome, match: (p) => p === '/' },
   { to: '/explore', label: 'Explore', Icon: IconCompass, match: (p) => p === '/explore' },
-  { to: '/#book', label: 'Book', Icon: IconBed, match: () => false },
+  { to: '/book', label: 'Book', Icon: IconBed, match: (p) => p === '/book' },
 ];
 
 export default function Navbar({ extra }) {
@@ -41,7 +41,11 @@ export default function Navbar({ extra }) {
     <nav className="lankora-nav">
       <Link to="/" className="lankora-nav-brand">
         <img src="/logo-icon.png" alt="Lankora" className="lankora-nav-logo" />
-        <span>Lankora</span>
+        <span className="lankora-wordmark">
+          LANK
+          <span className="lankora-o-icon" aria-hidden="true" />
+          RA
+        </span>
       </Link>
 
       <div className="lankora-nav-links">

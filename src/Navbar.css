@@ -2,9 +2,9 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   padding: 12px 20px;
   margin: -22px -18px 26px;
@@ -20,26 +20,68 @@
 
 .lankora-nav-brand {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   text-decoration: none;
   color: var(--text);
   flex-shrink: 0;
+  justify-self: start;
 }
 
 .lankora-nav-logo {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
   object-fit: cover;
+  flex-shrink: 0;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
-.lankora-nav-brand span {
+/* "LANK" + gold O-icon + "RA" — bold letter-spaced wordmark */
+.lankora-wordmark {
+  display: flex;
+  align-items: center;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 16px;
-  letter-spacing: -0.01em;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.lankora-o-icon {
+  display: inline-block;
+  position: relative;
+  width: 11px;
+  height: 11px;
+  margin: 0 1px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--accent-strong), var(--accent));
+  vertical-align: middle;
+}
+
+/* Pin drawn purely with CSS (classic teardrop: rounded square rotated
+   45deg with one corner square) — no image or SVG asset, so it cannot
+   fail to load or render incorrectly. */
+.lankora-o-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: #1a1206;
+  border-radius: 50% 50% 50% 0;
+  transform: translate(-50%, -62%) rotate(-45deg);
+}
+
+@media (min-width: 480px) {
+  .lankora-nav-logo { width: 30px; height: 30px; }
+  .lankora-wordmark { font-size: 15px; }
+  .lankora-o-icon { width: 13px; height: 13px; }
+  .lankora-o-icon::after { width: 6px; height: 6px; }
 }
 
 .lankora-nav-links {
@@ -51,6 +93,7 @@
   padding: 4px;
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+  justify-self: center;
 }
 
 .lankora-nav-link {
@@ -86,8 +129,5 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-}
-
-@media (max-width: 380px) {
-  .lankora-nav-brand span { display: none; }
+  justify-self: end;
 }

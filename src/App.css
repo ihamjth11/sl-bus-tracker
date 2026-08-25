@@ -377,14 +377,13 @@ body {
 
 .install-banner:hover { box-shadow: var(--shadow); }
 
-.install-banner .icon {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  background: var(--board-bg);
-  color: var(--board-text);
+.install-banner-logo {
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
+  object-fit: cover;
   flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .install-banner span:nth-child(2) {
@@ -655,9 +654,32 @@ body {
 
 .bus-option-info {
   display: flex;
+  align-items: center;
   gap: 16px;
   font-size: 12.5px;
   color: var(--text-dim);
+}
+
+.bus-book-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  text-decoration: none;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 20px;
+  padding: 4px 11px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  transition: background-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.bus-book-btn:hover {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .timing-box {
@@ -1176,63 +1198,7 @@ input:focus-visible,
 }
 
 /* ===================================================================
-   HERO TEASER — small rotating "Explore" card on the tracker hero,
-   tap/click navigates to /explore.
+   HERO — background is now the animated route map (RouteMapAnimation
+   component, self-contained with its own CSS file), not a photo.
+   .hero-photo-overlay below still softens the bottom for text legibility.
 =================================================================== */
-.hero-teaser {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  width: 92px;
-  transition: transform 0.15s ease;
-}
-
-.hero-teaser:hover { transform: translateY(-2px); }
-.hero-teaser:active { transform: scale(0.96); }
-
-.hero-teaser-images {
-  position: relative;
-  width: 92px;
-  height: 92px;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.18);
-}
-
-.hero-teaser-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.8s ease-in-out;
-}
-
-.hero-teaser-img.active { opacity: 1; }
-
-.hero-teaser-label {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  margin-top: 5px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 10.5px;
-  color: #ffffff;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 3px 8px;
-  border-radius: 10px;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-@media (min-width: 720px) {
-  .hero-teaser { top: 20px; right: 20px; width: 108px; }
-  .hero-teaser-images { width: 108px; height: 108px; }
-}

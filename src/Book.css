@@ -1,0 +1,87 @@
+/* ===================================================================
+   BOOK PAGE — SLTB Bus Booking, Hotels/Rooms, and Car Travel (soon).
+   Uses tokens from App.css (--surface, --accent, --font-display, etc.)
+=================================================================== */
+.book-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.book-option-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.book-option-card:not(.disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.book-option-card.disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.book-option-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--book-accent) 16%, transparent);
+  color: var(--book-accent);
+}
+
+.book-option-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.book-option-body h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 0 6px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.book-option-body p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+
+.book-option-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--book-accent);
+}
+
+.book-option-soon {
+  color: var(--text-faint);
+}
+
+.book-footer {
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 12px;
+  margin-top: 10px;
+}

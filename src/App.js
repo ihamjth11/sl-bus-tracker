@@ -5,6 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import './App.css';
 import Navbar from './Navbar';
 import NavMoreMenu from './NavMoreMenu';
+import RouteMapAnimation from './RouteMapAnimation';
 
 const DARK_MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#131a22" }] },
@@ -24,15 +25,6 @@ const LIGHT_MAP_STYLES = [
 
 // Same verified Wikimedia Commons image already used on the Home page.
 // onError below falls back to a plain gradient if it ever fails to load.
-const HERO_IMAGE = "https://commons.wikimedia.org/wiki/Special:FilePath/Kandy_lake.jpg";
-
-// Mini rotating teaser shown on the hero — tapping it goes to /explore.
-const TEASER_IMAGES = [
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Sigiriya.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Nine_Arches_Bridge.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Secret_beach_-_Mirissa_Sri_Lanka.jpg",
-];
-
 const icon = (children, extraProps = {}) => (props) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...extraProps} {...props}>
     {children}
@@ -123,13 +115,6 @@ const IconClock = icon(
   </>
 );
 
-const IconCompass = icon(
-  <>
-    <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M15 9L13 13L9 15L11 11L15 9Z" fill="currentColor" />
-  </>
-);
-
 
 function findRoute(from, to) {
   const key1 = `${from.toLowerCase()}-${to.toLowerCase()}`;
@@ -145,15 +130,7 @@ function App() {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [searchParams] = useSearchParams();
-  const [heroImgFailed, setHeroImgFailed] = useState(false);
-  const [teaserIndex, setTeaserIndex] = useState(0);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTeaserIndex((i) => (i + 1) % TEASER_IMAGES.length);
-    }, 2500);
-    return () => clearInterval(id);
-  }, []);
 
   useEffect(() => {
     const toParam = searchParams.get('to');
@@ -672,34 +649,9 @@ const getNextBus = (timing) => {
         }
       />
 
-      <div
-        className="hero hero-photo"
-        style={!heroImgFailed ? { backgroundImage: `url(${HERO_IMAGE})` } : undefined}
-      >
-        {/* Hidden img used only to detect load failure and trigger the plain-gradient fallback */}
-        <img
-          src={HERO_IMAGE}
-          alt=""
-          style={{ display: 'none' }}
-          onError={() => setHeroImgFailed(true)}
-        />
+      <div className="hero hero-photo">
+        <RouteMapAnimation />
         <div className="hero-photo-overlay" />
-
-        <Link to="/explore" className="hero-teaser" aria-label="Explore Sri Lanka">
-          <div className="hero-teaser-images">
-            {TEASER_IMAGES.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt=""
-                className={`hero-teaser-img ${i === teaserIndex ? 'active' : ''}`}
-              />
-            ))}
-          </div>
-          <span className="hero-teaser-label">
-            <IconCompass className="icon-xs" /> Explore
-          </span>
-        </Link>
 
         <div className="hero-photo-content">
           <h2>{t('heroLine1')}<br /><span>{t('heroLine2')}</span></h2>
@@ -709,7 +661,7 @@ const getNextBus = (timing) => {
 
       {installPrompt && (
         <button className="install-banner" onClick={handleInstallClick}>
-          <IconBus className="icon" />
+          <img src="/logo-icon.png" alt="Lankora" className="install-banner-logo" />
           <span>
             <strong>{t('installTitle')}</strong>
             <small>{t('installSub')}</small>
@@ -802,6 +754,14 @@ const getNextBus = (timing) => {
       <div className="bus-option-info">
         <span>{result.normal.bus}</span>
         <span className="info-with-icon"><IconClock className="icon-xs" /> {result.normal.duration}</span>
+        <a
+          href="https://1315.lk"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bus-book-btn"
+        >
+          <IconTicket className="icon-xs" /> Book
+        </a>
       </div>
     </div>
 
@@ -814,6 +774,14 @@ const getNextBus = (timing) => {
       <div className="bus-option-info">
         <span>{result.ac.bus}</span>
         <span className="info-with-icon"><IconClock className="icon-xs" /> {result.ac.duration}</span>
+        <a
+          href="https://1315.lk"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bus-book-btn"
+        >
+          <IconTicket className="icon-xs" /> Book
+        </a>
       </div>
     </div>
 

@@ -1,0 +1,136 @@
+/* ===================================================================
+   EXPLORE EXTRAS — search bar + pagination controls.
+   Uses tokens from App.css (already imported by Explore.js), so no
+   new colors/fonts are introduced.
+=================================================================== */
+.explore-search-wrap {
+  margin-bottom: 18px;
+}
+
+.explore-search-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 13px 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid transparent;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.explore-search-group:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.explore-search-group input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.explore-search-group input::placeholder { color: var(--text-faint); }
+
+.explore-search-clear {
+  background: var(--surface-2);
+  border: none;
+  color: var(--text-dim);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.explore-search-clear:hover { color: var(--text); background: var(--surface-3); }
+
+.explore-search-results-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-faint);
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.explore-search-empty {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  padding: 30px 10px;
+}
+
+/* Pagination controls below a category's place grid */
+.explore-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 18px 0 8px;
+}
+
+.explore-page-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface);
+  border: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.explore-page-btn:hover:not(:disabled) { box-shadow: var(--shadow); }
+
+.explore-page-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.explore-page-indicator {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-faint);
+  min-width: 52px;
+  text-align: center;
+}
+
+.explore-result-category-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: var(--place-accent);
+  background: color-mix(in srgb, var(--place-accent) 14%, transparent);
+  padding: 3px 9px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+/* ===================================================================
+   CATEGORY TABS FIX — with 6 categories now, the tab row can overflow
+   off-screen on mobile. Allow it to wrap onto a second line instead
+   of being cut off (this rule is loaded after Explore.css, so it
+   overrides without needing to touch that file directly).
+=================================================================== */
+.category-tabs {
+  flex-wrap: wrap !important;
+  row-gap: 8px;
+}

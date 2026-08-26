@@ -1,37 +1,65 @@
 import { busRoutes } from '../src/routesData.js';
 
-// Build the route knowledge text directly from the app's own verified database, so the AI
-// assistant is always consistent with what's shown elsewhere in the app — never a separately
-// hand-maintained (and easily outdated) copy.
-function buildRouteKnowledge() {
-  const lines = Object.values(busRoutes).map((r) => {
-    const stops = r.stops || [];
-    const from = stops[0] || '?';
-    const to = stops[stops.length - 1] || '?';
-    const normalFare = r.normal?.fare || 'N/A';
-    const acFare = r.ac?.fare || 'N/A';
-    const busNo = r.normal?.bus || '';
-    const duration = r.normal?.duration || '';
-    const freq = r.timing?.frequency || '';
-    const first = r.timing?.first || '';
-    const last = r.timing?.last || '';
-    return `- ${from}→${to}: Normal ${normalFare} / AC ${acFare} | ${busNo} | ${duration} | ${freq} | First ${first} Last ${last}`;
-  });
-  return lines.join('\n');
+// Build a line of route knowledge text from one route entry, matching the
+// app's own verified database — so the AI is always consistent with what's
+// shown elsewhere in the app, never a separately hand-maintained copy.
+function formatRouteLine(r) {
+  const stops = r.stops || [];
+  const from = stops[0] || '?';
+  const to = stops[stops.length - 1] || '?';
+  const normalFare = r.normal?.fare || 'N/A';
+  const acFare = r.ac?.fare || 'N/A';
+  const busNo = r.normal?.bus || '';
+  const duration = r.normal?.duration || '';
+  const freq = r.timing?.frequency || '';
+  const first = r.timing?.first || '';
+  const last = r.timing?.last || '';
+  return `- ${from}→${to}: Normal ${normalFare} / AC ${acFare} | ${busNo} | ${duration} | ${freq} | First ${first} Last ${last}`;
 }
 
-function buildSystemPrompt() {
-  const routeKnowledge = buildRouteKnowledge();
+// The full database (256 routes) is far too large to send on every request —
+// it alone exceeds the model's free-tier tokens-per-minute limit. Instead,
+// pick only routes relevant to what the user actually asked (by matching
+// town names mentioned in their message), capped to a safe count. This keeps
+// each request small while still giving the AI exact figures for the route
+// the user is actually asking about.
+const MAX_ROUTES_IN_PROMPT = 40;
+
+function buildRouteKnowledge(userMessage, history) {
+  const allRoutes = Object.values(busRoutes);
+  const searchText = [userMessage, ...(history || []).map((h) => h.content || '')]
+    .join(' ')
+    .toLowerCase();
+
+  const matched = allRoutes.filter((r) => {
+    const stops = r.stops || [];
+    const from = (stops[0] || '').toLowerCase();
+    const to = (stops[stops.length - 1] || '').toLowerCase();
+    return (from && searchText.includes(from)) || (to && searchText.includes(to));
+  });
+
+  const chosen = matched.length > 0 ? matched : allRoutes;
+  const limited = chosen.slice(0, MAX_ROUTES_IN_PROMPT);
+  const truncatedNote =
+    matched.length === 0 && allRoutes.length > MAX_ROUTES_IN_PROMPT
+      ? '\n(Note: this is only a sample of routes — not the full database. If the user asks about a town not shown here, say so rather than guessing.)'
+      : '';
+
+  return limited.map(formatRouteLine).join('\n') + truncatedNote;
+}
+
+function buildSystemPrompt(userMessage, history) {
+  const routeKnowledge = buildRouteKnowledge(userMessage, history);
 
   return `You are an expert Sri Lanka bus transport assistant for the Lankora app. Always answer in the same language as the user (Tamil, Sinhala, or English). Be friendly, accurate and helpful.
 
-VERIFIED ROUTE DATABASE (this is the app's own real data — routes marked "(est.)" in fare or "(approx.)" in frequency are estimated/calibrated, not officially published; everything else is sourced from NTC records, official timetables, or confirmed operator data):
+VERIFIED ROUTE DATABASE (this is the app's own real data, filtered to what's relevant to this conversation — routes marked "(est.)" in fare or "(approx.)" in frequency are estimated/calibrated, not officially published; everything else is sourced from NTC records, official timetables, or confirmed operator data):
 
 ${routeKnowledge}
 
 CRITICAL RULES:
 1. For any route listed above, use those exact figures. Do not alter them.
-2. For a route NOT listed above (a town pair with no direct entry), do NOT invent a specific fare, bus number, or exact time — you have no reliable source for it. Instead, suggest a sensible transfer using towns that ARE in the list above (e.g., "take a bus from Nochchiyagama to Anuradhapura, then transfer to a bus from Anuradhapura to Colombo"), and clearly tell the user to confirm the exact fare and timing at the local bus stand, since it isn't in the verified database.
+2. For a route NOT listed above (a town pair with no direct entry, or not shown in this sample), do NOT invent a specific fare, bus number, or exact time — you have no reliable source for it. Instead, suggest a sensible transfer using towns that ARE in the list above (e.g., "take a bus from Nochchiyagama to Anuradhapura, then transfer to a bus from Anuradhapura to Colombo"), and clearly tell the user to confirm the exact fare and timing at the local bus stand, since it isn't in the verified database.
 3. If a fare above is marked "(est.)", mention to the user that it's an estimate, not an officially confirmed fare.
 4. Never state a specific bus timetable time with confidence unless it's the value shown above.
 
@@ -78,7 +106,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'system',
-            content: buildSystemPrompt(),
+            content: buildSystemPrompt(message, history),
           },
           ...(history || []),
           { role: 'user', content: message },

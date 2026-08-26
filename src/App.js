@@ -363,7 +363,7 @@ const shareRoute = () => {
     `First bus: ${result.timing.first} | Last bus: ${result.timing.last}`,
     `Frequency: ${result.timing.frequency}`,
     ``,
-    `Via Lankora: https://slbustracker.vercel.app`,
+    `Via Lankora: https://lankora-lk.vercel.app`,
   ];
   const text = encodeURIComponent(lines.join('\n'));
   window.open(`https://wa.me/?text=${text}`, '_blank');

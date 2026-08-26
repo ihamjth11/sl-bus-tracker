@@ -17,13 +17,10 @@ function formatRouteLine(r) {
   return `- ${from}→${to}: Normal ${normalFare} / AC ${acFare} | ${busNo} | ${duration} | ${freq} | First ${first} Last ${last}`;
 }
 
-// The full database (256 routes) is far too large to send on every request —
-// it alone exceeds the model's free-tier tokens-per-minute limit. Instead,
-// pick only routes relevant to what the user actually asked (by matching
-// town names mentioned in their message), capped to a safe count. This keeps
-// each request small while still giving the AI exact figures for the route
-// the user is actually asking about.
-const MAX_ROUTES_IN_PROMPT = 40;
+// Gemini's free tier has a far higher tokens-per-minute limit than Groq's,
+// so this is mainly for keeping requests small/fast rather than a hard
+// necessity — still good practice to only send what's relevant.
+const MAX_ROUTES_IN_PROMPT = 60;
 
 function buildRouteKnowledge(userMessage, history) {
   const allRoutes = Object.values(busRoutes);
@@ -71,6 +68,17 @@ GENERAL NOTES:
 - Expressway (highway) AC buses exist for some long routes (e.g. Colombo-Kandy, Colombo-Matara, Colombo-Hambantota) and are faster than the regular routes above, but exact expressway fares/schedules aren't in the verified database — mention they exist but don't quote a specific fare for them unless asked, and note the rider should confirm directly.`;
 }
 
+// Convert the app's OpenAI-style history ({ role: 'user'|'assistant', content })
+// into Gemini's format ({ role: 'user'|'model', parts: [{ text }] }).
+function toGeminiContents(history, message) {
+  const converted = (history || []).map((h) => ({
+    role: h.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: h.content || '' }],
+  }));
+  converted.push({ role: 'user', parts: [{ text: message }] });
+  return converted;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -85,47 +93,47 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('API Key exists:', !!process.env.GROQ_API_KEY);
-    console.log('API Key first 10:', process.env.GROQ_API_KEY?.substring(0, 10));
+    console.log('API Key exists:', !!process.env.GEMINI_API_KEY);
     const { message, history } = req.body;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
-        // llama-3.3-70b-versatile was deprecated by Groq (June 2026) — switched
-        // to their recommended replacement for that model, openai/gpt-oss-120b.
-        model: 'openai/gpt-oss-120b',
-        messages: [
-          {
-            role: 'system',
-            content: buildSystemPrompt(message, history),
+    // Switched from Groq to Google Gemini's free tier (much higher tokens-
+    // per-minute limit, no credit card required) after hitting Groq's TPM
+    // rate limit with the route database in the prompt.
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: buildSystemPrompt(message, history) }],
           },
-          ...(history || []),
-          { role: 'user', content: message },
-        ],
-        max_tokens: 300,
-      }),
-    });
+          contents: toGeminiContents(history, message),
+          generationConfig: {
+            maxOutputTokens: 300,
+          },
+        }),
+      }
+    );
 
     clearTimeout(timeout);
 
     const data = await response.json();
-    console.log('Groq status:', response.status);
-    console.log('Groq response:', JSON.stringify(data));
+    console.log('Gemini status:', response.status);
+    console.log('Gemini response:', JSON.stringify(data));
 
-    if (!data.choices || !data.choices[0]) {
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!reply) {
       return res.status(500).json({ error: data.error?.message || 'No response from AI' });
     }
 
-    const reply = data.choices[0].message.content;
     res.status(200).json({ reply });
   } catch (error) {
     console.log('Error name:', error.name);

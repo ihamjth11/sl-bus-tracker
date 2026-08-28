@@ -103,7 +103,7 @@ export default async function handler(req, res) {
     // per-minute limit, no credit card required) after hitting Groq's TPM
     // rate limit with the route database in the prompt.
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -145,4 +145,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 }
-

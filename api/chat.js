@@ -56,7 +56,7 @@ ${routeKnowledge}
 
 CRITICAL RULES:
 1. For any route listed above, use those exact figures. Do not alter them.
-2. For a route NOT listed above (a town pair with no direct entry, or not shown in this sample), do NOT invent a specific fare, bus number, or exact time — you have no reliable source for it. Instead, suggest a sensible transfer using towns that ARE in the list above (e.g., "take a bus from Nochchiyagama to Anuradhapura, then transfer to a bus from Anuradhapura to Colombo"), and clearly tell the user to confirm the exact fare and timing at the local bus stand, since it isn't in the verified database.
+2. For a route NOT listed above (a town pair with no direct entry, or not shown in this sample), you may use Google Search to find real, current information about that route (operators, approximate fare, distance) rather than inventing figures from memory. If search doesn't turn up a reliable direct answer, suggest a sensible transfer using towns that ARE in the list above (e.g., "take a bus from Nochchiyagama to Anuradhapura, then transfer to a bus from Anuradhapura to Colombo"). Always tell the user to confirm the exact fare and timing at the local bus stand when the figure didn't come from the verified database above.
 3. If a fare above is marked "(est.)", mention to the user that it's an estimate, not an officially confirmed fare.
 4. Never state a specific bus timetable time with confidence unless it's the value shown above.
 
@@ -115,8 +115,14 @@ export default async function handler(req, res) {
             parts: [{ text: buildSystemPrompt(message, history) }],
           },
           contents: toGeminiContents(history, message),
+          // Lets the model search Google when a route isn't in our local
+          // database, instead of only suggesting a generic transfer — gives
+          // real, current answers for towns like Nochchiyagama that aren't
+          // in the verified route data. Note: Google bills this per search
+          // query the model decides to run, separate from plain text usage.
+          tools: [{ google_search: {} }],
           generationConfig: {
-            maxOutputTokens: 300,
+            maxOutputTokens: 600,
           },
         }),
       }

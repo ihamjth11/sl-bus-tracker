@@ -1,4 +1,4 @@
-import { busRoutes } from '../src/routesData.js';
+﻿import { busRoutes } from '../src/routesData.js';
 
 // Build a line of route knowledge text from one route entry, matching the
 // app's own verified database — so the AI is always consistent with what's
@@ -145,3 +145,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 }
+

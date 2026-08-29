@@ -17,10 +17,11 @@ function formatRouteLine(r) {
   return `- ${from}→${to}: Normal ${normalFare} / AC ${acFare} | ${busNo} | ${duration} | ${freq} | First ${first} Last ${last}`;
 }
 
-// Gemini's free tier has a far higher tokens-per-minute limit than Groq's,
-// so this is mainly for keeping requests small/fast rather than a hard
-// necessity — still good practice to only send what's relevant.
-const MAX_ROUTES_IN_PROMPT = 60;
+// The full database (256 routes) is far too large to send on every request —
+// it alone exceeds Groq's free-tier tokens-per-minute limit. Instead, pick
+// only routes relevant to what the user actually asked (by matching town
+// names mentioned in their message), capped to a safe count.
+const MAX_ROUTES_IN_PROMPT = 40;
 
 function buildRouteKnowledge(userMessage, history) {
   const allRoutes = Object.values(busRoutes);
@@ -48,35 +49,34 @@ function buildRouteKnowledge(userMessage, history) {
 function buildSystemPrompt(userMessage, history) {
   const routeKnowledge = buildRouteKnowledge(userMessage, history);
 
-  return `You are an expert Sri Lanka bus transport assistant for the Lankora app. Always answer in the same language as the user (Tamil, Sinhala, or English). Be friendly, accurate and helpful.
+  return `You are the Lankora AI Assistant — a knowledgeable Sri Lanka travel and transport expert. Always answer in the same language as the user (Tamil, Sinhala, or English). Be friendly, accurate and helpful.
+
+SCOPE — READ CAREFULLY:
+- You answer TWO kinds of questions: (1) Sri Lanka bus routes, fares, and timings, and (2) general Sri Lanka travel/tourism questions — places to visit, things to do, weather, culture, food, history, festivals, transport options, safety tips, best times to visit, etc. — the same kind of thing the app's Explore page covers.
+- You ONLY answer questions about Sri Lanka. If the user asks something unrelated to Sri Lanka (general trivia, other countries, coding help, personal advice unrelated to travel, etc.), politely decline and steer them back to what you can help with — Sri Lanka travel and buses.
 
 VERIFIED ROUTE DATABASE (this is the app's own real data, filtered to what's relevant to this conversation — routes marked "(est.)" in fare or "(approx.)" in frequency are estimated/calibrated, not officially published; everything else is sourced from NTC records, official timetables, or confirmed operator data):
 
 ${routeKnowledge}
 
-CRITICAL RULES:
+CRITICAL RULES FOR BUS ROUTE QUESTIONS:
 1. For any route listed above, use those exact figures. Do not alter them.
-2. For a route NOT listed above (a town pair with no direct entry, or not shown in this sample), you may use Google Search to find real, current information about that route (operators, approximate fare, distance) rather than inventing figures from memory. If search doesn't turn up a reliable direct answer, suggest a sensible transfer using towns that ARE in the list above (e.g., "take a bus from Nochchiyagama to Anuradhapura, then transfer to a bus from Anuradhapura to Colombo"). Always tell the user to confirm the exact fare and timing at the local bus stand when the figure didn't come from the verified database above.
+2. For a route NOT listed above (a town pair with no direct entry, or not shown in this sample), do NOT invent a specific fare, bus number, or exact time — you have no reliable source for it. Instead, suggest a sensible transfer using towns that ARE in the list above (e.g., "take a bus from Nochchiyagama to Anuradhapura, then transfer to a bus from Anuradhapura to Colombo"), and clearly tell the user to confirm the exact fare and timing at the local bus stand, since it isn't in the verified database.
 3. If a fare above is marked "(est.)", mention to the user that it's an estimate, not an officially confirmed fare.
 4. Never state a specific bus timetable time with confidence unless it's the value shown above.
 
-GENERAL NOTES:
+GENERAL SRI LANKA TRAVEL QUESTIONS (places, tourism, culture, weather, food, etc.):
+- Answer from your own general knowledge about Sri Lanka — you don't need a database entry for this.
+- Be genuinely helpful and specific (name real places, districts, practical tips) the way a knowledgeable local travel guide would.
+- If asked to suggest a place to visit, feel free to mention the app's Explore page has 250+ curated places across cities, ancient sites, hill country, beaches, wildlife, hidden gems, and sacred sites, in case the user wants to browse further.
+- Don't invent specific prices, opening hours, or logistical details you're not confident about — give general guidance instead and suggest confirming locally.
+
+GENERAL BUS NOTES:
 - All buses depart from Colombo Fort Bus Stand (Central Bus Stand, Pettah) unless stated otherwise.
 - AC/Luxury buses are more comfortable with reserved seating; Normal buses are cheaper but crowded, no reservation needed.
 - Minimum fare is Rs. 34.
 - Children under 5 travel free; ages 5-12 half fare.
 - Expressway (highway) AC buses exist for some long routes (e.g. Colombo-Kandy, Colombo-Matara, Colombo-Hambantota) and are faster than the regular routes above, but exact expressway fares/schedules aren't in the verified database — mention they exist but don't quote a specific fare for them unless asked, and note the rider should confirm directly.`;
-}
-
-// Convert the app's OpenAI-style history ({ role: 'user'|'assistant', content })
-// into Gemini's format ({ role: 'user'|'model', parts: [{ text }] }).
-function toGeminiContents(history, message) {
-  const converted = (history || []).map((h) => ({
-    role: h.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: h.content || '' }],
-  }));
-  converted.push({ role: 'user', parts: [{ text: message }] });
-  return converted;
 }
 
 export default async function handler(req, res) {
@@ -93,53 +93,44 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('API Key exists:', !!process.env.GEMINI_API_KEY);
+    console.log('API Key exists:', !!process.env.GROQ_API_KEY);
     const { message, history } = req.body;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
 
-    // Switched from Groq to Google Gemini's free tier (much higher tokens-
-    // per-minute limit, no credit card required) after hitting Groq's TPM
-    // rate limit with the route database in the prompt.
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: controller.signal,
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [{ text: buildSystemPrompt(message, history) }],
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: 'openai/gpt-oss-120b',
+        messages: [
+          {
+            role: 'system',
+            content: buildSystemPrompt(message, history),
           },
-          contents: toGeminiContents(history, message),
-          // Lets the model search Google when a route isn't in our local
-          // database, instead of only suggesting a generic transfer — gives
-          // real, current answers for towns like Nochchiyagama that aren't
-          // in the verified route data. Note: Google bills this per search
-          // query the model decides to run, separate from plain text usage.
-          tools: [{ google_search: {} }],
-          generationConfig: {
-            maxOutputTokens: 600,
-          },
-        }),
-      }
-    );
+          ...(history || []),
+          { role: 'user', content: message },
+        ],
+        max_tokens: 600,
+      }),
+    });
 
     clearTimeout(timeout);
 
     const data = await response.json();
-    console.log('Gemini status:', response.status);
-    console.log('Gemini response:', JSON.stringify(data));
+    console.log('Groq status:', response.status);
+    console.log('Groq response:', JSON.stringify(data));
 
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!reply) {
+    if (!data.choices || !data.choices[0]) {
       return res.status(500).json({ error: data.error?.message || 'No response from AI' });
     }
 
+    const reply = data.choices[0].message.content;
     res.status(200).json({ reply });
   } catch (error) {
     console.log('Error name:', error.name);

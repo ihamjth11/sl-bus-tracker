@@ -231,6 +231,23 @@ useEffect(() => {
 
 const t = (key) => TRANSLATIONS[uiLang]?.[key] ?? TRANSLATIONS.en[key] ?? key;
 const [installPrompt, setInstallPrompt] = useState(null);
+const [installBannerVisible, setInstallBannerVisible] = useState(false);
+const [hasSearched, setHasSearched] = useState(false);
+
+const INSTALL_DISMISS_KEY = 'sl-bus-install-dismissed';
+const INSTALL_COOLDOWN_DAYS = 7;
+
+const isInstallDismissedRecently = () => {
+  const dismissedAt = localStorage.getItem(INSTALL_DISMISS_KEY);
+  if (!dismissedAt) return false;
+  const daysSince = (Date.now() - Number(dismissedAt)) / (1000 * 60 * 60 * 24);
+  return daysSince < INSTALL_COOLDOWN_DAYS;
+};
+
+const dismissInstallBanner = () => {
+  localStorage.setItem(INSTALL_DISMISS_KEY, Date.now().toString());
+  setInstallBannerVisible(false);
+};
 
 useEffect(() => {
   const handler = (e) => {
@@ -241,11 +258,23 @@ useEffect(() => {
   return () => window.removeEventListener('beforeinstallprompt', handler);
 }, []);
 
+// Show the install banner only after the user has actually searched a route
+// (not immediately on page load), and only if they haven't dismissed it
+// within the last INSTALL_COOLDOWN_DAYS days.
+useEffect(() => {
+  if (hasSearched && installPrompt && !isInstallDismissedRecently()) {
+    const timer = setTimeout(() => setInstallBannerVisible(true), 1200);
+    return () => clearTimeout(timer);
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [hasSearched, installPrompt]);
+
 const handleInstallClick = async () => {
   if (!installPrompt) return;
   installPrompt.prompt();
   await installPrompt.userChoice;
   setInstallPrompt(null);
+  setInstallBannerVisible(false);
 };
 
 useEffect(() => {
@@ -283,6 +312,7 @@ localStorage.setItem('sl-bus-stats', JSON.stringify(newStats));
   if (route) {
     setResult(route);
     setNotFound(false);
+    setHasSearched(true);
     if (mapInstanceRef.current && route.coords) {
       const bounds = new window.google.maps.LatLngBounds();
       route.coords.forEach(coord => {
@@ -659,15 +689,25 @@ const getNextBus = (timing) => {
         </div>
       </div>
 
-      {installPrompt && (
-        <button className="install-banner" onClick={handleInstallClick}>
-          <img src="/logo-icon.png" alt="Lankora" className="install-banner-logo" />
-          <span>
-            <strong>{t('installTitle')}</strong>
-            <small>{t('installSub')}</small>
-          </span>
-          <span className="install-cta">{t('installCta')}</span>
-        </button>
+      {installBannerVisible && (
+        <div className="install-banner">
+          <button className="install-banner-main" onClick={handleInstallClick}>
+            <img src="/logo-icon.png" alt="Lankora" className="install-banner-logo" />
+            <span>
+              <strong>{t('installTitle')}</strong>
+              <small>{t('installSub')}</small>
+            </span>
+            <span className="install-cta">{t('installCta')}</span>
+          </button>
+          <button
+            className="install-banner-close"
+            onClick={dismissInstallBanner}
+            aria-label="Dismiss install prompt"
+            title="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
       <div className="search-card">

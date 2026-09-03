@@ -17,7 +17,7 @@ export const busRoutes = {
   "colombo-jaffna": {
     normal: { bus: "No. 15/87", fare: "Rs. 2,580", duration: "8 hrs" },
     ac: { bus: "No. 15/87 - AC Intercity", fare: "Rs. 3,289", duration: "7 hrs" },
-    timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 1 hour" },
+    timing: { first: "12:00 AM (continuous)", last: "11:30 PM", frequency: "Every 30-40 mins (day & night, NTC Route 87 corridor)" },
     stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Vavuniya", "Jaffna"],
     coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 9.6615, lng: 80.0255 }]
   },
@@ -38,7 +38,7 @@ export const busRoutes = {
   "colombo-anuradhapura": {
     normal: { bus: "No. 15-1-1", fare: "Rs. 1,433", duration: "5 hrs" },
     ac: { bus: "No. 15-1-1 - AC", fare: "Rs. 1,832", duration: "4 hrs" },
-    timing: { first: "6:00 AM", last: "8:00 PM", frequency: "Every 30 mins" },
+    timing: { first: "12:00 AM (continuous)", last: "11:30 PM", frequency: "Every 20-30 mins (day & night, Routes 04/57/87 combined)" },
     stops: ["Colombo Fort", "Kurunegala", "Dambulla", "Anuradhapura"],
     coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 8.3114, lng: 80.4037 }]
   },
@@ -115,7 +115,7 @@ export const busRoutes = {
   "colombo-vavuniya": {
     normal: { bus: "No. 15/87", fare: "Rs. 1,612", duration: "6 hrs" },
     ac: { bus: "No. 15/87 - AC", fare: "Rs. 2,057", duration: "5 hrs" },
-    timing: { first: "6:00 AM", last: "7:00 PM", frequency: "Every 1 hour" },
+    timing: { first: "12:00 AM (continuous)", last: "11:30 PM", frequency: "Every 30-40 mins (day & night, NTC Route 87 corridor)" },
     stops: ["Colombo Fort", "Kurunegala", "Anuradhapura", "Vavuniya"],
     coords: [{ lat: 6.9271, lng: 79.8612 }, { lat: 8.7514, lng: 80.4971 }]
   },

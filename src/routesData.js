@@ -761,17 +761,19 @@ export const busRoutes = {
   },
 
   // ============ ANURADHAPURA ROUTES ============
+  // CORRECTED per NTC official timetable (ntc.gov.lk/timetable/2019/87English.pdf) and
+  // travelanuradhapura.com route descriptions: only Route 04 and Route 87 run the
+  // Colombo-Katunayake-Negombo-Chilaw-Puttalam-Nochchiyagama-Anuradhapura corridor, so a
+  // rider between Anuradhapura and Nochchiyagama catches any passing 04 or 87 service.
+  // The previous "57/822" numbers were wrong: Route 57 (Ella Rd) runs a different
+  // corridor via Kurunegala-Variyapola-Galgamuwa and does not pass through Nochchiyagama,
+  // and no Route 822 serving this corridor could be confirmed anywhere.
   "anuradhapura-nochchiyagama": {
-    normal: { bus: "No. 57/822/87", fare: "Rs. 120", duration: "45 mins" },
-    ac: { bus: "No. 57 - AC", fare: "Rs. 226", duration: "35 mins" },
+    normal: { bus: "No. 04/87 (via)", fare: "Rs. 120", duration: "45 mins" },
+    ac: { bus: "No. 04/87 - AC (via)", fare: "Rs. 226", duration: "35 mins" },
     timing: { first: "5:30 AM", last: "8:00 PM", frequency: "Every 20 mins" },
     stops: ["Anuradhapura", "Thalawa", "Nochchiyagama"],
-    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.2833, lng: 80.2167 }],
-    alternativeBuses: [
-      { bus: "No. 57/1", fare: "Rs. 120", type: "Normal" },
-      { bus: "No. 822", fare: "Rs. 120", type: "Normal" },
-      { bus: "No. 87", fare: "Rs. 134", type: "Normal" },
-    ]
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.2833, lng: 80.2167 }]
   },
   // Route 42-05, verified via NTC permit registry + operator timetable (Jayasekara Express, NC-6719).
   // Single scheduled daily departure — not a frequent-service route. Fare is estimated

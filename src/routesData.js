@@ -775,6 +775,21 @@ export const busRoutes = {
     stops: ["Anuradhapura", "Thalawa", "Nochchiyagama"],
     coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.2833, lng: 80.2167 }]
   },
+  // ADDED: confirmed real route, previously missing from the database (the AI chatbot
+  // was guessing "no direct bus" for this pair with no data to check against). Route 04
+  // and Route 87 both run Colombo-Katunayake-Negombo-Chilaw-Puttalam-Nochchiyagama-
+  // Anuradhapura as one continuous service (ntc.gov.lk/timetable/2019/87English.pdf;
+  // travelanuradhapura.com route descriptions) — so a single bus already passing through
+  // both towns connects them directly, no transfer needed. Fare distance-calibrated
+  // against the similar-length kurunegala-puttalam fare (~90km) — flagged (est.) since no
+  // separate published through-fare for this specific town pair was found.
+  "anuradhapura-puttalam": {
+    normal: { bus: "No. 04/87 (via)", fare: "Rs. 260 (est.)", duration: "1.5 hrs" },
+    ac: { bus: "No. 04/87 - AC (via)", fare: "Rs. 480 (est.)", duration: "1 hr 15 mins" },
+    timing: { first: "12:00 AM (continuous)", last: "11:30 PM", frequency: "Every 20-30 mins (day & night, Routes 04/87 corridor)" },
+    stops: ["Anuradhapura", "Nochchiyagama", "Puttalam"],
+    coords: [{ lat: 8.3114, lng: 80.4037 }, { lat: 8.0408, lng: 79.8394 }]
+  },
   // Route 42-05, verified via NTC permit registry + operator timetable (Jayasekara Express, NC-6719).
   // Single scheduled daily departure — not a frequent-service route. Fare is estimated
   // (calibrated against colombo-kandy Rs/km) — not independently confirmed, flag to rider.

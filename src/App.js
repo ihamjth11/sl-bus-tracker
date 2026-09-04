@@ -6,6 +6,7 @@ import './App.css';
 import Navbar from './Navbar';
 import NavMoreMenu from './NavMoreMenu';
 import RouteMapAnimation from './RouteMapAnimation';
+import FeedbackWidget from './FeedbackWidget';
 
 const DARK_MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#131a22" }] },
@@ -1088,6 +1089,11 @@ const getNextBus = (timing) => {
           <button onClick={handleChat}>Send</button>
         </div>
       </div>
+
+      <FeedbackWidget
+        routeContext={result ? `${from} → ${to}` : ''}
+        pageName="Track"
+      />
     </div>
   );
 }

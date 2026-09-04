@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { type, message, routeContext, page } = req.body || {};
+    const { type, message, routeContext, page, rating, consentToFeature, displayName, displayLocation } = req.body || {};
 
     if (!message || !message.trim()) {
       return res.status(400).json({ error: 'Please write a message before submitting.' });
@@ -41,19 +41,32 @@ export default async function handler(req, res) {
     }
 
     const info = TYPE_INFO[type] || TYPE_INFO.general;
+    const isTestimonialCandidate = type === 'general' && !!consentToFeature;
     const contextSuffix = routeContext ? `: ${routeContext}` : '';
-    const title = `[App] ${info.title}${contextSuffix}`.slice(0, 120);
+    const titlePrefix = isTestimonialCandidate ? '[App][Testimonial]' : '[App]';
+    const title = `${titlePrefix} ${info.title}${contextSuffix}`.slice(0, 120);
 
     const bodyLines = [
       `**Type:** ${info.title}`,
+      rating ? `**Rating:** ${'⭐'.repeat(rating)} (${rating}/5)` : null,
       routeContext ? `**Route mentioned:** ${routeContext}` : null,
       page ? `**Page:** ${page}` : null,
+      isTestimonialCandidate ? '' : null,
+      isTestimonialCandidate ? '**⭐ User consented to feature this as a testimonial on the website.**' : null,
+      isTestimonialCandidate && displayName ? `**Name to display:** ${displayName}` : null,
+      isTestimonialCandidate && displayLocation ? `**Location to display:** ${displayLocation}` : null,
+      isTestimonialCandidate
+        ? '_If approved, copy this quote (and rating, if given) into src/testimonials.js manually — do not auto-publish._'
+        : null,
       '',
       '**Message from user:**',
       message.trim(),
       '',
       `_Submitted via the Lankora app feedback form — ${new Date().toISOString()}_`,
-    ].filter(Boolean);
+    ].filter((line) => line !== null);
+
+    const labels = ['user-report', info.label];
+    if (isTestimonialCandidate) labels.push('testimonial-consent');
 
     const ghResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/issues`, {
       method: 'POST',
@@ -66,7 +79,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         title,
         body: bodyLines.join('\n'),
-        labels: ['user-report', info.label],
+        labels,
       }),
     });
 

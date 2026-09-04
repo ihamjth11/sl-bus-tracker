@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import './App.css';
 import './Home.css';
 import Navbar from './Navbar';
+import TrustSection from './TrustSection';
+import FeedbackWidget from './FeedbackWidget';
 
 const icon = (children) => (props) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -77,12 +79,6 @@ const FEATURES = [
   },
 ];
 
-const STATS = [
-  { value: '25', label: 'Districts covered' },
-  { value: '256', label: 'Verified routes' },
-  { value: '180+', label: 'Towns & cities' },
-];
-
 export default function Home() {
   const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
 
@@ -126,14 +122,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="home-stats">
-        {STATS.map((s, i) => (
-          <div className="home-stat" key={i}>
-            <strong>{s.value}</strong>
-            <span>{s.label}</span>
-          </div>
-        ))}
-      </div>
+      <TrustSection />
 
       <div className="home-features" id="book">
         {FEATURES.map((f, i) => (
@@ -156,6 +145,8 @@ export default function Home() {
       </div>
 
       <p className="home-footer">Lankora — built for Sri Lanka, by Sri Lanka.</p>
+
+      <FeedbackWidget pageName="Home" />
     </div>
   );
 }

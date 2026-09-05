@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { testimonials } from './testimonials';
 import './TrustSection.css';
 
 // Real, verifiable facts about the app — never inflate these. Update the
@@ -57,41 +56,52 @@ const IconStar = ({ filled, ...rest }) => (
   </svg>
 );
 
-function TestimonialCard({ item }) {
+function timeAgo(dateStr) {
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (days <= 0) return 'Today';
+  if (days === 1) return '1 day ago';
+  if (days < 30) return `${days} days ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} month${months > 1 ? 's' : ''} ago`;
+  const years = Math.floor(months / 12);
+  return `${years} year${years > 1 ? 's' : ''} ago`;
+}
+
+function ReviewCard({ item }) {
   return (
     <div className="trust-testimonial-card">
-      <IconQuote className="trust-quote-icon" />
-      <p className="trust-testimonial-text">{item.quote}</p>
+      <div className="trust-stars">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <IconStar key={i} filled={i <= item.rating} className="trust-star-icon" />
+        ))}
+      </div>
+      {item.message ? (
+        <p className="trust-testimonial-text">{item.message}</p>
+      ) : (
+        <p className="trust-testimonial-text trust-testimonial-text-muted">Rated their experience</p>
+      )}
       <div className="trust-testimonial-footer">
-        <div>
-          <div className="trust-testimonial-name">{item.name}</div>
-          {item.location && <div className="trust-testimonial-location">{item.location}</div>}
-        </div>
-        {item.rating && (
-          <div className="trust-stars">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <IconStar key={i} filled={i <= item.rating} className="trust-star-icon" />
-            ))}
-          </div>
-        )}
+        <div className="trust-testimonial-name">{item.name}</div>
+        <div className="trust-testimonial-location">{timeAgo(item.date)}</div>
       </div>
     </div>
   );
 }
 
-function EmptyTestimonialState() {
+function EmptyReviewState() {
   const openFeedback = () => {
-    window.dispatchEvent(new CustomEvent('open-feedback-widget', { detail: { type: 'general' } }));
+    window.dispatchEvent(new CustomEvent('open-feedback-widget'));
   };
   return (
     <div className="trust-empty-card">
       <IconQuote className="trust-quote-icon trust-quote-icon-empty" />
-      <p className="trust-empty-title">Be the first to share your experience!</p>
+      <p className="trust-empty-title">Be the first to rate Lankora!</p>
       <p className="trust-empty-sub">
-        Used Lankora to find a bus? Tap the feedback button and let other travelers know how it went.
+        Used the app to find a bus? Tap the star button and let other travelers know how it went.
       </p>
       <button className="trust-empty-cta" onClick={openFeedback}>
-        Share Your Experience
+        Rate Your Experience
       </button>
     </div>
   );
@@ -101,6 +111,9 @@ export default function TrustSection() {
   const sectionRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const [index, setIndex] = useState(0);
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -119,12 +132,32 @@ export default function TrustSection() {
   }, []);
 
   useEffect(() => {
-    if (testimonials.length <= 1) return;
+    let cancelled = false;
+    fetch('/api/reviews')
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        setReviews(data.reviews || []);
+        setAverageRating(data.averageRating || 0);
+      })
+      .catch(() => {
+        // Fail quietly — the section just shows the empty state.
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (reviews.length <= 1) return;
     const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % testimonials.length);
+      setIndex((i) => (i + 1) % reviews.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [reviews.length]);
 
   return (
     <div className="trust-section" ref={sectionRef}>
@@ -134,26 +167,44 @@ export default function TrustSection() {
         ))}
       </div>
 
+      {reviews.length > 0 && (
+        <div className="trust-average-row">
+          <div className="trust-average-number">{averageRating}</div>
+          <div className="trust-average-stars">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <IconStar
+                key={i}
+                filled={i <= Math.round(averageRating)}
+                className="trust-star-icon trust-star-icon-lg"
+              />
+            ))}
+            <span className="trust-average-count">
+              from {reviews.length} review{reviews.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="trust-testimonials-area">
-        {testimonials.length === 0 ? (
-          <EmptyTestimonialState />
-        ) : (
+        {!loading && reviews.length === 0 ? (
+          <EmptyReviewState />
+        ) : reviews.length > 0 ? (
           <>
-            <TestimonialCard item={testimonials[index]} />
-            {testimonials.length > 1 && (
+            <ReviewCard item={reviews[index]} />
+            {reviews.length > 1 && (
               <div className="trust-dots">
-                {testimonials.map((_, i) => (
+                {reviews.map((_, i) => (
                   <button
                     key={i}
                     className={`trust-dot ${i === index ? 'active' : ''}`}
                     onClick={() => setIndex(i)}
-                    aria-label={`Show testimonial ${i + 1}`}
+                    aria-label={`Show review ${i + 1}`}
                   />
                 ))}
               </div>
             )}
           </>
-        )}
+        ) : null}
       </div>
     </div>
   );

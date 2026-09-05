@@ -39,6 +39,51 @@
   margin-top: 4px;
 }
 
+.trust-average-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.trust-average-number {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.trust-average-stars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+.trust-star-icon-lg {
+  width: 17px;
+  height: 17px;
+}
+
+.trust-average-count {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.trust-testimonial-text-muted {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
 .trust-testimonials-area {
   min-height: 150px;
 }

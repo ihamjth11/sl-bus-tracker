@@ -1090,10 +1090,7 @@ const getNextBus = (timing) => {
         </div>
       </div>
 
-      <FeedbackWidget
-        routeContext={result ? `${from} → ${to}` : ''}
-        pageName="Track"
-      />
+      <FeedbackWidget pageName="Track" />
     </div>
   );
 }

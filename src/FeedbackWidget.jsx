@@ -29,76 +29,44 @@ const IconStar = ({ filled, ...rest }) => (
   </svg>
 );
 
-const TYPES = [
-  { id: 'wrong_fare', label: 'Wrong Fare' },
-  { id: 'wrong_route', label: 'Wrong Route' },
-  { id: 'bug', label: 'Bug' },
-  { id: 'feature', label: 'Feature Idea' },
-  { id: 'general', label: 'General' },
-];
-
-// Drop this component once in your root layout (e.g. index.js wrapping the
-// router, or in each page) and it renders its own floating trigger button —
-// no other wiring needed. Optional props let a page pre-fill context:
-//   <FeedbackWidget routeContext="Colombo → Kandy" pageName="Track" />
-export default function FeedbackWidget({ routeContext: initialRouteContext = '', pageName = '' }) {
+// Drop this once anywhere in your layout — it renders its own floating
+// button. Ratings submitted here are automatically fetched and shown live
+// by <TrustSection /> (via /api/reviews) — no manual step needed.
+export default function FeedbackWidget({ pageName = '' }) {
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState('general');
-  const [routeContext, setRouteContext] = useState(initialRouteContext);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('idle'); // idle | sending | success | error
   const [errorMsg, setErrorMsg] = useState('');
-  const [issueUrl, setIssueUrl] = useState('');
-  const [consentToFeature, setConsentToFeature] = useState(false);
-  const [displayName, setDisplayName] = useState('');
-  const [displayLocation, setDisplayLocation] = useState('');
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
 
-  const openModal = () => {
-    setRouteContext(initialRouteContext);
-    setOpen(true);
-  };
+  const openModal = () => setOpen(true);
 
   const closeModal = () => {
     setOpen(false);
-    // Reset after the close animation would finish, so the form is fresh
-    // next time but doesn't visibly flicker while closing.
     setTimeout(() => {
       setStatus('idle');
-      setMessage('');
-      setErrorMsg('');
-      setIssueUrl('');
-      setType('general');
-      setConsentToFeature(false);
-      setDisplayName('');
-      setDisplayLocation('');
       setRating(0);
       setHoverRating(0);
+      setName('');
+      setMessage('');
+      setErrorMsg('');
     }, 200);
   };
 
-  // Lets any page trigger this widget without prop-drilling — e.g. a
-  // "share your story" button elsewhere on the site can do:
-  //   window.dispatchEvent(new CustomEvent('open-feedback-widget', { detail: { type: 'general' } }))
+  // Lets other components open this widget without prop-drilling, e.g.
+  // TrustSection's "Share Your Experience" button when there are no
+  // reviews yet: window.dispatchEvent(new CustomEvent('open-feedback-widget'))
   useEffect(() => {
-    const handler = (e) => {
-      if (e.detail?.type) setType(e.detail.type);
-      openModal();
-    };
+    const handler = () => openModal();
     window.addEventListener('open-feedback-widget', handler);
     return () => window.removeEventListener('open-feedback-widget', handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async () => {
-    if (type === 'general' && rating === 0) {
+    if (rating === 0) {
       setErrorMsg('Please tap a star to rate your experience.');
-      setStatus('error');
-      return;
-    }
-    if (!message.trim()) {
-      setErrorMsg('Please write a message first.');
       setStatus('error');
       return;
     }
@@ -109,21 +77,16 @@ export default function FeedbackWidget({ routeContext: initialRouteContext = '',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type,
-          message,
-          routeContext: routeContext.trim() || undefined,
+          rating,
+          name: name.trim() || undefined,
+          message: message.trim() || undefined,
           page: pageName || undefined,
-          rating: type === 'general' && rating > 0 ? rating : undefined,
-          consentToFeature: type === 'general' ? consentToFeature : false,
-          displayName: consentToFeature ? displayName.trim() || undefined : undefined,
-          displayLocation: consentToFeature ? displayLocation.trim() || undefined : undefined,
         }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Could not submit. Please try again.');
       }
-      setIssueUrl(data.issueUrl || '');
       setStatus('success');
     } catch (err) {
       setErrorMsg(err.message || 'Something went wrong. Please try again.');
@@ -136,8 +99,8 @@ export default function FeedbackWidget({ routeContext: initialRouteContext = '',
       <button
         className="feedback-fab"
         onClick={openModal}
-        aria-label="Send feedback or report an issue"
-        title="Feedback / Report an issue"
+        aria-label="Rate your experience"
+        title="Rate your experience"
       >
         <IconFeedback className="feedback-fab-icon" />
       </button>
@@ -146,7 +109,7 @@ export default function FeedbackWidget({ routeContext: initialRouteContext = '',
         <div className="feedback-overlay" onClick={closeModal}>
           <div className="feedback-modal" onClick={(e) => e.stopPropagation()}>
             <div className="feedback-modal-header">
-              <h3>{status === 'success' ? 'Thanks!' : 'Feedback & Reports'}</h3>
+              <h3>{status === 'success' ? 'Thanks!' : 'Rate Your Experience'}</h3>
               <button className="feedback-close-btn" onClick={closeModal} aria-label="Close">
                 <IconClose className="feedback-close-icon" />
               </button>
@@ -155,112 +118,53 @@ export default function FeedbackWidget({ routeContext: initialRouteContext = '',
             {status === 'success' ? (
               <div className="feedback-success">
                 <IconCheck className="feedback-success-icon" />
-                <p>Your report was submitted. We'll take a look soon.</p>
-                {issueUrl && (
-                  <a href={issueUrl} target="_blank" rel="noopener noreferrer" className="feedback-issue-link">
-                    View report
-                  </a>
-                )}
+                <p>Thanks for rating Lankora! Your review is now live for other travelers to see.</p>
                 <button className="feedback-submit-btn feedback-done-btn" onClick={closeModal}>
                   Done
                 </button>
               </div>
             ) : (
               <>
-                <div className="feedback-type-row">
-                  {TYPES.map((t) => (
-                    <button
-                      key={t.id}
-                      className={`feedback-type-chip ${type === t.id ? 'active' : ''}`}
-                      onClick={() => setType(t.id)}
-                      type="button"
-                    >
-                      {t.label}
-                    </button>
-                  ))}
+                <div className="feedback-field">
+                  <div className="feedback-star-row feedback-star-row-lg">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        className="feedback-star-btn"
+                        onClick={() => setRating(n)}
+                        onMouseEnter={() => setHoverRating(n)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        aria-label={`Rate ${n} star${n > 1 ? 's' : ''}`}
+                      >
+                        <IconStar
+                          filled={n <= (hoverRating || rating)}
+                          className={`feedback-star-icon ${n <= (hoverRating || rating) ? 'filled' : ''}`}
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {(type === 'wrong_fare' || type === 'wrong_route') && (
-                  <div className="feedback-field">
-                    <label>Which route? (e.g. Colombo → Kandy)</label>
-                    <input
-                      type="text"
-                      value={routeContext}
-                      onChange={(e) => setRouteContext(e.target.value)}
-                      placeholder="From → To"
-                    />
-                  </div>
-                )}
-
-                {type === 'general' && (
-                  <div className="feedback-field">
-                    <label>Rate your experience</label>
-                    <div className="feedback-star-row">
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <button
-                          key={n}
-                          type="button"
-                          className="feedback-star-btn"
-                          onClick={() => setRating(n)}
-                          onMouseEnter={() => setHoverRating(n)}
-                          onMouseLeave={() => setHoverRating(0)}
-                          aria-label={`Rate ${n} star${n > 1 ? 's' : ''}`}
-                        >
-                          <IconStar
-                            filled={n <= (hoverRating || rating)}
-                            className={`feedback-star-icon ${n <= (hoverRating || rating) ? 'filled' : ''}`}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 <div className="feedback-field">
-                  <label>{type === 'general' ? 'How was your experience?' : "What's the issue or idea?"}</label>
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Describe it here..."
-                    rows={4}
+                  <label>Your name (optional)</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Alex M."
                   />
                 </div>
 
-                {type === 'general' && (
-                  <>
-                    <label className="feedback-consent-row">
-                      <input
-                        type="checkbox"
-                        checked={consentToFeature}
-                        onChange={(e) => setConsentToFeature(e.target.checked)}
-                      />
-                      <span>It's OK to feature this on our website</span>
-                    </label>
-
-                    {consentToFeature && (
-                      <div className="feedback-consent-fields">
-                        <div className="feedback-field">
-                          <label>Your name</label>
-                          <input
-                            type="text"
-                            value={displayName}
-                            onChange={(e) => setDisplayName(e.target.value)}
-                            placeholder="e.g. Alex M."
-                          />
-                        </div>
-                        <div className="feedback-field">
-                          <label>Your country/city (optional)</label>
-                          <input
-                            type="text"
-                            value={displayLocation}
-                            onChange={(e) => setDisplayLocation(e.target.value)}
-                            placeholder="e.g. UK"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
+                <div className="feedback-field">
+                  <label>Tell us about your experience (optional)</label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="What did you like? What could be better?"
+                    rows={4}
+                  />
+                </div>
 
                 {status === 'error' && <p className="feedback-error">{errorMsg}</p>}
 
@@ -269,7 +173,7 @@ export default function FeedbackWidget({ routeContext: initialRouteContext = '',
                   onClick={handleSubmit}
                   disabled={status === 'sending'}
                 >
-                  {status === 'sending' ? 'Sending...' : 'Submit'}
+                  {status === 'sending' ? 'Submitting...' : 'Submit Rating'}
                 </button>
               </>
             )}

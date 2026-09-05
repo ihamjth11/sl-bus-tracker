@@ -104,32 +104,6 @@
 
 .feedback-close-icon { width: 14px; height: 14px; }
 
-.feedback-type-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-bottom: 16px;
-}
-
-.feedback-type-chip {
-  border: 1px solid var(--line-strong);
-  background: var(--surface-2);
-  color: var(--text-dim);
-  border-radius: 18px;
-  padding: 7px 13px;
-  font-family: var(--font-body);
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.feedback-type-chip.active {
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  color: var(--accent);
-}
-
 .feedback-field { margin-bottom: 14px; }
 
 .feedback-field label {
@@ -173,6 +147,12 @@
   gap: 4px;
 }
 
+.feedback-star-row-lg {
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0 4px;
+}
+
 .feedback-star-btn {
   background: none;
   border: none;
@@ -182,7 +162,7 @@
   transition: color 0.12s ease, transform 0.1s ease;
 }
 
-.feedback-star-btn:hover { transform: scale(1.12); }
+.feedback-star-btn:hover { transform: scale(1.15); }
 
 .feedback-star-icon {
   width: 26px;
@@ -190,30 +170,13 @@
   color: inherit;
 }
 
+.feedback-star-row-lg .feedback-star-icon {
+  width: 36px;
+  height: 36px;
+}
+
 .feedback-star-icon.filled {
   color: var(--accent);
-}
-
-.feedback-consent-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  font-size: 13px;
-  color: var(--text-dim);
-  cursor: pointer;
-}
-
-.feedback-consent-row input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.feedback-consent-fields {
-  animation: feedback-fade-in 0.15s ease;
 }
 
 .feedback-error {
@@ -262,14 +225,5 @@
   color: var(--text);
   font-weight: 500;
 }
-
-.feedback-issue-link {
-  font-size: 12.5px;
-  color: var(--accent);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.feedback-issue-link:hover { text-decoration: underline; }
 
 .feedback-done-btn { margin-top: 10px; }

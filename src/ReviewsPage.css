@@ -1,0 +1,216 @@
+.reviews-page {
+  padding-top: 22px;
+}
+
+.reviews-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  transition: color 0.15s ease;
+}
+
+.reviews-back-link:hover { color: var(--accent); }
+
+.reviews-back-icon { width: 15px; height: 15px; }
+
+.reviews-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--text);
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.reviews-subtitle {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  margin: 0 0 22px;
+}
+
+.reviews-loading {
+  color: var(--text-faint);
+  font-size: 13.5px;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.reviews-summary-card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 22px 20px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 16px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.reviews-summary-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 110px;
+}
+
+.reviews-summary-number {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 40px;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.reviews-summary-count {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-weight: 500;
+}
+
+.reviews-stars { display: flex; gap: 2px; }
+.reviews-stars-sm .reviews-star-icon { width: 13px; height: 13px; }
+.reviews-stars-lg .reviews-star-icon { width: 18px; height: 18px; }
+
+.reviews-star-icon { color: var(--accent); }
+
+.reviews-breakdown {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+
+.reviews-breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reviews-breakdown-label {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 600;
+  width: 26px;
+  flex-shrink: 0;
+}
+
+.reviews-breakdown-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.reviews-breakdown-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-strong), var(--accent));
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.reviews-breakdown-count {
+  font-size: 11px;
+  color: var(--text-faint);
+  width: 18px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.reviews-rate-btn {
+  background: linear-gradient(180deg, var(--accent-strong), var(--accent));
+  color: var(--accent-ink);
+  border: none;
+  border-radius: 14px;
+  padding: 12px 20px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.reviews-rate-btn:hover { filter: brightness(1.05); }
+.reviews-rate-btn:active { transform: scale(0.98); }
+
+.reviews-rate-btn-full {
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.reviews-empty-card {
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: 20px;
+  padding: 34px 20px;
+  text-align: center;
+}
+
+.reviews-empty-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.reviews-empty-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0 0 18px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.reviews-row {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.reviews-row-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.reviews-row-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.reviews-row-date {
+  font-size: 11px;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.reviews-row-text {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin: 0;
+}

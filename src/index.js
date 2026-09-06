@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
+import Home from './Home';
 import App from './App';
 import Explore from './Explore';
 import Book from './Book';
+import ReviewsPage from './ReviewsPage';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -12,9 +14,11 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/track" element={<App />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/book" element={<Book />} />
+        <Route path="/reviews" element={<ReviewsPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

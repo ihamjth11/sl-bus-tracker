@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './TrustSection.css';
 
 // Real, verifiable facts about the app — never inflate these. Update the
@@ -203,6 +204,9 @@ export default function TrustSection() {
                 ))}
               </div>
             )}
+            <Link to="/reviews" className="trust-see-all-link">
+              See All Reviews →
+            </Link>
           </>
         ) : null}
       </div>

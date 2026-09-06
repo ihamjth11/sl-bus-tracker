@@ -5,6 +5,7 @@ import './Home.css';
 import Navbar from './Navbar';
 import TrustSection from './TrustSection';
 import FeedbackWidget from './FeedbackWidget';
+import HeroSlideshow from './HeroSlideshow';
 
 const icon = (children) => (props) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -47,7 +48,6 @@ const IconMoon = icon(
 );
 
 // Stable Wikimedia Commons URLs — same source as the Explore carousel
-const HERO_IMAGE = "https://commons.wikimedia.org/wiki/Special:FilePath/Sigiriya.jpg";
 
 const FEATURES = [
   {
@@ -96,16 +96,19 @@ export default function Home() {
     <div className="app home-page">
       <Navbar
         extra={
-          <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
-            {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
-          </button>
+          <>
+            <div className="badge">Live</div>
+            <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
+              {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
+            </button>
+          </>
         }
       />
 
       <div
         className="home-hero home-hero-photo"
-        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
       >
+        <HeroSlideshow />
         <div className="home-hero-overlay" />
         <div className="home-hero-content">
           <span className="home-eyebrow">Track · Travel · Explore</span>

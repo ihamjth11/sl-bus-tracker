@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './App.css';
 import './Home.css';
 import Navbar from './Navbar';
+import NavMoreMenu from './NavMoreMenu';
 import TrustSection from './TrustSection';
 import FeedbackWidget from './FeedbackWidget';
 import HeroSlideshow from './HeroSlideshow';
@@ -34,17 +35,6 @@ const IconBed = icon(
     <path d="M3 18V6M3 13H21V18M3 13V10C3 9 3.9 8 5 8H11C12.1 8 13 9 13 10V13M15 8H19C20.1 8 21 9 21 10V13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     <circle cx="7" cy="10.5" r="1.2" stroke="currentColor" strokeWidth="1.3" />
   </>
-);
-
-const IconSun = icon(
-  <>
-    <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.7" />
-    <path d="M12 2.5V4.5M12 19.5V21.5M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M2.5 12H4.5M19.5 12H21.5M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-  </>
-);
-
-const IconMoon = icon(
-  <path d="M20.5 14.2C19.3 14.7 18 15 16.6 15C11.3 15 7 10.7 7 5.4C7 4 7.3 2.7 7.8 1.5C4.4 2.9 2 6.2 2 10.1C2 15.3 6.2 19.5 11.4 19.5C15.3 19.5 18.6 17.1 20 13.7C20.2 13.9 20.4 14.1 20.5 14.2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
 );
 
 // Stable Wikimedia Commons URLs — same source as the Explore carousel
@@ -81,6 +71,16 @@ const FEATURES = [
 
 export default function Home() {
   const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
+  const [uiLang, setUiLang] = useState(() => localStorage.getItem('sl-bus-lang') || 'en');
+  const [currency, setCurrency] = useState(() => localStorage.getItem('sl-bus-currency') || 'LKR');
+
+  useEffect(() => {
+    localStorage.setItem('sl-bus-lang', uiLang);
+  }, [uiLang]);
+
+  useEffect(() => {
+    localStorage.setItem('sl-bus-currency', currency);
+  }, [currency]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -98,9 +98,14 @@ export default function Home() {
         extra={
           <>
             <div className="badge">Live</div>
-            <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
-              {theme === 'dark' ? <IconSun className="icon" /> : <IconMoon className="icon" />}
-            </button>
+            <NavMoreMenu
+              theme={theme}
+              toggleTheme={toggleTheme}
+              uiLang={uiLang}
+              setUiLang={setUiLang}
+              currency={currency}
+              setCurrency={setCurrency}
+            />
           </>
         }
       />

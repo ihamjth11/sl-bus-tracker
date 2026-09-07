@@ -608,20 +608,13 @@ export default function Explore() {
       <div className="booking-section">
         <p className="quick-title">Planning your trip</p>
         <div className="booking-cards">
-          <a href="https://1315.lk" target="_blank" rel="noopener noreferrer" className="booking-card">
+          <Link to="/book" className="booking-card">
             <IconTicketExternal className="icon" />
             <div>
-              <strong>Reserve intercity bus seats</strong>
-              <small>Official SLTB booking — 1315.lk</small>
+              <strong>Book Buses, Trains & Hotels</strong>
+              <small>Reserve intercity seats or find a room — all in one place</small>
             </div>
-          </a>
-          <div className="booking-card disabled">
-            <IconBed className="icon" />
-            <div>
-              <strong>Hotels & villas</strong>
-              <small>Coming soon</small>
-            </div>
-          </div>
+          </Link>
         </div>
       </div>
 

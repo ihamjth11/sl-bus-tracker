@@ -1,5 +1,6 @@
 import { searchLocations } from './locations';
 import { busRoutes } from './routesData';
+import { findTransferPath, titleCaseTown } from './routeGraph';
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './App.css';
@@ -140,6 +141,7 @@ function App() {
   }, []);
   const [result, setResult] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [transferSuggestion, setTransferSuggestion] = useState(null);
   const [chat, setChat] = useState([]);
   const [chatInput, setChatInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -302,17 +304,22 @@ const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
     }
   }, [theme]);
 
-  const handleSearch = () => {
-  if (!from || !to) return;
+  const handleSearch = (fromOverride, toOverride) => {
+  const f = fromOverride !== undefined ? fromOverride : from;
+  const t = toOverride !== undefined ? toOverride : to;
+  if (!f || !t) return;
+  if (fromOverride !== undefined) setFrom(f);
+  if (toOverride !== undefined) setTo(t);
   setShowFullSchedule(false);
-  const route = findRoute(from, to);
-  const key = `${from}-${to}`;
+  const route = findRoute(f, t);
+  const key = `${f}-${t}`;
 const newStats = { ...routeStats, [key]: (routeStats[key] || 0) + 1 };
 setRouteStats(newStats);
 localStorage.setItem('sl-bus-stats', JSON.stringify(newStats));
   if (route) {
     setResult(route);
     setNotFound(false);
+    setTransferSuggestion(null);
     setHasSearched(true);
     if (mapInstanceRef.current && route.coords) {
       const bounds = new window.google.maps.LatLngBounds();
@@ -336,7 +343,15 @@ localStorage.setItem('sl-bus-stats', JSON.stringify(newStats));
     }
   } else {
     setResult(null);
-    setNotFound(true);
+    const transferPath = findTransferPath(f, t);
+    if (transferPath) {
+      setNotFound(false);
+      setTransferSuggestion(transferPath);
+      setHasSearched(true);
+    } else {
+      setNotFound(true);
+      setTransferSuggestion(null);
+    }
   }
 };
 const handleFromChange = (e) => {
@@ -624,6 +639,7 @@ const getNextBus = (timing) => {
     setTo(from);
     setResult(null);
     setNotFound(false);
+    setTransferSuggestion(null);
   };
 
   const handleChip = (chip) => {
@@ -632,6 +648,7 @@ const getNextBus = (timing) => {
     setTo(t);
     setResult(null);
     setNotFound(false);
+    setTransferSuggestion(null);
   };
 
   const handleChat = async () => {
@@ -937,6 +954,39 @@ const getNextBus = (timing) => {
   </div>
 )}
 
+      {transferSuggestion && (
+  <div className="result-card transfer-card">
+    <div className="result-title-row">
+      <p className="result-title"><IconBus className="icon" /> Suggested Route</p>
+    </div>
+    <p className="transfer-note">
+      No direct bus for this route — here's how to get there with {transferSuggestion.length - 1} transfer{transferSuggestion.length > 2 ? 's' : ''}:
+    </p>
+    <div className="transfer-legs">
+      {transferSuggestion.map((leg, i) => (
+        <div key={i} className="transfer-leg">
+          <div className="transfer-leg-header">
+            <span className="transfer-leg-number">Leg {i + 1}</span>
+            <span className="transfer-leg-route">{titleCaseTown(leg.from)} → {titleCaseTown(leg.to)}</span>
+          </div>
+          <div className="transfer-leg-info">
+            <span>{leg.route.normal.bus}</span>
+            <span>{formatFare(leg.route.normal.fare)}</span>
+            <span className="info-with-icon"><IconClock className="icon-xs" /> {leg.route.normal.duration}</span>
+          </div>
+          <button
+            className="transfer-leg-btn"
+            onClick={() => handleSearch(titleCaseTown(leg.from), titleCaseTown(leg.to))}
+          >
+            View this leg
+          </button>
+        </div>
+      ))}
+    </div>
+    <p className="transfer-disclaimer">Transfer times aren't accounted for — allow extra time between buses at each stop.</p>
+  </div>
+)}
+
       {notFound && (
   <div className="not-found">
     <div className="not-found-icon"><IconSearch className="icon-lg" /></div>
@@ -992,6 +1042,7 @@ const getNextBus = (timing) => {
           setTo(fav.to);
           setResult(null);
           setNotFound(false);
+          setTransferSuggestion(null);
         }}>
           {fav.from} → {fav.to}
           <span className="remove-fav" onClick={(e) => {
@@ -1021,6 +1072,7 @@ const getNextBus = (timing) => {
                 setTo(t.charAt(0).toUpperCase() + t.slice(1));
                 setResult(null);
                 setNotFound(false);
+                setTransferSuggestion(null);
               }}>
                 {f.charAt(0).toUpperCase() + f.slice(1)} → {t.charAt(0).toUpperCase() + t.slice(1)}
                 <span className="count-badge">{count}</span>

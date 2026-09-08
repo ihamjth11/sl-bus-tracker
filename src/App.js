@@ -124,6 +124,29 @@ function findRoute(from, to) {
   return busRoutes[key1] || busRoutes[key2] || null;
 }
 
+// Approximate road distance from a route's stored start/end coordinates.
+// Uses the same haversine-with-road-factor approach used when fares were
+// calibrated — a straight-line estimate, not a routed/turn-by-turn distance.
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.asin(Math.sqrt(a));
+}
+
+const ROAD_FACTOR = 1.3;
+
+function getRouteDistanceKm(route) {
+  if (!route?.coords || route.coords.length < 2) return null;
+  const [a, b] = route.coords;
+  if (!a || !b) return null;
+  return Math.round(haversineKm(a.lat, a.lng, b.lat, b.lng) * ROAD_FACTOR);
+}
+
 function App() {
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
@@ -812,6 +835,9 @@ const getNextBus = (timing) => {
       <div className="bus-option-info">
         <span>{result.normal.bus}</span>
         <span className="info-with-icon"><IconClock className="icon-xs" /> {result.normal.duration}</span>
+        {getRouteDistanceKm(result) && (
+          <span className="info-with-icon"><IconPin className="icon-xs" /> ~{getRouteDistanceKm(result)} km</span>
+        )}
         <a
           href="https://1315.lk"
           target="_blank"
@@ -973,6 +999,9 @@ const getNextBus = (timing) => {
             <span>{leg.route.normal.bus}</span>
             <span>{formatFare(leg.route.normal.fare)}</span>
             <span className="info-with-icon"><IconClock className="icon-xs" /> {leg.route.normal.duration}</span>
+            {getRouteDistanceKm(leg.route) && (
+              <span className="info-with-icon"><IconPin className="icon-xs" /> ~{getRouteDistanceKm(leg.route)} km</span>
+            )}
           </div>
           <button
             className="transfer-leg-btn"

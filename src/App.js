@@ -787,7 +787,7 @@ const getNextBus = (timing) => {
   </div>
 
  <div className="search-actions">
-  <button className="search-btn" onClick={handleSearch}>{t('findBus')}</button>
+  <button className="search-btn" onClick={() => handleSearch()}>{t('findBus')}</button>
   <button className="fav-btn" onClick={toggleFavorite} title="Save to favorites">
     <IconHeart filled={isFavorite()} className="icon" />
   </button>

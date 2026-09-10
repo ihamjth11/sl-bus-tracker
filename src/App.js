@@ -181,7 +181,7 @@ const [routeStats, setRouteStats] = useState(() => {
 const [nearbyStops, setNearbyStops] = useState([]);
 const [locationLoading, setLocationLoading] = useState(false);
 const [locationError, setLocationError] = useState('');
-const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
+const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'light');
 const [currency, setCurrency] = useState(() => localStorage.getItem('sl-bus-currency') || 'LKR');
 
 useEffect(() => {

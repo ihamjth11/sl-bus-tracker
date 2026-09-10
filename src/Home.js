@@ -70,7 +70,7 @@ const FEATURES = [
 ];
 
 export default function Home() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'light');
   const [uiLang, setUiLang] = useState(() => localStorage.getItem('sl-bus-lang') || 'en');
   const [currency, setCurrency] = useState(() => localStorage.getItem('sl-bus-currency') || 'LKR');
 

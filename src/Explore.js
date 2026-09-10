@@ -400,7 +400,7 @@ const CATEGORIES = [
 
 
 export default function Explore() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'light');
   const [activeCategory, setActiveCategory] = useState('cities');
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');

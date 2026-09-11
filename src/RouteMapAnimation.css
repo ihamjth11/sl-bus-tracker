@@ -1,9 +1,12 @@
 /* ===================================================================
    ROUTE MAP ANIMATION — landscape Sri Lanka silhouette in the upper-
-   right (clear of the hero text), a self-drawing gradient route line
-   with a "live" data-flow overlay, radar-ring pulsing city markers
-   with label pills, and a glossy, detailed bus with a moving shadow.
-   Pure SVG + CSS, no assets.
+   right (clear of the hero text). Cycles through several route
+   journeys, each with a self-drawing gradient route line, a "live"
+   data-flow overlay, radar-ring pulsing city markers with label pills,
+   and a glossy, pseudo-3D bus (side depth panels, roof highlight,
+   windshield shine sweep, spinning spoked wheels, subtle bounce) with
+   a moving shadow. A field of slow ambient particles drifts underneath
+   throughout, independent of route cycling. Pure SVG + CSS, no assets.
 =================================================================== */
 .route-map {
   position: absolute;
@@ -24,23 +27,49 @@
   stroke-width: 1.5;
 }
 
+/* ---------- Ambient particles ---------- */
+.route-map-particle {
+  fill: var(--accent);
+  opacity: 0;
+  animation: route-map-particle-drift var(--dur, 9s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes route-map-particle-drift {
+  0% { opacity: 0; transform: translateY(0); }
+  15% { opacity: 0.55; }
+  50% { opacity: 0.25; transform: translateY(-16px); }
+  85% { opacity: 0.55; }
+  100% { opacity: 0; transform: translateY(-28px); }
+}
+
+/* ---------- Per-route content (cycles with a cross-fade) ---------- */
+.route-map-content {
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+
+.route-map-content.is-fading {
+  opacity: 0;
+}
+
 .route-map-line {
   fill: none;
   stroke: url(#rm-route-gradient);
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 260;
-  stroke-dashoffset: 260;
+  stroke-dasharray: var(--dash-length, 260);
+  stroke-dashoffset: var(--dash-length, 260);
   filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent-strong) 60%, transparent));
   animation: route-map-draw 4.5s ease-in-out infinite;
 }
 
 @keyframes route-map-draw {
-  0% { stroke-dashoffset: 260; opacity: 0.4; }
+  0% { stroke-dashoffset: var(--dash-length, 260); opacity: 0.4; }
   55% { stroke-dashoffset: 0; opacity: 1; }
   85% { stroke-dashoffset: 0; opacity: 1; }
-  100% { stroke-dashoffset: -260; opacity: 0; }
+  100% { stroke-dashoffset: calc(var(--dash-length, 260) * -1); opacity: 0; }
 }
 
 /* "Live" data-flow — small dashes continuously travel the route,
@@ -97,7 +126,6 @@
   transform-origin: center;
   transform-box: fill-box;
   animation: route-map-pulse 2.4s ease-out infinite;
-  animation-delay: inherit;
 }
 
 @keyframes route-map-pulse {
@@ -120,12 +148,9 @@
   letter-spacing: 0.01em;
 }
 
+/* ---------- Bus ---------- */
 .route-map-bus {
   animation: route-map-bus-fade 9s ease-in-out infinite;
-}
-
-.route-map-bus-body {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
 
 @keyframes route-map-bus-fade {
@@ -135,14 +160,63 @@
   100% { opacity: 0; }
 }
 
+/* Subtle up/down life on the whole bus body — nested inside the
+   animateMotion-driven outer <g> so the two transforms never collide */
+.route-map-bus-bounce {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: route-map-bus-bounce 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes route-map-bus-bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-0.6px); }
+}
+
+.route-map-bus-body {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+}
+
+/* Spoked wheels spin continuously, isolated in their own nested group so
+   the rotation never fights the parent's positional transform */
+.route-map-wheel-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: route-map-wheel-spin 0.6s linear infinite;
+}
+
+@keyframes route-map-wheel-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Windshield shine sweep — clipped to the glass, nested inside the
+   static skewX() group so the CSS transform only ever handles the sweep */
+.route-map-bus-shine {
+  transform-box: fill-box;
+  animation: route-map-shine-sweep 3.5s ease-in-out infinite;
+}
+
+@keyframes route-map-shine-sweep {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  45% { transform: translateX(46px); opacity: 0.6; }
+  55% { opacity: 0; }
+  100% { transform: translateX(46px); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .route-map-particle,
   .route-map-line,
   .route-map-flow,
   .route-map-marker-pulse,
   .route-map-marker-ring,
-  .route-map-bus {
+  .route-map-bus,
+  .route-map-bus-bounce,
+  .route-map-wheel-spin,
+  .route-map-bus-shine {
     animation: none;
   }
   .route-map-line { stroke-dashoffset: 0; opacity: 1; }
   .route-map-marker { opacity: 1; }
+  .route-map-content { transition: none; }
 }

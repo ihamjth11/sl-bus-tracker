@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './RouteMapAnimation.css';
 
 // A lightweight, hand-drawn animated map: a simplified Sri Lanka outline
@@ -83,9 +83,24 @@ const PARTICLES = [
   { x: 440, y: 160, r: 0.9, delay: '3.3s', dur: '11s' },
 ];
 
+// Resting 3D tilt applied even without any mouse interaction — gives the
+// whole map a permanently "floating tilted glass panel" look. Mouse-move
+// nudges it further for an interactive parallax feel on desktop.
+const REST_TILT = { x: 6, y: -5 };
+const MAX_TILT_OFFSET = 9;
+
 export default function RouteMapAnimation() {
   const [routeIndex, setRouteIndex] = useState(0);
   const [visible, setVisible] = useState(true);
+  const [tilt, setTilt] = useState(REST_TILT);
+  const reduceMotionRef = useRef(false);
+
+  useEffect(() => {
+    reduceMotionRef.current =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -98,19 +113,45 @@ export default function RouteMapAnimation() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleMouseMove = (e) => {
+    if (reduceMotionRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5; // -0.5..0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({
+      x: REST_TILT.x - py * MAX_TILT_OFFSET * 2,
+      y: REST_TILT.y + px * MAX_TILT_OFFSET * 2,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt(REST_TILT);
+  };
+
   const route = ROUTES[routeIndex];
 
   return (
-    <div className="route-map">
+    <div
+      className="route-map"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       <svg
         viewBox="0 0 520 300"
         className="route-map-svg"
         preserveAspectRatio="xMidYMid slice"
+        style={{
+          transform: reduceMotionRef.current
+            ? undefined
+            : `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        }}
       >
         <defs>
           <radialGradient id="rm-bg-glow" cx="70%" cy="30%" r="70%">
             <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.16" />
             <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+            <animate attributeName="cx" values="70%;42%;70%" dur="16s" repeatCount="indefinite" />
+            <animate attributeName="cy" values="30%;55%;30%" dur="16s" repeatCount="indefinite" />
           </radialGradient>
 
           <linearGradient id="rm-route-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -139,6 +180,11 @@ export default function RouteMapAnimation() {
             <stop offset="100%" stopColor="#fff6d8" stopOpacity="0" />
           </radialGradient>
 
+          <radialGradient id="rm-ground-shadow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#000000" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+          </radialGradient>
+
           <pattern id="rm-grid" width="26" height="26" patternUnits="userSpaceOnUse">
             <circle cx="1" cy="1" r="1" fill="var(--accent)" opacity="0.08" />
           </pattern>
@@ -146,6 +192,10 @@ export default function RouteMapAnimation() {
           <clipPath id="rm-glass-clip">
             <rect x="-9" y="-5.5" width="18" height="7" rx="1.8" />
           </clipPath>
+
+          <filter id="rm-bloom" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="5" />
+          </filter>
         </defs>
 
         <rect x="0" y="0" width="520" height="300" fill="url(#rm-bg-glow)" />
@@ -175,6 +225,14 @@ export default function RouteMapAnimation() {
           key={route.id}
           className={`route-map-content ${visible ? 'is-visible' : 'is-fading'}`}
         >
+          {/* Soft neon bloom — a blurred, wider duplicate of the route line
+              sitting behind the crisp one, for extra glow depth */}
+          <path
+            d={route.path}
+            className="route-map-line-bloom"
+            style={{ '--dash-length': route.dashLength }}
+          />
+
           {/* Base route line — draws itself in with a gradient stroke, then loops */}
           <path
             d={route.path}
@@ -186,9 +244,11 @@ export default function RouteMapAnimation() {
               completed route for a tech-tracking feel */}
           <path d={route.path} className="route-map-flow" />
 
-          {/* City markers — radar ring + pulse, in sequence, with label pills */}
+          {/* City markers — ground shadow (grounds them on the tilted board),
+              radar ring + pulse, in sequence, with label pills */}
           {route.markers.map((m) => (
             <g key={m.name} className="route-map-marker" style={{ animationDelay: m.delay }}>
+              <ellipse cx={m.x} cy={m.y + 3} rx="10" ry="3" fill="url(#rm-ground-shadow)" />
               <circle cx={m.x} cy={m.y} r="13" className="route-map-marker-ring" />
               <circle cx={m.x} cy={m.y} r="9" className="route-map-marker-pulse" style={{ animationDelay: m.delay }} />
               <circle cx={m.x} cy={m.y} r="4" className="route-map-marker-dot" />

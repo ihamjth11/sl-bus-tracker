@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 import './Home.css';
@@ -37,6 +37,10 @@ const IconBed = icon(
   </>
 );
 
+const IconChevronDown = icon(
+  <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+);
+
 // Stable Wikimedia Commons URLs — same source as the Explore carousel
 
 const FEATURES = [
@@ -69,6 +73,95 @@ const FEATURES = [
   },
 ];
 
+// Reveals children with a fade-up transition once the wrapping element
+// scrolls into view — stays revealed after that (no re-hiding on scroll
+// back up), matching the pattern already used by TrustSection's stats.
+function useRevealOnScroll() {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, visible];
+}
+
+// A single "Track / Explore / Book" card with a subtle 3D tilt that
+// follows the cursor on hover (desktop) and a glass shine sweep across
+// the photo — springs back flat on mouse-leave. Skipped when the user
+// prefers reduced motion.
+function FeatureCard({ feature, index, revealed }) {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const reduceMotionRef = useRef(false);
+
+  useEffect(() => {
+    reduceMotionRef.current =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
+  const handleMouseMove = (e) => {
+    if (reduceMotionRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: -py * 8, y: px * 8 });
+  };
+
+  const handleMouseLeave = () => setTilt({ x: 0, y: 0 });
+
+  return (
+    <Link
+      to={feature.to}
+      className={`home-feature-card ${revealed ? 'is-revealed' : ''}`}
+      style={{
+        '--feature-accent': feature.accent,
+        '--reveal-delay': `${index * 0.1}s`,
+      }}
+    >
+      <div
+        className="home-feature-tilt"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          transform: reduceMotionRef.current
+            ? undefined
+            : `perspective(700px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        }}
+      >
+        <div
+          className="home-feature-photo"
+          style={{ backgroundImage: `url(${feature.image})` }}
+        >
+          <span className="home-feature-shine" />
+          <div className="home-feature-icon">
+            <feature.Icon className="icon" />
+          </div>
+        </div>
+        <div className="home-feature-body">
+          <h3>{feature.title}</h3>
+          <p>{feature.desc}</p>
+          <span className="home-feature-cta">{feature.cta} →</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function Home() {
   const [theme, setTheme] = useState(() => localStorage.getItem('sl-bus-theme') || 'light');
   const [uiLang, setUiLang] = useState(() => localStorage.getItem('sl-bus-lang') || 'en');
@@ -91,6 +184,8 @@ export default function Home() {
     setTheme(next);
     localStorage.setItem('sl-bus-theme', next);
   };
+
+  const [featuresRef, featuresRevealed] = useRevealOnScroll();
 
   return (
     <div className="app home-page">
@@ -128,27 +223,16 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        <span className="home-scroll-indicator">
+          <IconChevronDown className="icon-xs" />
+        </span>
       </div>
 
       <TrustSection />
 
-      <div className="home-features" id="book">
+      <div className="home-features" id="book" ref={featuresRef}>
         {FEATURES.map((f, i) => (
-          <Link to={f.to} className="home-feature-card" key={i} style={{ '--feature-accent': f.accent }}>
-            <div
-              className="home-feature-photo"
-              style={{ backgroundImage: `url(${f.image})` }}
-            >
-              <div className="home-feature-icon">
-                <f.Icon className="icon" />
-              </div>
-            </div>
-            <div className="home-feature-body">
-              <h3>{f.title}</h3>
-              <p>{f.desc}</p>
-              <span className="home-feature-cta">{f.cta} →</span>
-            </div>
-          </Link>
+          <FeatureCard feature={f} index={i} revealed={featuresRevealed} key={i} />
         ))}
       </div>
 

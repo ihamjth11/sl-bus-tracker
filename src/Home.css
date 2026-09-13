@@ -158,6 +158,31 @@
   .home-hero-content h1 { font-size: 40px; }
 }
 
+/* ---------- SCROLL INDICATOR ---------- */
+.home-scroll-indicator {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: home-scroll-bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes home-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
+  50% { transform: translateX(-50%) translateY(5px); opacity: 1; }
+}
+
 /* ---------- FEATURE CARDS ---------- */
 .home-features {
   display: flex;
@@ -178,13 +203,25 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: var(--shadow);
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+  transition: box-shadow 0.22s ease, opacity 0.5s ease, transform 0.5s ease;
   flex: 1;
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.home-feature-card.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: var(--reveal-delay, 0s);
 }
 
 .home-feature-card:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+}
+
+.home-feature-tilt {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
 }
 
 .home-feature-photo {
@@ -211,6 +248,35 @@
     rgba(10, 13, 18, 0) 40%,
     rgba(10, 13, 18, 0.55) 100%
   );
+}
+
+.home-feature-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.home-feature-shine::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-40%) rotate(8deg);
+  transition: transform 0.65s ease;
+}
+
+.home-feature-card:hover .home-feature-shine::after {
+  transform: translateX(320%) rotate(8deg);
 }
 
 .home-feature-icon {
@@ -279,14 +345,21 @@
   .home-eyebrow,
   .home-hero-content h1,
   .home-hero-content p,
-  .home-hero-actions {
+  .home-hero-actions,
+  .home-scroll-indicator {
     animation: none !important;
   }
   .home-cta-primary:hover,
   .home-cta-secondary:hover,
   .home-feature-card:hover,
   .home-feature-card:hover .home-feature-photo,
-  .home-feature-card:hover .home-feature-icon {
+  .home-feature-card:hover .home-feature-icon,
+  .home-feature-shine::after {
     transform: none !important;
+  }
+  .home-feature-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

@@ -1,7 +1,12 @@
 /* ===================================================================
-   BOOK PAGE — SLTB Bus Booking, Hotels/Rooms, and Car Travel (soon).
+
+   BOOK PAGE — SLTB Bus Booking, Hotels/Rooms, Private Bus Booking,
+   and Car Travel (soon).
+
    Uses tokens from App.css (--surface, --accent, --font-display, etc.)
+
 =================================================================== */
+
 .book-options {
   display: flex;
   flex-direction: column;

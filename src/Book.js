@@ -137,8 +137,11 @@ export default function Book() {
           </div>
         </a>
 
-        <div
-          className="book-option-card disabled"
+        <a
+          href="https://busseat.lk/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="book-option-card"
           style={{ '--book-accent': '#8a94a3' }}
         >
           <div className="book-option-icon">
@@ -147,9 +150,9 @@ export default function Book() {
           <div className="book-option-body">
             <h3>Private Bus Booking</h3>
             <p>Book seats on private intercity bus operators, in addition to SLTB services.</p>
-            <span className="book-option-cta book-option-soon">Coming soon</span>
+            <span className="book-option-cta">Book a seat <IconArrow className="icon-xs" /></span>
           </div>
-        </div>
+        </a>
 
         <div
           className="book-option-card disabled"

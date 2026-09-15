@@ -142,7 +142,7 @@ export default function Book() {
           target="_blank"
           rel="noopener noreferrer"
           className="book-option-card"
-          style={{ '--book-accent': '#8a94a3' }}
+          style={{ '--book-accent': '#3ff0bb' }}
         >
           <div className="book-option-icon">
             <IconTicket className="icon-lg" />
